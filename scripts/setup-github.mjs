@@ -85,6 +85,43 @@ try {
     console.warn('⚠️ Could not apply branch protection rules automatically (requires org admin privileges).');
   }
 
+  // 8. Ensure the design-system sync workflow can authenticate (GitHub App secrets).
+  //    Preferred: org-level secrets shared with the repo. Fallback: set repo secrets from local env vars.
+  console.log(`🔑 Checking design-system sync secrets on ${repo}...`);
+  const requiredSecrets = ['KMD_BOT_APP_ID', 'KMD_BOT_PRIVATE_KEY'];
+  const listNames = (cmd) => {
+    try {
+      return runSilent(cmd).toString().split('\n').map((s) => s.trim()).filter(Boolean);
+    } catch {
+      return [];
+    }
+  };
+  const available = new Set([
+    ...listNames(`gh api repos/${repo}/actions/secrets --jq '.secrets[].name'`),
+    ...listNames(`gh api repos/${repo}/actions/organization-secrets --jq '.secrets[].name'`)
+  ]);
+  for (const name of requiredSecrets) {
+    if (available.has(name)) continue;
+    const value = process.env[name];
+    if (value) {
+      try {
+        execSync(`gh secret set ${name} --repo ${repo}`, { input: value, stdio: ['pipe', 'ignore', 'inherit'] });
+        available.add(name);
+        console.log(`✅ Set repo secret ${name} from local environment.`);
+      } catch {}
+    }
+  }
+  const missing = requiredSecrets.filter((n) => !available.has(n));
+  if (missing.length) {
+    console.warn(
+      `⚠️ Missing secrets: ${missing.join(', ')}. The "Sync Design System Submodule" workflow will fail until they exist.\n` +
+        `   Fix once for all apps: add them as kmd-labs ORG secrets (Settings → Secrets → Actions) with access to all repositories,\n` +
+        `   or export them locally and re-run "npm run setup:github".`
+    );
+  } else {
+    console.log('✅ Design-system sync secrets available.');
+  }
+
   console.log(`
 🎉 Repository setup complete: https://github.com/${repo}`);
   console.log(`🌐 Live site URL: https://kmd-labs.github.io/landing/

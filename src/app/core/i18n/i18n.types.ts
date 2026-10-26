@@ -7,6 +7,7 @@ export type Lang = 'en' | 'pl';
 export interface Dict {
   htmlLang: string;
   docTitle: string;
+  appName: string;
   langName: string;
 
   // Top HUD & Navigation

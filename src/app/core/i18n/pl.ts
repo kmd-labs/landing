@@ -3,6 +3,7 @@ import { Dict } from './i18n.types';
 export const PL: Dict = {
   htmlLang: 'pl',
   docTitle: 'KMD · Landing',
+  appName: 'Landing',
   langName: 'Polski',
 
   // Top HUD & Navigation

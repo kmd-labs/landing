@@ -1,2 +1,13 @@
 @use "variables" as *;
 @use "base";
+
+html,
+body {
+  height: auto;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  user-select: text;
+  scroll-behavior: smooth;
+  @include custom-scrollbar;
+}

@@ -1,39 +1,39 @@
 @use "variables" as *;
 
-.viewport {
+.landing-page {
   position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  width: 100%;
+  min-height: 100vh;
   background: color("bg-deep");
+  color: color("text-main");
+  font-family: var(--font-family);
 }
 
+.text-accent {
+  color: color("accent");
+}
+
+.font-mono {
+  font-family: var(--font-family-mono);
+}
+
+// ─── Floating Top HUD ────────────────────────────────────────────────────────
 .header {
   position: fixed;
-  top: 16px;
-  left: 16px;
-  right: 16px;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   pointer-events: none;
-  z-index: 25;
-
-  &--popup-open {
-    z-index: 120;
-
-    .header__settings,
-    .header__view {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition: opacity transition("fast"), visibility transition("fast");
-    }
-  }
+  z-index: 50;
 
   &__left,
-  &__right {
+  &__nav {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -60,9 +60,7 @@
     font: inherit;
     color: color("text-bright");
     cursor: pointer;
-    text-decoration: none;
     user-select: none;
-    -webkit-tap-highlight-color: transparent;
     transition: background transition("fast"), transform transition("fast");
 
     &:hover {
@@ -70,13 +68,7 @@
     }
 
     &:active {
-      background: color("btn-hover");
       transform: scale(0.98);
-    }
-
-    &:focus-visible {
-      outline: 2px solid color("accent");
-      outline-offset: 1px;
     }
   }
 
@@ -84,7 +76,6 @@
     height: 16px;
     width: auto;
     display: block;
-    user-select: none;
   }
 
   &__divider {
@@ -94,66 +85,678 @@
   }
 
   &__app-name {
-    margin: 0;
     font-size: font-size("xs");
     font-weight: font-weight("medium");
     color: color("text-dim");
   }
 
-  &__settings,
-  &__view {
+  &__settings {
     display: inline-flex;
     align-items: center;
     padding: 4px;
     border-radius: radius("pill");
-    transition: opacity transition("fast"), visibility transition("fast");
   }
 
-  &__view {
-    width: 180px;
+  &__nav {
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    border-radius: radius("pill");
+    gap: 4px;
+
+    .nav-link {
+      background: transparent;
+      border: 0;
+      color: color("text-desc");
+      font-size: font-size("xs");
+      font-weight: font-weight("medium");
+      height: 34px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: radius("pill");
+      cursor: pointer;
+      user-select: none;
+      transition: color transition("fast"), background transition("fast"), transform transition("fast");
+
+      &:hover {
+        color: color("text-bright");
+        background: color("btn-hover");
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      &--cta {
+        color: color("accent");
+        font-weight: font-weight("semibold");
+      }
+    }
   }
 
   @include respond-to("mobile") {
-    top: 10px;
-    left: 8px;
-    right: 8px;
+    top: 12px;
+    left: 12px;
+    right: 12px;
 
     &__app-name,
     &__divider {
       display: none;
     }
+  }
+}
 
-    &__view {
-      width: 140px;
+// ─── 1. Hero Section ──────────────────────────────────────────────────────────
+.hero-stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 640px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 24px 40px;
+
+  &__inner {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    pointer-events: none;
+    transition: margin transition("base");
+  }
+
+  &__content {
+    position: relative;
+    z-index: 10;
+    max-width: 580px;
+    pointer-events: auto;
+  }
+
+  // Elevate the KMD editorial pane higher in landscape view
+  @media (orientation: landscape) {
+    padding-bottom: clamp(64px, 14vh, 120px);
+
+    &__inner {
+      margin-bottom: clamp(32px, 8vh, 80px);
+    }
+  }
+
+  // Compact scaling for short landscape displays (e.g. phones or netbooks in landscape)
+  @media (orientation: landscape) and (max-height: 640px) {
+    min-height: 480px;
+    padding-bottom: 56px;
+
+    &__inner {
+      margin-bottom: 16px;
+    }
+
+    .hero-card {
+      padding: 16px 20px;
+
+      &__title {
+        font-size: 1.35rem;
+        margin-bottom: 6px;
+      }
+
+      &__subtitle {
+        font-size: font-size("xs");
+        margin-bottom: 10px;
+      }
+    }
+  }
+
+  // Show More floating action button (using KMD Design System ButtonComponent)
+  &__show-more {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+
+    .hero-stage__show-more-btn {
+      gap: 8px;
+      padding: 0 18px 0 20px;
+      height: 36px;
+      border-radius: radius("pill");
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+      transition: all transition("fast");
+
+      lucide-icon {
+        color: color("accent");
+        transition: transform transition("fast");
+      }
+
+      &:hover {
+        border-color: color("accent");
+        color: color("accent");
+        box-shadow: 0 6px 20px rgba(211, 116, 0, 0.16);
+        transform: translateY(-2px);
+
+        lucide-icon {
+          transform: translateY(2px);
+        }
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    @include respond-to("mobile") {
+      bottom: 20px;
+
+      .hero-stage__show-more-btn {
+        height: 32px;
+        padding: 0 14px 0 16px;
+        font-size: font-size("xxs");
+      }
+    }
+  }
+
+  @include respond-to("tablet") {
+    padding: 0 20px clamp(64px, 10vh, 88px);
+
+    &__inner {
+      margin-bottom: clamp(20px, 4vh, 36px);
+    }
+  }
+
+  @include respond-to("mobile") {
+    padding: 0 16px clamp(72px, 12vh, 96px);
+
+    &__inner {
+      margin-bottom: clamp(24px, 5vh, 48px);
     }
   }
 }
 
-.stage {
-  width: 100%;
-  height: 100%;
+.hero-card {
+  padding: 24px 28px;
+  border-radius: radius("panel");
+  animation: panelSlideIn 0.5s ease-out;
+
+  &__title {
+    margin: 0 0 12px;
+    font-size: clamp(1.5rem, 3.0vw, 2.2rem);
+    font-weight: font-weight("bold");
+    line-height: 1.18;
+    color: color("text-bright");
+    letter-spacing: -0.02em;
+  }
+
+  &__subtitle {
+    margin: 0 0 16px;
+    font-size: font-size("sm");
+    line-height: 1.55;
+    color: color("text-desc");
+  }
+
+  &__source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: font-size("xxs");
+    color: color("text-dim");
+    letter-spacing: 0.04em;
+
+    .source-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: color("info-500");
+      box-shadow: 0 0 6px color("info-500");
+      flex-shrink: 0;
+    }
+  }
+
+  @include respond-to("mobile") {
+    padding: 18px 16px;
+  }
 }
 
-.dock-wrap {
-  position: fixed;
-  bottom: 16px;
-  left: 16px;
-  right: 16px;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 20;
+
+
+// ─── Common Section Scaffolding ───────────────────────────────────────────────
+.section {
+  padding: 96px 24px;
+  position: relative;
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  &__header {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 56px;
+  }
+
+  &__title {
+    margin: 10px 0 16px;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: font-weight("bold");
+    color: color("text-bright");
+    letter-spacing: -0.02em;
+    line-height: 1.22;
+  }
+
+  &__lead {
+    margin: 0;
+    font-size: font-size("base");
+    color: color("text-desc");
+    line-height: 1.6;
+  }
+
+  @include respond-to("mobile") {
+    padding: 64px 16px;
+
+    &__header {
+      margin-bottom: 36px;
+    }
+  }
 }
 
-.dock {
-  pointer-events: auto;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-  width: min(720px, 100%);
+.section-kicker {
+  font-size: font-size("xxs");
+  font-weight: font-weight("bold");
+  letter-spacing: 0.14em;
+  color: color("accent");
+  text-transform: uppercase;
+}
 
-  &__slider {
+// ─── 2. Portfolio Observatory ─────────────────────────────────────────────────
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+
+  @include respond-to("tablet") {
+    grid-template-columns: 1fr;
+  }
+}
+
+.portfolio-card {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  border-radius: radius("panel");
+  transition: transform transition("fast"), box-shadow transition("fast");
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px color("shadow-heavy");
+  }
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .portfolio-tag {
+    font-size: font-size("xxs");
+    font-weight: font-weight("bold");
+    color: color("accent");
+    letter-spacing: 0.08em;
+  }
+
+  .portfolio-badges {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  &__visual {
+    width: 100%;
+    height: 160px;
+    background: color("neutral-100");
+    border: 1px solid color("line");
+    border-radius: radius("card");
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    overflow: hidden;
+
+    .visual-svg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__title {
+    margin: 0 0 6px;
+    font-size: font-size("xl");
+    font-weight: font-weight("bold");
+    color: color("text-bright");
+  }
+
+  &__subtitle {
+    margin: 0 0 12px;
+    font-size: font-size("xs");
+    font-weight: font-weight("medium");
+    color: color("accent");
+  }
+
+  &__desc {
+    margin: 0 0 20px;
+    font-size: font-size("sm");
+    color: color("text-desc");
+    line-height: 1.55;
     flex: 1;
+  }
+
+  &__metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 12px;
+    background: color("neutral-50");
+    border: 1px solid color("line");
+    border-radius: radius("sm");
+    margin-bottom: 20px;
+
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .metric-label {
+      font-size: 9px;
+      color: color("text-dim");
+      letter-spacing: 0.05em;
+    }
+
+    .metric-val {
+      font-size: font-size("xs");
+      font-weight: font-weight("semibold");
+      color: color("text-bright");
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .portfolio-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: radius("pill");
+    background: color("text-bright");
+    color: color("neutral-0");
+    font-size: font-size("xs");
+    font-weight: font-weight("medium");
+    text-decoration: none;
+    transition: background transition("fast"), transform transition("fast");
+
+    &:hover {
+      background: color("accent");
+      transform: translateX(2px);
+    }
+  }
+}
+
+// ─── 4. Specialities Section ──────────────────────────────────────────────────
+.specialities-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+
+  @include respond-to("desktop") {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include respond-to("tablet") {
+    grid-template-columns: 1fr;
+  }
+}
+
+.discipline-card {
+  padding: 32px 28px;
+  border-radius: radius("panel");
+  display: flex;
+  flex-direction: column;
+
+  &__icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: radius("card");
+    background: color("neutral-100");
+    border: 1px solid color("line");
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: color("accent");
+    margin-bottom: 20px;
+  }
+
+  &__title {
+    margin: 0 0 10px;
+    font-size: font-size("lg");
+    font-weight: font-weight("bold");
+    color: color("text-bright");
+  }
+
+  &__lead {
+    margin: 0 0 20px;
+    font-size: font-size("sm");
+    color: color("text-desc");
+    line-height: 1.55;
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: font-size("xs");
+      color: color("text-desc");
+      line-height: 1.5;
+
+      .bullet {
+        color: color("accent");
+        font-size: font-size("xxs");
+        margin-top: 2px;
+      }
+    }
+  }
+
+  &__tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding-top: 16px;
+    border-top: 1px solid color("line");
+  }
+
+  .tool-pill {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: radius("pill");
+    background: color("neutral-100");
+    color: color("text-dim");
+    border: 1px solid color("line");
+  }
+}
+
+// ─── 5. Team Section ──────────────────────────────────────────────────────────
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+
+  @include respond-to("tablet") {
+    grid-template-columns: 1fr;
+  }
+}
+
+.team-card {
+  border-radius: radius("panel");
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  &__media {
+    width: 100%;
+    height: 240px;
+    overflow: hidden;
+    background: color("neutral-200");
+
+    .team-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(15%);
+      transition: transform transition("base"), filter transition("base");
+
+      &:hover {
+        transform: scale(1.03);
+        filter: grayscale(0%);
+      }
+    }
+  }
+
+  &__content {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .team-name {
+    margin: 0 0 4px;
+    font-size: font-size("lg");
+    font-weight: font-weight("bold");
+    color: color("text-bright");
+  }
+
+  .team-role {
+    font-size: font-size("xs");
+    margin-bottom: 14px;
+  }
+
+  .team-bio {
+    margin: 0 0 18px;
+    font-size: font-size("xs");
+    line-height: 1.6;
+    color: color("text-desc");
+    flex: 1;
+  }
+
+  .team-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .tag-chip {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: radius("pill");
+    background: color("neutral-100");
+    color: color("text-dim");
+  }
+
+  .team-links {
+    display: flex;
+    gap: 14px;
+    padding-top: 14px;
+    border-top: 1px solid color("line");
+  }
+
+  .icon-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: font-size("xs");
+    color: color("text-dim");
+    text-decoration: none;
+    transition: color transition("fast");
+
+    &:hover {
+      color: color("text-bright");
+    }
+  }
+}
+
+// ─── 6. Footer ────────────────────────────────────────────────────────────────
+.footer {
+  border-top: 1px solid color("line");
+  background: color("panel-bg-heavy");
+  padding: 28px 24px;
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+
+    @include respond-to("mobile") {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__logo {
+    height: 15px;
+    width: auto;
+  }
+
+  &__tagline {
+    font-size: font-size("xs");
+    color: color("text-dim");
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: font-size("xxs");
+    color: color("text-dim");
+  }
+
+  .back-to-top {
+    background: transparent;
+    border: 0;
+    color: color("accent");
+    font: inherit;
+    font-weight: font-weight("bold");
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }

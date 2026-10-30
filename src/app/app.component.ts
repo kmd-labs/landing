@@ -1,21 +1,33 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, Globe, Activity, Layers, BookOpen } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  Globe,
+  Compass,
+  Layers,
+  Users,
+  ExternalLink,
+  ChevronDown,
+  ArrowUpRight,
+  Cpu,
+  Waves,
+  Database
+} from 'lucide-angular';
 import {
   ButtonComponent,
+  BadgeComponent,
   DropdownComponent,
   DropdownOption,
-  PopupComponent,
-  PopupService,
   SplashComponent,
   SplashService,
-  AboutService,
-  TimelineSliderComponent,
-  TooltipComponent,
   BreakpointService
 } from '@kmd/design-system';
 import { I18nService } from './core/i18n/i18n.service';
 import { Lang } from './core/i18n/i18n.types';
+import {
+  TelemetryData,
+  VortexCanvasComponent
+} from './components/vortex-canvas/vortex-canvas.component';
 
 @Component({
   selector: 'app-root',
@@ -24,11 +36,10 @@ import { Lang } from './core/i18n/i18n.types';
     CommonModule,
     LucideAngularModule,
     ButtonComponent,
+    BadgeComponent,
     DropdownComponent,
-    PopupComponent,
     SplashComponent,
-    TimelineSliderComponent,
-    TooltipComponent
+    VortexCanvasComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -36,15 +47,38 @@ import { Lang } from './core/i18n/i18n.types';
 export class AppComponent {
   readonly i18n = inject(I18nService);
   readonly bp = inject(BreakpointService);
-  readonly popup = inject(PopupService);
-  readonly about = inject(AboutService);
   readonly splash = inject(SplashService);
 
+  // Lucide Icons
   readonly globeIcon = Globe;
-  readonly bookOpenIcon = BookOpen;
+  readonly compassIcon = Compass;
+  readonly layersIcon = Layers;
+  readonly usersIcon = Users;
+  readonly externalLinkIcon = ExternalLink;
+  readonly chevronDownIcon = ChevronDown;
+  readonly arrowUpRightIcon = ArrowUpRight;
+  readonly cpuIcon = Cpu;
+  readonly wavesIcon = Waves;
+  readonly databaseIcon = Database;
 
-  readonly currentView = signal<string>('primary');
-  readonly sliderValue = signal<number>(0);
+  // Live telemetry state from Vortex Canvas
+  readonly telemetry = signal<TelemetryData>({
+    latLon: '39.00°N, 71.00°W (Cyclone Eye Center)',
+    velocity: '2.8 m/s (5.4 kn) · Eyewall Peak',
+    vorticity: '+2.8 × 10⁻⁴ s⁻¹ (Concentric Swirl)',
+    regimeKey: 'regimeVortex'
+  });
+
+  /**
+   * Evaluates the current four-digit calendar year dynamically.
+   */
+  getCurrentYear(): number {
+    return new Date().getFullYear();
+  }
+
+  get currentYear(): number {
+    return this.getCurrentYear();
+  }
 
   readonly langOptions = computed<DropdownOption<Lang>[]>(() =>
     this.i18n.langs.map(l => ({
@@ -55,27 +89,20 @@ export class AppComponent {
     }))
   );
 
-  readonly viewOptions = computed<DropdownOption<string>[]>(() => {
-    const t = this.i18n.t();
-    return [
-      { value: 'primary', label: t.viewPrimary, icon: Activity },
-      { value: 'secondary', label: t.viewSecondary, icon: Layers }
-    ];
-  });
+  onTelemetryUpdate(data: TelemetryData) {
+    this.telemetry.set(data);
+  }
 
-  readonly currentViewIcon = computed(
-    () => this.viewOptions().find(o => o.value === this.currentView())?.icon ?? Activity
-  );
+  scrollToSection(id: string) {
+    if (typeof document === 'undefined') return;
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
 
-  readonly isPopupOpen = computed(() => this.popup.config() !== null);
-
-  openGlossary() {
-    this.popup.open({
-      id: 'glossary',
-      title: computed(() => this.i18n.t().glossary),
-      description: computed(() => this.i18n.t().glossaryDesc),
-      size: 'md',
-      actions: [{ label: computed(() => this.i18n.t().close), variant: 'default' }]
-    });
+  scrollToTop() {
+    if (typeof window === 'undefined') return;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

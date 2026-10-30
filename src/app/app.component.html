@@ -1,23 +1,23 @@
 @let t = i18n.t();
 
-<main class="viewport">
+<div class="landing-page" id="top">
   <app-splash (revealed)="splash.finish()"></app-splash>
 
-  <!-- Top HUD: Left Logotype + Language, Right View Switcher -->
-  <header class="header" [class.header--popup-open]="isPopupOpen()">
+  <!-- Top Floating HUD: Brand pill & Language Selector only -->
+  <header class="header">
     <div class="header__left">
       <div class="header__brand glass-panel">
         <button
           type="button"
           class="header__brand-btn"
-          aria-label="KMD Labs – About us"
-          (click)="about.open({ lang: i18n.lang() })">
+          [attr.aria-label]="t.scrollToTopAria"
+          (click)="scrollToTop()">
           <img
             class="header__logo-img"
             src="assets/design-system/logo/kmd-black-orange.svg"
             alt="KMD" />
           <span class="header__divider" aria-hidden="true"></span>
-          <h1 class="header__app-name">{{ t.appName }}</h1>
+          <span class="header__app-name">{{ t.appName }}</span>
         </button>
       </div>
 
@@ -33,45 +33,273 @@
       </div>
     </div>
 
-    <div class="header__right">
-      <div class="header__view glass-panel">
-        <app-dropdown
-          variant="ghost"
-          align="right"
-          [fullWidth]="true"
-          [options]="viewOptions()"
-          [value]="currentView()"
-          [icon]="currentViewIcon()"
-          [ariaLabel]="t.chooseView"
-          (valueChange)="currentView.set($event)">
-        </app-dropdown>
-      </div>
-    </div>
+    <!-- Quick navigation bar on desktop -->
+    <nav class="header__nav glass-panel" *ngIf="!bp.mobile()">
+      <button type="button" class="nav-link" (click)="scrollToSection('portfolio')">
+        {{ t.navPortfolio }}
+      </button>
+      <button type="button" class="nav-link" (click)="scrollToSection('specialities')">
+        {{ t.navSpecialities }}
+      </button>
+      <button type="button" class="nav-link nav-link--cta" (click)="scrollToSection('team')">
+        {{ t.navTeam }}
+      </button>
+    </nav>
   </header>
 
-  <!-- Fullscreen Visualization Stage -->
-  <section class="stage" [attr.aria-label]="t.stageAriaLabel"></section>
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- 1. HERO SECTION: Interactive 2D Vortex Canvas + Telemetry Console       -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="hero-stage">
+    <app-vortex-canvas (telemetryChange)="onTelemetryUpdate($event)"></app-vortex-canvas>
 
-  <!-- Bottom Dock: Sliders & Glossaries -->
-  <footer class="dock-wrap">
-    <div class="dock glass-panel">
-      <div class="dock__slider">
-        <app-timeline-slider
-          [min]="-100"
-          [max]="100"
-          [step]="1"
-          [value]="sliderValue()"
-          [ariaLabel]="t.timelineLabel"
-          (valueChange)="sliderValue.set($event)">
-        </app-timeline-slider>
+    <!-- Hero Glass Editorial Card (Simplified per user request) -->
+    <div class="hero-stage__inner">
+      <div class="hero-stage__content">
+        <div class="hero-card glass-panel--heavy">
+          <h1 class="hero-card__title">
+            {{ t.heroTitle }}
+            <span class="text-accent">{{ t.heroHighlight }}</span>
+          </h1>
+          <p class="hero-card__subtitle">
+            {{ t.heroSubtitle }}
+          </p>
+
+          <div class="hero-card__source font-mono">
+            <span class="source-pulse" aria-hidden="true"></span>
+            <span>{{ t.heroDataSource }}</span>
+          </div>
+        </div>
       </div>
-      <app-button variant="ghost" (btnClick)="openGlossary()">
-        <lucide-icon [img]="bookOpenIcon" [size]="15"></lucide-icon>
-        <span>{{ t.glossary }}</span>
-      </app-button>
+    </div>
+
+    <!-- Show More button (using official KMD Design System ButtonComponent) -->
+    <app-button
+      class="hero-stage__show-more"
+      variant="default"
+      extraClass="hero-stage__show-more-btn glass-panel"
+      [ariaLabel]="t.showMoreAria"
+      (btnClick)="scrollToSection('portfolio')">
+      <span>{{ t.showMore }}</span>
+      <lucide-icon [img]="chevronDownIcon" [size]="14"></lucide-icon>
+    </app-button>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- 2. PORTFOLIO OBSERVATORY                                                -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="section portfolio-section" id="portfolio">
+    <div class="section__container">
+      <div class="section__header">
+        <span class="section-kicker">{{ t.portfolioKicker }}</span>
+        <h2 class="section__title">{{ t.portfolioTitle }}</h2>
+        <p class="section__lead">{{ t.portfolioLead }}</p>
+      </div>
+
+      <div class="portfolio-grid">
+        <article
+          *ngFor="let proj of t.projects"
+          class="portfolio-card glass-panel"
+          [class.portfolio-card--featured]="proj.id === 'el-nino' || proj.id === 'watershed'">
+          <div class="portfolio-card__top">
+            <span class="portfolio-tag font-mono">{{ proj.tag }}</span>
+            <div class="portfolio-badges">
+              <app-badge
+                *ngFor="let tg of proj.tags"
+                [text]="tg"
+                backgroundColor="#334155">
+              </app-badge>
+            </div>
+          </div>
+
+          <!-- Abstract SVG Graphic Preview -->
+          <div class="portfolio-card__visual" [attr.data-project]="proj.id">
+            <!-- Project 01: El Niño Isotherm Globe Sketch -->
+            <svg *ngIf="proj.id === 'el-nino'" class="visual-svg" viewBox="0 0 400 180" fill="none">
+              <circle cx="200" cy="90" r="70" stroke="rgba(15,23,42,0.12)" stroke-width="1.5" />
+              <path d="M130 90 Q 200 65, 270 90" stroke="#d37400" stroke-width="3" stroke-linecap="round" />
+              <path d="M140 105 Q 200 85, 260 105" stroke="#cc3e1c" stroke-width="2" stroke-linecap="round" />
+              <path d="M140 75 Q 200 55, 260 75" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" />
+              <ellipse cx="200" cy="90" rx="68" ry="24" stroke="rgba(15,23,42,0.18)" stroke-width="1" stroke-dasharray="3 3" />
+              <circle cx="240" cy="88" r="4" fill="#d37400" />
+            </svg>
+
+            <!-- Project 02: Watershed Baltic Catchment Sketch -->
+            <svg *ngIf="proj.id === 'watershed'" class="visual-svg" viewBox="0 0 400 180" fill="none">
+              <path d="M140 140 C 160 120, 180 80, 210 50 C 230 70, 250 110, 270 140" stroke="#0284c7" stroke-width="2.5" fill="none" />
+              <path d="M170 100 Q 190 90, 210 95 Q 230 105, 250 100" stroke="#10b981" stroke-width="2" />
+              <circle cx="210" cy="95" r="16" fill="rgba(211,116,0,0.16)" stroke="#d37400" stroke-width="1.5" />
+              <circle cx="210" cy="95" r="4" fill="#d37400" />
+              <circle cx="180" cy="115" r="8" fill="rgba(220,38,38,0.2)" stroke="#dc2626" stroke-width="1" />
+            </svg>
+
+            <!-- Project 03: Golfstrom Vector Vortex Sketch -->
+            <svg *ngIf="proj.id === 'golfstrom'" class="visual-svg" viewBox="0 0 400 180" fill="none">
+              <path d="M100 150 C 160 140, 220 90, 310 40" stroke="#2563eb" stroke-width="3" stroke-linecap="round" />
+              <path d="M130 160 C 180 145, 240 100, 320 55" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" />
+              <circle cx="240" cy="85" r="28" stroke="#d37400" stroke-width="1.8" stroke-dasharray="4 4" fill="none" />
+              <circle cx="240" cy="85" r="12" stroke="#cc3e1c" stroke-width="1.5" fill="none" />
+            </svg>
+
+            <!-- Project 04: Viadrus AI Satellite Wave Sketch -->
+            <svg *ngIf="proj.id === 'viadrus-ai'" class="visual-svg" viewBox="0 0 400 180" fill="none">
+              <rect x="180" y="30" width="40" height="20" rx="3" fill="#1e293b" />
+              <line x1="160" y1="40" x2="180" y2="40" stroke="#d37400" stroke-width="3" />
+              <line x1="220" y1="40" x2="240" y2="40" stroke="#d37400" stroke-width="3" />
+              <path d="M185 70 C 195 90, 205 90, 215 70" stroke="#0ea5e9" stroke-width="2" fill="none" />
+              <path d="M175 90 C 195 120, 205 120, 225 90" stroke="#0ea5e9" stroke-width="1.5" stroke-dasharray="3 3" fill="none" />
+              <line x1="140" y1="140" x2="260" y2="140" stroke="rgba(15,23,42,0.2)" stroke-width="2" />
+              <circle cx="200" cy="140" r="5" fill="#dc2626" />
+            </svg>
+          </div>
+
+          <div class="portfolio-card__body">
+            <h3 class="portfolio-card__title">{{ proj.title }}</h3>
+            <p class="portfolio-card__subtitle">{{ proj.subtitle }}</p>
+            <p class="portfolio-card__desc">{{ proj.description }}</p>
+
+            <div class="portfolio-card__metrics font-mono">
+              <div *ngFor="let m of proj.metrics" class="metric-item">
+                <span class="metric-label">{{ m.label }}</span>
+                <span class="metric-val">{{ m.value }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="portfolio-card__footer">
+            <a
+              [href]="proj.url"
+              [target]="proj.isExternal ? '_blank' : '_self'"
+              rel="noopener noreferrer"
+              class="portfolio-link-btn">
+              <span>{{ t.launchApp }}</span>
+              <lucide-icon [img]="arrowUpRightIcon" [size]="16"></lucide-icon>
+            </a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- 4. SPECIALITIES: Geovisualisation, Data Eng, AI & Anomaly ML            -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="section specialities-section" id="specialities">
+    <div class="section__container">
+      <div class="section__header">
+        <span class="section-kicker">{{ t.specialitiesKicker }}</span>
+        <h2 class="section__title">{{ t.specialitiesTitle }}</h2>
+        <p class="section__lead">{{ t.specialitiesLead }}</p>
+      </div>
+
+      <div class="specialities-grid">
+        <div
+          *ngFor="let disc of t.disciplines; let i = index"
+          class="discipline-card glass-panel">
+          <div class="discipline-card__icon-wrap">
+            <lucide-icon *ngIf="i === 0" [img]="wavesIcon" [size]="24"></lucide-icon>
+            <lucide-icon *ngIf="i === 1" [img]="databaseIcon" [size]="24"></lucide-icon>
+            <lucide-icon *ngIf="i === 2" [img]="cpuIcon" [size]="24"></lucide-icon>
+          </div>
+
+          <h3 class="discipline-card__title">{{ disc.title }}</h3>
+          <p class="discipline-card__lead">{{ disc.lead }}</p>
+
+          <ul class="discipline-card__list">
+            <li *ngFor="let pt of disc.points">
+              <span class="bullet" aria-hidden="true">▹</span>
+              <span>{{ pt }}</span>
+            </li>
+          </ul>
+
+          <div class="discipline-card__tools">
+            <span *ngFor="let tool of disc.tools" class="tool-pill font-mono">
+              {{ tool }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- 5. TEAM DOSSIER: Founders Collective (Inline Lab Notes)                -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="section team-section" id="team">
+    <div class="section__container">
+      <div class="section__header">
+        <span class="section-kicker">{{ t.teamKicker }}</span>
+        <h2 class="section__title">{{ t.teamTitle }}</h2>
+        <p class="section__lead">{{ t.teamLead }}</p>
+      </div>
+
+      <div class="team-grid">
+        <article *ngFor="let person of t.founders" class="team-card glass-panel">
+          <div class="team-card__media">
+            <img
+              class="team-photo"
+              [src]="person.photo"
+              [alt]="person.name"
+              loading="lazy" />
+          </div>
+
+          <div class="team-card__content">
+            <h3 class="team-name">{{ person.name }}</h3>
+            <span class="team-role font-mono text-accent">{{ person.role }}</span>
+            <p class="team-bio">{{ person.bio }}</p>
+
+            <div class="team-tags">
+              <span *ngFor="let tg of person.tags" class="tag-chip">
+                {{ tg }}
+              </span>
+            </div>
+
+            <div class="team-links">
+              <a
+                [href]="person.linkedin"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="icon-link"
+                [attr.aria-label]="person.name + ' on LinkedIn'">
+                <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
+                <span>LinkedIn</span>
+              </a>
+              <a
+                *ngIf="person.github"
+                [href]="person.github"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="icon-link"
+                [attr.aria-label]="person.name + ' on GitHub'">
+                <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
+                <span>GitHub</span>
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- 6. SITE FOOTER                                                          -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="footer__container">
+      <div class="footer__brand">
+        <img
+          class="footer__logo"
+          src="assets/design-system/logo/kmd-black-orange.svg"
+          alt="KMD" />
+        <span class="footer__tagline">{{ t.footerTagline }}</span>
+      </div>
+
+      <div class="footer__meta font-mono">
+        <span>© {{ getCurrentYear() }} KMD Labs. {{ t.footerRights }}</span>
+        <button type="button" class="back-to-top" (click)="scrollToTop()">
+          ↑ TOP
+        </button>
+      </div>
     </div>
   </footer>
-
-  <app-popup [closeAriaLabel]="t.close"></app-popup>
-  <app-tooltip></app-tooltip>
-</main>
+</div>

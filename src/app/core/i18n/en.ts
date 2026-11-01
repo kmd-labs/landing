@@ -14,6 +14,8 @@ export const EN: Dict = {
   navSpecialities: "Specialities",
   navTeam: "Team",
   navContact: "Contact",
+  menuOpenAria: "Open navigation menu",
+  menuCloseAria: "Close navigation menu",
 
   // Hero Section
   heroKicker: "KMD LABS · EARTH OBSERVATION & CARTOGRAPHY",

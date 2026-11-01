@@ -3,7 +3,7 @@
 <div class="landing-page" id="top">
   <app-splash (revealed)="onSplashRevealed()"></app-splash>
 
-  <!-- Top Floating HUD: Brand pill & Language Selector only -->
+  <!-- Top Floating HUD: Brand pill, Language Selector & Navigation -->
   <header class="header">
     <div class="header__left">
       <div class="header__brand glass-panel">
@@ -46,6 +46,24 @@
         {{ t.navContact }}
       </button>
     </nav>
+
+    <!-- Mobile Navigation Menu on the right -->
+    <div class="header__right" *ngIf="bp.mobile()">
+      <div class="header__menu glass-panel" role="group" [attr.aria-label]="t.menuOpenAria">
+        <app-dropdown
+          variant="ghost"
+          [icon]="menuIcon"
+          [activeIcon]="xIcon"
+          [iconOnly]="true"
+          [iconSize]="18"
+          [options]="navOptions()"
+          [showCheck]="false"
+          align="right"
+          [ariaLabel]="t.menuOpenAria"
+          (valueChange)="onNavSelect($event)">
+        </app-dropdown>
+      </div>
+    </div>
   </header>
 
   <!-- ═══════════════════════════════════════════════════════════════════════ -->

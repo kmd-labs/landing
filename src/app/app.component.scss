@@ -33,6 +33,7 @@
   z-index: 50;
 
   &__left,
+  &__right,
   &__nav {
     display: flex;
     align-items: center;
@@ -40,19 +41,22 @@
     pointer-events: auto;
   }
 
-  &__brand {
+  &__brand,
+  &__settings,
+  &__menu {
     display: inline-flex;
     align-items: center;
-    height: 42px;
+    height: 40px;
     padding: 4px;
     border-radius: radius("pill");
+    box-sizing: border-box;
   }
 
   &__brand-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 34px;
+    height: 32px;
     padding: 0 12px;
     border-radius: radius("pill");
     border: 0;
@@ -78,11 +82,20 @@
     display: block;
   }
 
-  &__settings {
-    display: inline-flex;
-    align-items: center;
-    padding: 4px;
-    border-radius: radius("pill");
+  &__menu {
+    width: 40px;
+    justify-content: center;
+    --dropdown-menu-min-width: 180px;
+
+    app-dropdown {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      ::ng-deep .btn {
+        color: color("text-bright");
+      }
+    }
   }
 
   &__nav {

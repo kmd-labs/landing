@@ -54,6 +54,8 @@ export interface Dict {
   navSpecialities: string;
   navTeam: string;
   navContact: string;
+  menuOpenAria: string;
+  menuCloseAria: string;
 
   // Hero Section
   heroKicker: string;

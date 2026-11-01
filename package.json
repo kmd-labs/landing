@@ -8,6 +8,7 @@
     "build": "ng build",
     "build:gh-pages": "ng build --base-href /landing/",
     "fetch:wind": "node scripts/fetch-current-wind.mjs",
+    "fetch:map": "node scripts/fetch-uk-map-features.mjs",
     "watch": "ng build --watch --configuration development",
     "setup:github": "node scripts/setup-github.mjs"
   },

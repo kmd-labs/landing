@@ -128,9 +128,10 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
   private mapScale = 11000;
 
   // Calibrated particle pool for locked 60-120 FPS without thermal throttling
-  private readonly NW_DESKTOP = 120;
-  private readonly NW_MOBILE = 65;
-  private readonly TRAIL = 180; // Elegant orbital swirling trails
+  // High-density vector fields on mobile and desktop
+  private readonly NW_DESKTOP = 140;
+  private readonly NW_MOBILE = 120;
+  private readonly TRAIL = 280; // Extended sweeping orbital streamlines
   private numParticles = this.NW_DESKTOP;
   private particles: WaterParticle[] = [];
   private readonly sampleBuffer: WaterSample = { u: 0, v: 0, speed: 0, waveHeight: 1.5, wavePeriod: 8.0 };
@@ -192,7 +193,8 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
   }
 
   private initParticles() {
-    this.numParticles = typeof window !== 'undefined' && window.innerWidth <= 768 ? this.NW_MOBILE : this.NW_DESKTOP;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 640;
+    this.numParticles = isMobile ? this.NW_MOBILE : this.NW_DESKTOP;
     this.particles = [];
 
     for (let i = 0; i < this.numParticles; i++) {
@@ -229,6 +231,44 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
     // Fast warm-up: pre-advance initial histories so spiral streamlines appear immediately on load
     for (let step = 0; step < 120; step++) {
       this.tick(0.033);
+    }
+  }
+
+  private syncParticleCount(target: number) {
+    if (this.particles.length === target) return;
+    this.numParticles = target;
+
+    while (this.particles.length < target) {
+      const [lon, lat] = this.randomOceanPoint();
+      const life = 18.0 + Math.random() * 14.0;
+      const histX = new Float32Array(this.TRAIL);
+      const histY = new Float32Array(this.TRAIL);
+      const histSpeed = new Float32Array(this.TRAIL);
+      histSpeed.fill(2.0);
+
+      const [sx, sy] = this.lonLatToScreen(lon, lat);
+      histX.fill(sx);
+      histY.fill(sy);
+
+      this.particles.push({
+        lon,
+        lat,
+        age: Math.random() * life,
+        life,
+        speed: 2.0,
+        waveHeight: 1.8,
+        u: 0,
+        v: 0,
+        histX,
+        histY,
+        histSpeed,
+        trailCount: 1,
+        isDying: false
+      });
+    }
+
+    if (this.particles.length > target) {
+      this.particles.length = target;
     }
   }
 
@@ -358,6 +398,10 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
     const isMobile = cssWidth <= 640;
     const spanLonDeg = isMobile ? 9.6 : 14.0;
     this.mapScale = cssWidth / (spanLonDeg * DEG);
+
+    // Dynamically adjust particle pool for rich density across mobile and desktop
+    const targetCount = isMobile ? this.NW_MOBILE : this.NW_DESKTOP;
+    this.syncParticleCount(targetCount);
 
     if (this.offscreenMapCanvas) {
       this.offscreenMapCanvas.width = canvas.width;
@@ -542,7 +586,7 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
       }
 
       if (p.isDying) {
-        p.trailCount = Math.max(0, p.trailCount - 4);
+        p.trailCount = Math.max(0, p.trailCount - 5);
 
         if (p.trailCount <= 1) {
           const [nLon, nLat] = this.randomOceanPoint();
@@ -641,7 +685,7 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
       ctx.strokeStyle = gradTail;
       ctx.beginPath();
       ctx.moveTo(xMid, yMid);
-      for (let s = midIdx + 2; s < count; s += 2) {
+      for (let s = midIdx + 2; s < count; s += 3) {
         ctx.lineTo(p.histX[s], p.histY[s]);
       }
       ctx.lineTo(xTail, yTail);

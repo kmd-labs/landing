@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   LucideAngularModule,
@@ -11,7 +11,9 @@ import {
   ArrowUpRight,
   Cpu,
   Waves,
-  Database
+  Database,
+  Mail,
+  Send
 } from 'lucide-angular';
 import {
   ButtonComponent,
@@ -24,6 +26,8 @@ import {
 } from '@kmd/design-system';
 import { I18nService } from './core/i18n/i18n.service';
 import { Lang } from './core/i18n/i18n.types';
+import { CurrentWeatherService } from './core/services/current-weather.service';
+import { LocaleDatePipe } from './core/pipes/locale-date.pipe';
 import {
   TelemetryData,
   VortexCanvasComponent
@@ -39,7 +43,8 @@ import {
     BadgeComponent,
     DropdownComponent,
     SplashComponent,
-    VortexCanvasComponent
+    VortexCanvasComponent,
+    LocaleDatePipe
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -48,6 +53,38 @@ export class AppComponent {
   readonly i18n = inject(I18nService);
   readonly bp = inject(BreakpointService);
   readonly splash = inject(SplashService);
+  readonly weather = inject(CurrentWeatherService);
+  private readonly splashRevealed = signal(false);
+
+  constructor() {
+    effect(() => {
+      const revealed = this.splashRevealed();
+      const status = this.weather.status();
+      // Ensure splash only fades out once BOTH brand animation finishes AND data/canvas is fully ready
+      if (revealed && (status === 'ready' || status === 'error')) {
+        this.splash.finish();
+      }
+    });
+
+    if (typeof window !== 'undefined') {
+      setTimeout(() => {
+        if (this.splash.visible()) {
+          this.splash.finish();
+        }
+      }, 5000);
+    }
+  }
+
+  onSplashRevealed() {
+    this.splashRevealed.set(true);
+  }
+
+  readonly vectorDates = computed<[Date, Date]>(() => {
+    const meta = this.weather.meta();
+    const end = meta?.time ? new Date(meta.time) : new Date();
+    const start = new Date(end.getTime() - 24 * 60 * 60 * 1000);
+    return [start, end];
+  });
 
   // Lucide Icons
   readonly globeIcon = Globe;
@@ -60,6 +97,33 @@ export class AppComponent {
   readonly cpuIcon = Cpu;
   readonly wavesIcon = Waves;
   readonly databaseIcon = Database;
+  readonly mailIcon = Mail;
+  readonly sendIcon = Send;
+
+  // Contact Mailto URL (Prefilled with localized general inquiry)
+  readonly mailtoUrl = computed(() => {
+    const t = this.i18n.t();
+    const subject = encodeURIComponent(t.contactMailSubject);
+    const body = encodeURIComponent(t.contactMailBody);
+    return `mailto:hello@kmd-labs.org?subject=${subject}&body=${body}`;
+  });
+
+  onSpecialitiesMouseMove(event: MouseEvent) {
+    const target = event.currentTarget as HTMLElement;
+    if (!target) return;
+    const rect = target.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    target.style.setProperty('--mouse-x', `${x}px`);
+    target.style.setProperty('--mouse-y', `${y}px`);
+    target.style.setProperty('--grid-opacity', '1');
+  }
+
+  onSpecialitiesMouseLeave(event: MouseEvent) {
+    const target = event.currentTarget as HTMLElement;
+    if (!target) return;
+    target.style.setProperty('--grid-opacity', '0');
+  }
 
   // Live telemetry state from Vortex Canvas
   readonly telemetry = signal<TelemetryData>({

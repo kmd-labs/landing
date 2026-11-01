@@ -1,7 +1,7 @@
 @let t = i18n.t();
 
 <div class="landing-page" id="top">
-  <app-splash (revealed)="splash.finish()"></app-splash>
+  <app-splash (revealed)="onSplashRevealed()"></app-splash>
 
   <!-- Top Floating HUD: Brand pill & Language Selector only -->
   <header class="header">
@@ -16,8 +16,6 @@
             class="header__logo-img"
             src="assets/design-system/logo/kmd-black-orange.svg"
             alt="KMD" />
-          <span class="header__divider" aria-hidden="true"></span>
-          <span class="header__app-name">{{ t.appName }}</span>
         </button>
       </div>
 
@@ -41,8 +39,11 @@
       <button type="button" class="nav-link" (click)="scrollToSection('specialities')">
         {{ t.navSpecialities }}
       </button>
-      <button type="button" class="nav-link nav-link--cta" (click)="scrollToSection('team')">
+      <button type="button" class="nav-link" (click)="scrollToSection('team')">
         {{ t.navTeam }}
+      </button>
+      <button type="button" class="nav-link nav-link--cta" (click)="scrollToSection('contact')">
+        {{ t.navContact }}
       </button>
     </nav>
   </header>
@@ -65,9 +66,25 @@
             {{ t.heroSubtitle }}
           </p>
 
+          <div class="hero-card__divider" aria-hidden="true"></div>
+
           <div class="hero-card__source font-mono">
-            <span class="source-pulse" aria-hidden="true"></span>
-            <span>{{ t.heroDataSource }}</span>
+            <span class="live-lozenge">
+              <span class="live-dot" aria-hidden="true"></span>
+              <span class="live-text">{{ t.telemetryLiveBadge }}</span>
+            </span>
+            <span class="source-info">
+              <a
+                class="source-link"
+                [href]="t.telemetrySourceUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                [title]="t.telemetrySourceTitle"
+              >{{ bp.mobile() ? t.telemetrySourceShort : t.telemetrySourceLabel }}</a>
+              <span class="source-sep">·</span>
+              <span class="source-range">{{ vectorDates() | localeDate:i18n.lang():'range' }}</span>
+              <span class="source-cycle" *ngIf="!bp.mobile()">({{ t.telemetryUtcCycle }})</span>
+            </span>
           </div>
         </div>
       </div>
@@ -184,7 +201,12 @@
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
   <!-- 4. SPECIALITIES: Geovisualisation, Data Eng, AI & Anomaly ML            -->
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
-  <section class="section specialities-section" id="specialities">
+  <section
+    class="section specialities-section"
+    id="specialities"
+    (mousemove)="onSpecialitiesMouseMove($event)"
+    (mouseleave)="onSpecialitiesMouseLeave($event)">
+    <div class="specialities-grid-bg" aria-hidden="true"></div>
     <div class="section__container">
       <div class="section__header">
         <span class="section-kicker">{{ t.specialitiesKicker }}</span>
@@ -223,14 +245,29 @@
   </section>
 
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
-  <!-- 5. TEAM DOSSIER: Founders Collective (Inline Lab Notes)                -->
+  <!-- 5. TEAM DOSSIER: Collective (1:1 with Design System)                    -->
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
   <section class="section team-section" id="team">
     <div class="section__container">
       <div class="section__header">
         <span class="section-kicker">{{ t.teamKicker }}</span>
         <h2 class="section__title">{{ t.teamTitle }}</h2>
-        <p class="section__lead">{{ t.teamLead }}</p>
+        <div class="team-leads">
+          <p *ngFor="let lead of t.teamLeads" class="section__lead team-lead-p">{{ lead }}</p>
+        </div>
+        <div class="team-refs" *ngIf="t.teamRefs.length">
+          <a
+            *ngFor="let ref of t.teamRefs"
+            class="team-ref-chip glass-panel"
+            [href]="ref.href"
+            target="_blank"
+            rel="noopener noreferrer"
+            [title]="ref.title"
+            [attr.aria-label]="ref.aria">
+            <lucide-icon [img]="externalLinkIcon" [size]="12"></lucide-icon>
+            <span>{{ ref.label }}</span>
+          </a>
+        </div>
       </div>
 
       <div class="team-grid">
@@ -245,13 +282,16 @@
 
           <div class="team-card__content">
             <h3 class="team-name">{{ person.name }}</h3>
-            <span class="team-role font-mono text-accent">{{ person.role }}</span>
+            <span *ngIf="person.role" class="team-role font-mono text-accent">{{ person.role }}</span>
             <p class="team-bio">{{ person.bio }}</p>
 
-            <div class="team-tags">
-              <span *ngFor="let tg of person.tags" class="tag-chip">
-                {{ tg }}
-              </span>
+            <div class="team-focus">
+              <span class="team-focus__label">{{ t.teamFocusLabel }}</span>
+              <div class="team-tags">
+                <span *ngFor="let tg of person.tags" class="tag-chip">
+                  {{ tg }}
+                </span>
+              </div>
             </div>
 
             <div class="team-links">
@@ -282,21 +322,63 @@
   </section>
 
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
-  <!-- 6. SITE FOOTER                                                          -->
+  <!-- 5. CONTACT SECTION: Direct Mail Form to hello@kmd-labs.org                -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="section contact-section" id="contact">
+    <div class="section__container">
+      <div class="section__header">
+        <span class="section-kicker">{{ t.contactKicker }}</span>
+        <h2 class="section__title">{{ t.contactTitle }}</h2>
+        <p class="section__lead">{{ t.contactLead }}</p>
+      </div>
+
+      <div class="contact-card glass-panel">
+        <div class="contact-cta-wrap">
+          <a
+            [href]="mailtoUrl()"
+            class="contact-submit-btn"
+            aria-label="Send email to hello@kmd-labs.org">
+            <lucide-icon [img]="mailIcon" [size]="16" aria-hidden="true"></lucide-icon>
+            <span>{{ t.contactSubmitBtn }}</span>
+          </a>
+          <p class="contact-note">{{ t.contactClientNote }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- 6. SITE FOOTER: 3-Column Balanced Layout                                -->
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
   <footer class="footer">
     <div class="footer__container">
-      <div class="footer__brand">
-        <img
-          class="footer__logo"
-          src="assets/design-system/logo/kmd-black-orange.svg"
-          alt="KMD" />
+      <!-- Col 1: Logo -->
+      <div class="footer__col footer__col--left">
+        <button
+          type="button"
+          class="footer__logo-btn"
+          [attr.aria-label]="t.scrollToTopAria"
+          (click)="scrollToTop()">
+          <img
+            class="footer__logo"
+            src="assets/design-system/logo/kmd-black-orange.svg"
+            alt="KMD" />
+        </button>
+      </div>
+
+      <!-- Col 2: Centered Tagline -->
+      <div class="footer__col footer__col--center">
         <span class="footer__tagline">{{ t.footerTagline }}</span>
       </div>
 
-      <div class="footer__meta font-mono">
-        <span>© {{ getCurrentYear() }} KMD Labs. {{ t.footerRights }}</span>
-        <button type="button" class="back-to-top" (click)="scrollToTop()">
+      <!-- Col 3: Copyright Notice & TOP Button -->
+      <div class="footer__col footer__col--right font-mono">
+        <span class="footer__copyright">© {{ getCurrentYear() }} KMD Labs. {{ t.footerRights }}</span>
+        <button
+          type="button"
+          class="back-to-top"
+          [attr.aria-label]="t.scrollToTopAria"
+          (click)="scrollToTop()">
           ↑ TOP
         </button>
       </div>

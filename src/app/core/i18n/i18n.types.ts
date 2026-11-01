@@ -20,9 +20,16 @@ export interface DisciplineEntry {
   tools: string[];
 }
 
+export interface TeamRef {
+  label: string;
+  href: string;
+  title: string;
+  aria: string;
+}
+
 export interface FounderEntry {
   name: string;
-  role: string;
+  role?: string;
   bio: string;
   tags: string[];
   linkedin: string;
@@ -57,6 +64,12 @@ export interface Dict {
   heroSecondaryCta: string;
   heroInteractionHint: string;
   heroDataSource: string;
+  telemetryLiveBadge: string;
+  telemetrySourceLabel: string;
+  telemetrySourceShort: string;
+  telemetrySourceUrl: string;
+  telemetrySourceTitle: string;
+  telemetryUtcCycle: string;
   showMore: string;
   showMoreAria: string;
 
@@ -113,12 +126,19 @@ export interface Dict {
   teamKicker: string;
   teamTitle: string;
   teamLead: string;
+  teamLeads: string[];
+  teamRefs: TeamRef[];
+  teamFocusLabel: string;
   founders: FounderEntry[];
 
-  // Contact / Terminal Section
+  // Contact Section
   contactKicker: string;
   contactTitle: string;
   contactLead: string;
+  contactSubmitBtn: string;
+  contactClientNote: string;
+  contactMailSubject: string;
+  contactMailBody: string;
   contactTypeDemo: string;
   contactTypeCall: string;
   contactTypeMessage: string;

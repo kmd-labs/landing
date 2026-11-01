@@ -13,6 +13,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { ThemeService } from '@kmd/design-system';
 import { CurrentWeatherService, WaterSample } from '../../core/services/current-weather.service';
+import { MAP_CONFIG, ViewportSettings } from '../../core/config/map-viewport.config';
 
 export interface TelemetryData {
   latLon: string;
@@ -117,15 +118,14 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
   private height = 0;
   private dpr = 1;
 
-  // Camera Center Coordinates (View shifted westward to showcase the American continent & seaboard)
-  private readonly CENTER_LON = -74.2;
-  private readonly CENTER_LAT = 39.4;
-  private readonly centerMerc = Math.log(Math.tan(Math.PI / 4 + (39.4 * DEG) / 2));
+  // Camera state derived from MAP_CONFIG
+  private centerMerc = Math.log(Math.tan(Math.PI / 4 + (MAP_CONFIG.desktop.lat * DEG) / 2));
+  private mapScale = 3600;
 
-  // Cyclone Eye Physical Coordinates (Offshore in the slope waters)
-  private readonly EYE_LON = -71.0;
-  private readonly EYE_LAT = 39.0;
-  private mapScale = 11000;
+  private getActiveConfig(): ViewportSettings {
+    const isMobile = this.width > 0 ? this.width <= 640 : (typeof window !== 'undefined' && window.innerWidth <= 640);
+    return isMobile ? MAP_CONFIG.mobile : MAP_CONFIG.desktop;
+  }
 
   // Calibrated particle pool for locked 60-120 FPS without thermal throttling
   // High-density vector fields on mobile and desktop
@@ -153,6 +153,10 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
       const land = this.weather.landFeature();
       const detailed = this.weather.detailedLand();
       const states = this.weather.stateBorders();
+      const states50m = this.weather.stateBorders50m();
+      const roads = this.weather.roads();
+      const cityLimits = this.weather.cityLimits();
+      const cityLimits50m = this.weather.cityLimits50m();
       if (status === 'ready' && this.width > 0 && this.height > 0) {
         this.isDataReady = true;
         this.renderBasemap();
@@ -276,44 +280,40 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
     const [minLon, maxLat] = this.screenToLonLat(0, 0);
     const [maxLon, minLat] = this.screenToLonLat(this.width, this.height);
 
+    const eyeLon = MAP_CONFIG.vortex.lon;
+    const eyeLat = MAP_CONFIG.vortex.lat;
+
     // Active spatial density governor:
-    // Count how many particles currently occupy the eye vicinity (within 3.8 degrees)
+    // Count how many particles currently occupy the eye vicinity (within 4.0 degrees)
     let eyeCount = 0;
     const total = this.particles.length;
     for (let i = 0; i < total; i++) {
       const p = this.particles[i];
-      const dL = (p.lon - this.EYE_LON) * Math.cos(this.EYE_LAT * DEG);
-      const dP = p.lat - this.EYE_LAT;
-      if (dL * dL + dP * dP < 14.4) {
+      const dL = (p.lon - eyeLon) * Math.cos(eyeLat * DEG);
+      const dP = p.lat - eyeLat;
+      if (dL * dL + dP * dP < 16.0) {
         eyeCount++;
       }
     }
     const eyeDensity = total > 0 ? eyeCount / total : 0;
     const canSpawnInEye = eyeDensity < 0.28; // Cap eye saturation at 28% to prevent long-term clustering
 
-    for (let tries = 0; tries < 35; tries++) {
+    for (let tries = 0; tries < 40; tries++) {
       let lon: number;
       let lat: number;
 
       const roll = Math.random();
       if (canSpawnInEye && roll < 0.35) {
-        // Logarithmic radial distribution from the eye:
-        // Preserves a clean calm eye center (r >= 1.25 deg) while creating dense, rich outer rim lines
+        // Logarithmic radial distribution from the configured vortex core
         const theta = Math.random() * Math.PI * 2;
-        const rMin = 1.25;
-        const rMax = 7.80;
-        const u = Math.pow(Math.random(), 0.72); // Biased outward across logarithmic octaves
+        const rMin = 1.0;
+        const rMax = 7.0;
+        const u = Math.pow(Math.random(), 0.72);
         const r = rMin * Math.pow(rMax / rMin, u);
-        lon = this.EYE_LON + (r * Math.cos(theta)) / Math.cos(this.EYE_LAT * DEG);
-        lat = this.EYE_LAT + r * Math.sin(theta);
-      } else if (roll < 0.70) {
-        // 35% along the continental shelf, Gulf Stream, & coastal boundary waters
-        const tLat = 30.0 + Math.random() * 15.0;
-        const tLon = -77.5 + (tLat - 30.0) * (11.0 / 15.0) + (Math.random() - 0.5) * 4.0;
-        lon = tLon;
-        lat = tLat;
+        lon = eyeLon + (r * Math.cos(theta)) / Math.cos(eyeLat * DEG);
+        lat = eyeLat + r * Math.sin(theta);
       } else {
-        // 30% across broader regional Atlantic waters
+        // Across the broader visible oceanic viewport
         lon = minLon + Math.random() * (maxLon - minLon);
         lat = minLat + Math.random() * (maxLat - minLat);
       }
@@ -322,33 +322,41 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
         return [lon, lat];
       }
     }
-    return [this.EYE_LON + 2.5, this.EYE_LAT + 1.2];
+    return [eyeLon + 1.5, eyeLat + 0.8];
   }
 
   /**
-   * Conformal Mercator Projection centered over the American East Coast seaboard.
-   * (CENTER_LON, CENTER_LAT) projects EXACTLY to (width/2, height/2).
+   * Conformal Mercator Projection using parameters from MAP_CONFIG.
+   * Target (cfg.lon, cfg.lat) projects to (w * 0.5 + w * cfg.x, h * 0.5 + h * cfg.y).
    */
   private lonLatToScreen(lon: number, lat: number): [number, number] {
     const w = this.width;
     const h = this.height;
     if (w <= 0 || h <= 0) return [0, 0];
 
-    const x = w * 0.5 + (lon - this.CENTER_LON) * DEG * this.mapScale;
+    const cfg = this.getActiveConfig();
+    const screenCenterX = w * 0.5 + w * cfg.x;
+    const screenCenterY = h * 0.5 + h * cfg.y;
+
+    const x = screenCenterX + (lon - cfg.lon) * DEG * this.mapScale;
     const safeLat = Math.max(-85, Math.min(85, lat));
     const latRad = safeLat * DEG;
     const mercN = Math.log(Math.tan(Math.PI / 4 + latRad / 2));
-    const y = h * 0.5 - (mercN - this.centerMerc) * this.mapScale;
+    const y = screenCenterY - (mercN - this.centerMerc) * this.mapScale;
     return [x, y];
   }
 
   private screenToLonLat(x: number, y: number): [number, number] {
     const w = this.width;
     const h = this.height;
-    if (w <= 0 || h <= 0) return [this.CENTER_LON, this.CENTER_LAT];
+    const cfg = this.getActiveConfig();
+    if (w <= 0 || h <= 0) return [cfg.lon, cfg.lat];
 
-    const lon = this.CENTER_LON + (x - w * 0.5) / (this.mapScale * DEG);
-    const mercN = this.centerMerc - (y - h * 0.5) / this.mapScale;
+    const screenCenterX = w * 0.5 + w * cfg.x;
+    const screenCenterY = h * 0.5 + h * cfg.y;
+
+    const lon = cfg.lon + (x - screenCenterX) / (this.mapScale * DEG);
+    const mercN = this.centerMerc - (y - screenCenterY) / this.mapScale;
     const latRad = 2 * Math.atan(Math.exp(mercN)) - Math.PI / 2;
     const lat = latRad * RAD;
     return [lon, lat];
@@ -394,12 +402,12 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
     canvas.width = Math.round(cssWidth * this.dpr);
     canvas.height = Math.round(cssHeight * this.dpr);
 
-    // View scale shifted westward over the American continent and seaboard
-    const isMobile = cssWidth <= 640;
-    const spanLonDeg = isMobile ? 9.6 : 14.0;
-    this.mapScale = cssWidth / (spanLonDeg * DEG);
+    const cfg = this.getActiveConfig();
+    this.centerMerc = Math.log(Math.tan(Math.PI / 4 + (cfg.lat * DEG) / 2));
+    this.mapScale = cssWidth / (cfg.zoom * DEG);
 
     // Dynamically adjust particle pool for rich density across mobile and desktop
+    const isMobile = cssWidth <= 640;
     const targetCount = isMobile ? this.NW_MOBILE : this.NW_DESKTOP;
     this.syncParticleCount(targetCount);
 
@@ -430,23 +438,30 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
     ctx.fillStyle = this.theme.getTokenColor('neutral-50', '#f5f7fb');
     ctx.fillRect(0, 0, this.width, this.height);
 
-    // Graticules across the view
+    // Graticules dynamically generated for the active visible viewport
+    const [minLon, maxLat] = this.screenToLonLat(0, 0);
+    const [maxLon, minLat] = this.screenToLonLat(this.width, this.height);
+    const cfg = this.getActiveConfig();
+    const step = cfg.zoom > 100 ? 15 : cfg.zoom > 45 ? 5 : cfg.zoom > 15 ? 2 : 1;
+
     ctx.strokeStyle = this.theme.getTokenColor('neutral-200', 'rgba(203, 213, 225, 0.40)');
     ctx.lineWidth = 1.0;
     ctx.setLineDash([4, 6]);
 
-    // Parallels (34°N to 44°N)
-    for (let lat = 34; lat <= 44; lat += 2) {
-      const [, y] = this.lonLatToScreen(this.CENTER_LON, lat);
+    const startLat = Math.max(-80, Math.floor(Math.min(minLat, maxLat) / step) * step);
+    const endLat = Math.min(80, Math.ceil(Math.max(minLat, maxLat) / step) * step);
+    for (let lat = startLat; lat <= endLat; lat += step) {
+      const [, y] = this.lonLatToScreen(cfg.lon, lat);
       ctx.beginPath();
       ctx.moveTo(0, y);
       ctx.lineTo(this.width, y);
       ctx.stroke();
     }
 
-    // Meridians (-82°W to -66°W)
-    for (let lon = -82; lon <= -66; lon += 2) {
-      const [x] = this.lonLatToScreen(lon, this.CENTER_LAT);
+    const startLon = Math.max(-180, Math.floor(Math.min(minLon, maxLon) / step) * step);
+    const endLon = Math.min(180, Math.ceil(Math.max(minLon, maxLon) / step) * step);
+    for (let lon = startLon; lon <= endLon; lon += step) {
+      const [x] = this.lonLatToScreen(lon, cfg.lat);
       ctx.beginPath();
       ctx.moveTo(x, 0);
       ctx.lineTo(x, this.height);
@@ -454,25 +469,32 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
     }
     ctx.setLineDash([]);
 
-    // 2. High-Resolution American Landmass (Detailed 10m coastline and filled land)
-    const land = this.weather.detailedLand() || this.weather.landFeature();
-    if (land) {
-      ctx.fillStyle = this.theme.getTokenColor('neutral-100', '#eef2f7');
-      ctx.strokeStyle = this.theme.getTokenColor('neutral-400', 'rgba(100, 116, 139, 0.48)');
-      ctx.lineWidth = 1.2;
+    // 2. Landmass (Clean 50m global land on mobile; 10m regional enhancement on desktop)
+    const globalLand = this.weather.landFeature();
+    const detailedLand = this.weather.detailedLand();
+    const isMobile = this.width <= 640;
 
-      const drawRing = (ring: [number, number][]) => {
-        if (!ring.length) return;
-        const [x0, y0] = this.lonLatToScreen(ring[0][0], ring[0][1]);
-        ctx.moveTo(x0, y0);
-        for (let i = 1; i < ring.length; i++) {
-          const [x, y] = this.lonLatToScreen(ring[i][0], ring[i][1]);
+    const drawRing = (ring: [number, number][]) => {
+      if (!ring.length) return;
+      const [x0, y0] = this.lonLatToScreen(ring[0][0], ring[0][1]);
+      ctx.moveTo(x0, y0);
+      for (let i = 1; i < ring.length; i++) {
+        const dLon = Math.abs(ring[i][0] - ring[i - 1][0]);
+        const [x, y] = this.lonLatToScreen(ring[i][0], ring[i][1]);
+        if (dLon > 180) {
+          ctx.moveTo(x, y);
+        } else {
           ctx.lineTo(x, y);
         }
-      };
+      }
+    };
 
+    const drawLandLayer = (geo: any, strokeAlpha: number) => {
+      ctx.fillStyle = this.theme.getTokenColor('neutral-100', '#eef2f7');
+      ctx.strokeStyle = this.theme.getTokenColor('neutral-400', `rgba(100, 116, 139, ${strokeAlpha})`);
+      ctx.lineWidth = 1.1;
       ctx.beginPath();
-      for (const feature of land.features || [land]) {
+      for (const feature of geo.features || [geo]) {
         const geom = feature.geometry;
         if (!geom) continue;
         if (geom.type === 'Polygon') {
@@ -485,27 +507,91 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
       }
       ctx.fill();
       ctx.stroke();
+    };
+
+    if (globalLand) drawLandLayer(globalLand, 0.40);
+    // On thin mobile screens, use 50m generalized landmass only to prevent visual clutter
+    if (detailedLand && !isMobile) drawLandLayer(detailedLand, 0.48);
+
+    // 3. City Limits & Metropolitan Urban Area Boundaries (Polygonal shapes, no text)
+    // On mobile, use clean 50m major urban hubs; on desktop, use detailed 10m boundaries
+    const cityLimits = isMobile ? this.weather.cityLimits50m() : this.weather.cityLimits();
+    if (cityLimits && cityLimits.length > 0) {
+      ctx.fillStyle = this.theme.getTokenColor('neutral-200', isMobile ? 'rgba(226, 232, 240, 0.45)' : 'rgba(226, 232, 240, 0.55)');
+      ctx.strokeStyle = this.theme.getTokenColor('neutral-400', isMobile ? 'rgba(100, 116, 139, 0.25)' : 'rgba(100, 116, 139, 0.35)');
+      ctx.lineWidth = isMobile ? 0.7 : 0.8;
+      ctx.beginPath();
+      for (let c = 0; c < cityLimits.length; c++) {
+        const ring = cityLimits[c];
+        if (ring.length < 3) continue;
+        const [x0, y0] = this.lonLatToScreen(ring[0][0], ring[0][1]);
+        ctx.moveTo(x0, y0);
+        for (let i = 1; i < ring.length; i++) {
+          const dLon = Math.abs(ring[i][0] - ring[i - 1][0]);
+          const [x, y] = this.lonLatToScreen(ring[i][0], ring[i][1]);
+          if (dLon > 180) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+        ctx.closePath();
+      }
+      ctx.fill();
+      ctx.stroke();
     }
 
-    // 3. Detailed US State & Provincial Borders (Subtle dotted cartography)
-    const stateLines = this.weather.stateBorders();
-    if (stateLines && stateLines.length > 0) {
-      ctx.strokeStyle = this.theme.getTokenColor('neutral-300', 'rgba(148, 163, 184, 0.35)');
-      ctx.lineWidth = 0.8;
-      ctx.setLineDash([3, 4]);
-      ctx.beginPath();
-      for (let s = 0; s < stateLines.length; s++) {
-        const seg = stateLines[s];
+    // Helper to batch-draw polyline segments (with antimeridian jump protection)
+    const drawLineSegments = (segments: [number, number][][]) => {
+      for (let s = 0; s < segments.length; s++) {
+        const seg = segments[s];
         if (seg.length < 2) continue;
         const [x0, y0] = this.lonLatToScreen(seg[0][0], seg[0][1]);
         ctx.moveTo(x0, y0);
         for (let i = 1; i < seg.length; i++) {
+          const dLon = Math.abs(seg[i][0] - seg[i - 1][0]);
           const [x, y] = this.lonLatToScreen(seg[i][0], seg[i][1]);
-          ctx.lineTo(x, y);
+          if (dLon > 180) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
         }
       }
+    };
+
+    // 4. Regional & National Borders (50m clean lines on mobile, 10m county/state lines on desktop)
+    const stateLines = isMobile ? this.weather.stateBorders50m() : this.weather.stateBorders();
+    if (stateLines && stateLines.length > 0) {
+      ctx.strokeStyle = this.theme.getTokenColor('neutral-300', isMobile ? 'rgba(148, 163, 184, 0.50)' : 'rgba(148, 163, 184, 0.40)');
+      ctx.lineWidth = isMobile ? 0.9 : 0.8;
+      ctx.setLineDash(isMobile ? [4, 4] : [3, 4]);
+      ctx.beginPath();
+      drawLineSegments(stateLines);
       ctx.stroke();
       ctx.setLineDash([]);
+    }
+
+    // 5. Road Network (Vector line shapes, strictly without descriptions or text)
+    const roads = this.weather.roads();
+    if (roads) {
+      // 5A. Secondary Highways & Regional Arteries (Rendered only on desktop to avoid clutter on mobile)
+      if (!isMobile && roads.secondary && roads.secondary.length > 0) {
+        ctx.strokeStyle = this.theme.getTokenColor('neutral-300', 'rgba(148, 163, 184, 0.42)');
+        ctx.lineWidth = 0.65;
+        ctx.beginPath();
+        drawLineSegments(roads.secondary);
+        ctx.stroke();
+      }
+
+      // 5B. Major Highways, Interstates & Expressways (Crisp transit corridors & beltways)
+      if (roads.highways && roads.highways.length > 0) {
+        ctx.strokeStyle = this.theme.getTokenColor('neutral-500', isMobile ? 'rgba(100, 116, 139, 0.55)' : 'rgba(100, 116, 139, 0.62)');
+        ctx.lineWidth = isMobile ? 0.9 : 1.1;
+        ctx.beginPath();
+        drawLineSegments(roads.highways);
+        ctx.stroke();
+      }
     }
 
     ctx.restore();
@@ -705,11 +791,18 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
   }
 
   private emitSummaryTelemetry() {
+    const v = MAP_CONFIG.vortex;
+    const latStr = `${Math.abs(v.lat).toFixed(2)}°${v.lat >= 0 ? 'N' : 'S'}`;
+    const lonStr = `${Math.abs(v.lon).toFixed(2)}°${v.lon >= 0 ? 'E' : 'W'}`;
+    const label = v.telemetryLabel || `${latStr}, ${lonStr} (Marine Vortex Core)`;
+    const spd = (v.swirlSpeed ?? 2.7).toFixed(1);
+    const kn = ((v.swirlSpeed ?? 2.7) * 1.94384).toFixed(1);
+
     this.ngZone.run(() => {
       this.telemetryChange.emit({
-        latLon: '39.00°N, 71.00°W (Cyclone Eye Center)',
-        velocity: '2.8 m/s (5.4 kn) · Eyewall Peak',
-        vorticity: '+2.8 × 10⁻⁴ s⁻¹ (Concentric Swirl)',
+        latLon: label,
+        velocity: `${spd} m/s (${kn} kn) · Eyewall Peak`,
+        vorticity: '+2.7 × 10⁻⁴ s⁻¹ (Cyclonic Vortex)',
         regimeKey: 'regimeVortex'
       });
     });

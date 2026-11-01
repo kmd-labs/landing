@@ -13,7 +13,9 @@ import {
   Waves,
   Database,
   Mail,
-  Send
+  Send,
+  Menu,
+  X
 } from 'lucide-angular';
 import {
   ButtonComponent,
@@ -22,7 +24,8 @@ import {
   DropdownOption,
   SplashComponent,
   SplashService,
-  BreakpointService
+  BreakpointService,
+  getContactMailtoUrl
 } from '@kmd/design-system';
 import { I18nService } from './core/i18n/i18n.service';
 import { Lang } from './core/i18n/i18n.types';
@@ -56,6 +59,16 @@ export class AppComponent {
   readonly weather = inject(CurrentWeatherService);
   private readonly splashRevealed = signal(false);
 
+  readonly navOptions = computed<DropdownOption<string>[]>(() => {
+    const t = this.i18n.t();
+    return [
+      { value: 'portfolio', label: t.navPortfolio },
+      { value: 'specialities', label: t.navSpecialities },
+      { value: 'team', label: t.navTeam },
+      { value: 'contact', label: t.navContact, cta: true, variant: 'cta' }
+    ];
+  });
+
   constructor() {
     effect(() => {
       const revealed = this.splashRevealed();
@@ -79,6 +92,10 @@ export class AppComponent {
     this.splashRevealed.set(true);
   }
 
+  onNavSelect(id: string) {
+    this.scrollToSection(id);
+  }
+
   readonly vectorDates = computed<[Date, Date]>(() => {
     const meta = this.weather.meta();
     const end = meta?.time ? new Date(meta.time) : new Date();
@@ -99,14 +116,11 @@ export class AppComponent {
   readonly databaseIcon = Database;
   readonly mailIcon = Mail;
   readonly sendIcon = Send;
+  readonly menuIcon = Menu;
+  readonly xIcon = X;
 
   // Contact Mailto URL (Prefilled with localized general inquiry)
-  readonly mailtoUrl = computed(() => {
-    const t = this.i18n.t();
-    const subject = encodeURIComponent(t.contactMailSubject);
-    const body = encodeURIComponent(t.contactMailBody);
-    return `mailto:hello@kmd-labs.org?subject=${subject}&body=${body}`;
-  });
+  readonly mailtoUrl = computed(() => getContactMailtoUrl(this.i18n.lang()));
 
   onSpecialitiesMouseMove(event: MouseEvent) {
     const target = event.currentTarget as HTMLElement;

@@ -71,7 +71,6 @@ export interface Dict {
   telemetrySourceShort: string;
   telemetrySourceUrl: string;
   telemetrySourceTitle: string;
-  telemetryUtcCycle: string;
   showMore: string;
   showMoreAria: string;
 

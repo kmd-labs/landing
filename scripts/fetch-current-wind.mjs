@@ -139,6 +139,16 @@ async function run() {
   await mkdir(dirname(OUT_FILE), { recursive: true });
   await writeFile(OUT_FILE, JSON.stringify(payload, null, 2));
   console.log(`[fetch-current-wind] Successfully wrote ${OUT_FILE} (${(Buffer.byteLength(JSON.stringify(payload)) / 1024).toFixed(1)} KB)`);
+
+  if (process.env.GITHUB_OUTPUT) {
+    const { appendFile } = await import('node:fs/promises');
+    const endDate = new Date(payload.time);
+    const startDate = new Date(endDate.getTime() - 24 * 60 * 60 * 1000);
+    const dtf = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const range = dtf.formatRange(startDate, endDate).replace(/[\s\u2000-\u200F\u202F]*[–—-][\s\u2000-\u200F\u202F]*/g, ' – ');
+    await appendFile(process.env.GITHUB_OUTPUT, `date_range=${range}\nvalid_nodes=${validCount}\nmax_speed=${maxSpd} m/s\n`);
+    console.log(`[fetch-current-wind] Exported date_range="${range}" to GITHUB_OUTPUT`);
+  }
 }
 
 run().catch((err) => {

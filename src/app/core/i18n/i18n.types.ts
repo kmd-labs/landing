@@ -10,6 +10,11 @@ export interface ProjectEntry {
   tags: string[];
   url: string;
   isExternal?: boolean;
+  poster: string;
+  media: string;
+  repoUrl?: string;
+  secondaryUrl?: string;
+  secondaryLabel?: string;
 }
 
 export interface DisciplineEntry {
@@ -115,6 +120,7 @@ export interface Dict {
   portfolioTitle: string;
   portfolioLead: string;
   launchApp: string;
+  viewRepository: string;
   projects: ProjectEntry[];
 
   // Specialities Section

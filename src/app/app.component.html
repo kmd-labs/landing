@@ -146,46 +146,40 @@
             </div>
           </div>
 
-          <!-- Abstract SVG Graphic Preview -->
-          <div class="portfolio-card__visual" [attr.data-project]="proj.id">
-            <!-- Project 01: El Niño Isotherm Globe Sketch -->
-            <svg *ngIf="proj.id === 'el-nino'" class="visual-svg" viewBox="0 0 400 180" fill="none">
-              <circle cx="200" cy="90" r="70" stroke="rgba(15,23,42,0.12)" stroke-width="1.5" />
-              <path d="M130 90 Q 200 65, 270 90" stroke="#d37400" stroke-width="3" stroke-linecap="round" />
-              <path d="M140 105 Q 200 85, 260 105" stroke="#cc3e1c" stroke-width="2" stroke-linecap="round" />
-              <path d="M140 75 Q 200 55, 260 75" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" />
-              <ellipse cx="200" cy="90" rx="68" ry="24" stroke="rgba(15,23,42,0.18)" stroke-width="1" stroke-dasharray="3 3" />
-              <circle cx="240" cy="88" r="4" fill="#d37400" />
-            </svg>
-
-            <!-- Project 02: Watershed Baltic Catchment Sketch -->
-            <svg *ngIf="proj.id === 'watershed'" class="visual-svg" viewBox="0 0 400 180" fill="none">
-              <path d="M140 140 C 160 120, 180 80, 210 50 C 230 70, 250 110, 270 140" stroke="#0284c7" stroke-width="2.5" fill="none" />
-              <path d="M170 100 Q 190 90, 210 95 Q 230 105, 250 100" stroke="#10b981" stroke-width="2" />
-              <circle cx="210" cy="95" r="16" fill="rgba(211,116,0,0.16)" stroke="#d37400" stroke-width="1.5" />
-              <circle cx="210" cy="95" r="4" fill="#d37400" />
-              <circle cx="180" cy="115" r="8" fill="rgba(220,38,38,0.2)" stroke="#dc2626" stroke-width="1" />
-            </svg>
-
-            <!-- Project 03: Golfstrom Vector Vortex Sketch -->
-            <svg *ngIf="proj.id === 'golfstrom'" class="visual-svg" viewBox="0 0 400 180" fill="none">
-              <path d="M100 150 C 160 140, 220 90, 310 40" stroke="#2563eb" stroke-width="3" stroke-linecap="round" />
-              <path d="M130 160 C 180 145, 240 100, 320 55" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" />
-              <circle cx="240" cy="85" r="28" stroke="#d37400" stroke-width="1.8" stroke-dasharray="4 4" fill="none" />
-              <circle cx="240" cy="85" r="12" stroke="#cc3e1c" stroke-width="1.5" fill="none" />
-            </svg>
-
-            <!-- Project 04: Viadrus AI Satellite Wave Sketch -->
-            <svg *ngIf="proj.id === 'viadrus-ai'" class="visual-svg" viewBox="0 0 400 180" fill="none">
-              <rect x="180" y="30" width="40" height="20" rx="3" fill="#1e293b" />
-              <line x1="160" y1="40" x2="180" y2="40" stroke="#d37400" stroke-width="3" />
-              <line x1="220" y1="40" x2="240" y2="40" stroke="#d37400" stroke-width="3" />
-              <path d="M185 70 C 195 90, 205 90, 215 70" stroke="#0ea5e9" stroke-width="2" fill="none" />
-              <path d="M175 90 C 195 120, 205 120, 225 90" stroke="#0ea5e9" stroke-width="1.5" stroke-dasharray="3 3" fill="none" />
-              <line x1="140" y1="140" x2="260" y2="140" stroke="rgba(15,23,42,0.2)" stroke-width="2" />
-              <circle cx="200" cy="140" r="5" fill="#dc2626" />
-            </svg>
-          </div>
+          <!-- Interactive Screengrab Media / GIF on Hover & In-View -->
+          <a
+            class="portfolio-card__media portfolio-card__media--swap"
+            [class.is-active]="isProjectActive(proj.id)"
+            [class.is-ready]="isProjectReady(proj.id)"
+            [href]="proj.url"
+            [target]="proj.isExternal ? '_blank' : '_self'"
+            rel="noopener noreferrer"
+            [attr.aria-label]="t.launchApp + ': ' + proj.title"
+            [attr.data-project-id]="proj.id"
+            (pointerenter)="onProjectPointerEnter(proj.id, $event)"
+            (pointerleave)="onProjectPointerLeave(proj.id, $event)"
+            (focus)="activateProject(proj.id)"
+            (blur)="deactivateProject(proj.id)"
+            #projectMediaEl>
+            <img
+              class="portfolio-card__poster"
+              [src]="proj.poster"
+              [alt]="proj.title"
+              width="900"
+              height="698"
+              loading="lazy"
+              decoding="async" />
+            <img
+              *ngIf="hasProjectStarted(proj.id)"
+              class="portfolio-card__gif"
+              [src]="proj.media"
+              alt=""
+              aria-hidden="true"
+              width="640"
+              height="496"
+              decoding="async"
+              (load)="onProjectGifLoaded(proj.id)" />
+          </a>
 
           <div class="portfolio-card__body">
             <h3 class="portfolio-card__title">{{ proj.title }}</h3>
@@ -201,13 +195,36 @@
           </div>
 
           <div class="portfolio-card__footer">
+            <div class="portfolio-card__footer-links">
+              <a
+                *ngIf="proj.repoUrl"
+                [href]="proj.repoUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="portfolio-link-btn portfolio-link-btn--secondary"
+                [attr.aria-label]="t.viewRepository + ': ' + proj.title">
+                <lucide-icon [img]="githubIcon" [size]="14"></lucide-icon>
+                <span>{{ t.viewRepository }}</span>
+              </a>
+              <a
+                *ngIf="proj.secondaryUrl"
+                [href]="proj.secondaryUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="portfolio-link-btn portfolio-link-btn--secondary"
+                [attr.aria-label]="proj.secondaryLabel + ': ' + proj.title">
+                <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
+                <span>{{ proj.secondaryLabel }}</span>
+              </a>
+            </div>
+
             <a
               [href]="proj.url"
               [target]="proj.isExternal ? '_blank' : '_self'"
               rel="noopener noreferrer"
-              class="portfolio-link-btn">
+              class="portfolio-link-btn portfolio-link-btn--primary">
               <span>{{ t.launchApp }}</span>
-              <lucide-icon [img]="arrowUpRightIcon" [size]="16"></lucide-icon>
+              <lucide-icon [img]="arrowUpRightIcon" [size]="15"></lucide-icon>
             </a>
           </div>
         </article>

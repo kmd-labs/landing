@@ -1,4 +1,16 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  NgZone,
+  OnDestroy,
+  QueryList,
+  ViewChildren,
+  computed,
+  effect,
+  inject,
+  signal
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   LucideAngularModule,
@@ -15,7 +27,8 @@ import {
   Mail,
   Send,
   Menu,
-  X
+  X,
+  Github
 } from 'lucide-angular';
 import {
   ButtonComponent,
@@ -52,12 +65,27 @@ import {
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit, OnDestroy {
   readonly i18n = inject(I18nService);
   readonly bp = inject(BreakpointService);
   readonly splash = inject(SplashService);
   readonly weather = inject(CurrentWeatherService);
+  private readonly zone = inject(NgZone);
   private readonly splashRevealed = signal(false);
+
+  // Portfolio interactive screengrab / GIF preview state
+  readonly activeProjectIds = signal(new Set<string>());
+  readonly startedProjectIds = signal(new Set<string>());
+  readonly loadedProjectIds = signal(new Set<string>());
+  private readonly minLoadingMs = 500;
+  private readonly startedAt = new Map<string, number>();
+  private readonly isTouchPrimary =
+    typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches;
+
+  @ViewChildren('projectMediaEl', { read: ElementRef })
+  private projectMediaEls?: QueryList<ElementRef<HTMLElement>>;
+
+  private observer?: IntersectionObserver;
 
   readonly navOptions = computed<DropdownOption<string>[]>(() => {
     const t = this.i18n.t();
@@ -118,6 +146,7 @@ export class AppComponent {
   readonly sendIcon = Send;
   readonly menuIcon = Menu;
   readonly xIcon = X;
+  readonly githubIcon = Github;
 
   // Contact Mailto URL (Prefilled with localized general inquiry)
   readonly mailtoUrl = computed(() => getContactMailtoUrl(this.i18n.lang()));
@@ -169,6 +198,103 @@ export class AppComponent {
 
   onTelemetryUpdate(data: TelemetryData) {
     this.telemetry.set(data);
+  }
+
+  ngAfterViewInit(): void {
+    if (typeof window === 'undefined') return;
+    if (this.isReducedMotion()) return;
+    if (!this.isTouchPrimary && !this.bp.mobile()) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    this.zone.runOutsideAngular(() => {
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          this.zone.run(() => {
+            for (const entry of entries) {
+              const id = entry.target.getAttribute('data-project-id');
+              if (!id) continue;
+              if (entry.isIntersecting) {
+                this.activateProject(id);
+              } else {
+                this.deactivateProject(id);
+              }
+            }
+          });
+        },
+        { threshold: 0.25, rootMargin: '0px' }
+      );
+      this.projectMediaEls?.forEach((ref) => this.observer!.observe(ref.nativeElement));
+      this.projectMediaEls?.changes.subscribe((ql: QueryList<ElementRef<HTMLElement>>) => {
+        this.observer?.disconnect();
+        ql.forEach((ref) => this.observer!.observe(ref.nativeElement));
+      });
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.observer?.disconnect();
+  }
+
+  onProjectPointerEnter(id: string, event: PointerEvent): void {
+    if (this.isTouchPrimary || event.pointerType === 'touch') return;
+    this.activateProject(id);
+  }
+
+  onProjectPointerLeave(id: string, event: PointerEvent): void {
+    if (this.isTouchPrimary || event.pointerType === 'touch') return;
+    this.deactivateProject(id);
+  }
+
+  activateProject(id: string): void {
+    if (this.isReducedMotion()) return;
+    if (this.activeProjectIds().has(id)) return;
+    this.activeProjectIds.set(new Set(this.activeProjectIds()).add(id));
+    if (!this.startedProjectIds().has(id)) {
+      this.startedProjectIds.set(new Set(this.startedProjectIds()).add(id));
+      this.startedAt.set(id, performance.now());
+    }
+  }
+
+  deactivateProject(id: string): void {
+    if (!this.activeProjectIds().has(id)) return;
+    const next = new Set(this.activeProjectIds());
+    next.delete(id);
+    this.activeProjectIds.set(next);
+  }
+
+  onProjectGifLoaded(id: string): void {
+    if (this.loadedProjectIds().has(id)) return;
+    const started = this.startedAt.get(id);
+    const elapsed = started != null ? performance.now() - started : Infinity;
+    const wait = Math.max(0, this.minLoadingMs - elapsed);
+    const markReady = () => {
+      this.zone.run(() => {
+        if (this.loadedProjectIds().has(id)) return;
+        this.loadedProjectIds.set(new Set(this.loadedProjectIds()).add(id));
+      });
+    };
+    if (wait === 0) {
+      markReady();
+    } else {
+      setTimeout(markReady, wait);
+    }
+  }
+
+  isProjectActive(id: string): boolean {
+    return this.activeProjectIds().has(id);
+  }
+
+  isProjectReady(id: string): boolean {
+    return this.loadedProjectIds().has(id);
+  }
+
+  hasProjectStarted(id: string): boolean {
+    return this.startedProjectIds().has(id);
+  }
+
+  private isReducedMotion(): boolean {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
   scrollToSection(id: string) {

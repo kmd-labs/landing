@@ -33,7 +33,6 @@ export const PL: Dict = {
   telemetrySourceUrl: "https://www.noaa.gov/",
   telemetrySourceTitle:
     "NOAA – Amerykańska Narodowa Służba Oceaniczna i Atmosferyczna",
-  telemetryUtcCycle: "00:00 UTC",
   showMore: "Pokaż więcej",
   showMoreAria: "Przewiń w dół, aby zobaczyć obserwatorium i projekty KMD Labs",
 

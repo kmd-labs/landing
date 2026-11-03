@@ -101,7 +101,6 @@
               >{{ bp.mobile() ? t.telemetrySourceShort : t.telemetrySourceLabel }}</a>
               <span class="source-sep">·</span>
               <span class="source-range">{{ vectorDates() | localeDate:i18n.lang():'range' }}</span>
-              <span class="source-cycle" *ngIf="!bp.mobile()">({{ t.telemetryUtcCycle }})</span>
             </span>
           </div>
         </div>

@@ -36,6 +36,7 @@ jobs:
           node-version: 20
 
       - name: Fetch and compile global wind field
+        id: fetch-wind
         run: node scripts/fetch-current-wind.mjs
 
       - name: Create Pull Request with updated wind vectors
@@ -43,9 +44,14 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
-          commit-message: "chore(data): refresh global wind vectors [skip ci]"
-          title: "chore(data): refresh global wind vectors"
-          body: "Automated daily refresh of global meteorological wind vectors (`src/assets/data/current-wind.json`) from Open-Meteo."
+          commit-message: "chore(data): refresh global wind vectors (${{ steps.fetch-wind.outputs.date_range || 'daily' }})"
+          title: "chore(data): refresh global wind vectors (${{ steps.fetch-wind.outputs.date_range || 'daily' }})"
+          body: |
+            Automated daily refresh of global meteorological wind vectors (`src/assets/data/current-wind.json`) from Open-Meteo.
+
+            - **Telemetry Window:** ${{ steps.fetch-wind.outputs.date_range || 'Latest 24h cycle' }}
+            - **Valid Grid Nodes:** ${{ steps.fetch-wind.outputs.valid_nodes || '468' }}
+            - **Peak Wind Speed:** ${{ steps.fetch-wind.outputs.max_speed || 'N/A' }}
           branch: chore/daily-wind-update
           delete-branch: true
 

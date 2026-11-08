@@ -590,47 +590,14 @@
       outline-offset: 2px;
     }
 
-    // Cool-slate editorial wash & inner vignette at rest
-    .portfolio-card__plate-wash {
-      position: absolute;
-      inset: 0;
-      z-index: 3;
-      pointer-events: none;
-      background:
-        radial-gradient(
-          120% 100% at 50% 50%,
-          rgba(15, 23, 42, 0.02) 42%,
-          rgba(15, 23, 42, 0.24) 100%
-        ),
-        linear-gradient(
-          160deg,
-          rgba(51, 65, 85, 0.18) 0%,
-          rgba(100, 116, 139, 0.08) 50%,
-          rgba(15, 23, 42, 0.22) 100%
-        );
-      box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.08);
-      opacity: 1;
-      transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-
-      &::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: rgba(71, 85, 105, 0.22);
-        mix-blend-mode: color;
-      }
-    }
-
     &--swap {
       .portfolio-card__poster {
         position: relative;
         z-index: 2;
         opacity: 1;
-        filter: grayscale(1) contrast(1.06) brightness(0.95);
         transform: scale(1.001);
         transition:
           opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-          filter 0.65s cubic-bezier(0.22, 1, 0.36, 1),
           transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
       }
 
@@ -667,19 +634,14 @@
         transition: opacity transition("fast");
       }
 
-      // Immediate color bloom + optical zoom on hover/active
+      // Optical zoom on hover/active
       &.is-active {
         .portfolio-card__poster {
-          filter: grayscale(0) contrast(1) brightness(1);
           transform: scale(1.035);
         }
 
         .portfolio-card__gif {
           transform: scale(1.035);
-        }
-
-        .portfolio-card__plate-wash {
-          opacity: 0;
         }
       }
 
@@ -702,17 +664,12 @@
       @media (prefers-reduced-motion: reduce) {
         .portfolio-card__poster {
           opacity: 1 !important;
-          filter: grayscale(0) !important;
           transform: none !important;
           transition: none !important;
         }
         .portfolio-card__gif {
           opacity: 0 !important;
           transform: none !important;
-          transition: none !important;
-        }
-        .portfolio-card__plate-wash {
-          opacity: 0 !important;
           transition: none !important;
         }
         &::after {
@@ -1335,8 +1292,6 @@
       object-fit: cover;
       display: block;
       border: 1px solid color("line");
-      filter: grayscale(100%);
-      transition: filter transition("fast");
     }
 
     &-name {
@@ -1355,10 +1310,6 @@
       border-color: color("accent");
       color: color("text-bright");
       box-shadow: 0 3px 12px color("accent-glow");
-
-      .team-carousel__pill-avatar {
-        filter: grayscale(0%);
-      }
     }
 
     &-progress {
@@ -1452,10 +1403,6 @@
       opacity: 1;
       transform: scale(1);
       box-shadow: 0 12px 36px color("shadow-heavy");
-
-      .team-photo {
-        filter: grayscale(0%);
-      }
     }
   }
 }

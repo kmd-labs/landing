@@ -87,14 +87,13 @@ export const EN: Dict = {
   projects: buildProjects([
     {
       id: "el-nino",
-      tag: "01 / COUPLED OCEAN–ATMOSPHERE DYNAMICS",
+      shortTitle: "El Niño",
       title: "El Niño — Southern Oscillation (ENSO)",
       subtitle:
         "3D Pacific thermocline variability, Walker Circulation dynamics & Niño 3.4 teleconnections",
       description:
         "Interactive geophysical model of the coupled tropical Pacific ocean–atmosphere system. Visualizes Bjerknes feedback, trade-wind relaxation, equatorial upwelling suppression, and multi-decadal Sea Surface Temperature (SST) anomalies driving global hydroclimate extremes.",
       metrics: [
-        { label: "CATEGORY", value: "Educational" },
         { label: "THEME", value: "Climatology & Meteorology" },
         { label: "DATA SOURCE", value: "NOAA OISST · Copernicus" },
       ],
@@ -107,14 +106,13 @@ export const EN: Dict = {
     },
     {
       id: "watershed",
-      tag: "02 / MARINE BIOGEOCHEMISTRY & HYDROLOGY",
+      shortTitle: "Watershed",
       title: "Baltic Nutrient Loads & Hypoxia (Watershed)",
       subtitle:
         "Catchment-scale nitrogen/phosphorus runoff, halocline stratification & benthic dead zones",
       description:
         "Spatiotemporal mass-balance analysis of riverine nutrient loading across 85+ Baltic drainage basins in 14 countries. Tracks five decades of anthropogenic eutrophication and deep-water oxygen depletion punctuated by barotropic Major Baltic Inflows from the North Sea.",
       metrics: [
-        { label: "CATEGORY", value: "Educational" },
         { label: "THEME", value: "Environment & Ecology" },
         { label: "DATA SOURCE", value: "HELCOM PLC-7 · SMHI" },
       ],
@@ -127,14 +125,13 @@ export const EN: Dict = {
     },
     {
       id: "baltic",
-      tag: "03 / QUATERNARY GEOLOGY & PALEOCLIMATE",
+      shortTitle: "Baltic",
       title: "Baltic Postglacial Reconstruction",
       subtitle:
         "Fennoscandian deglaciation, Glacial Isostatic Adjustment & shoreline evolution (20 ka BP → Present)",
       description:
         "Paleogeographic DEM reconstruction modeling viscoelastic lithospheric rebound and eustatic sea-level rise across the Baltic basin. Traces the morphological transitions from the Baltic Ice Lake and Yoldia Sea through the Ancylus Lake to the modern Littorina Sea.",
       metrics: [
-        { label: "CATEGORY", value: "Educational" },
         { label: "THEME", value: "Geology & Paleogeography" },
         { label: "DATA SOURCE", value: "GEBCO · ICE-6G DEM" },
       ],
@@ -147,14 +144,13 @@ export const EN: Dict = {
     },
     {
       id: "viadrus-ai",
-      tag: "04 / SATELLITE EARTH OBSERVATION",
+      shortTitle: "Viadrus AI",
       title: "Viadrus AI (CASSINI EU Winner)",
       subtitle:
         "1st Place European Winner — EUSPA 11th CASSINI Hackathon · SAR & multispectral leak detection",
       description:
         "Award-winning remote sensing pipeline fusing C-band Synthetic Aperture Radar (Sentinel-1 SAR) soil dielectric moisture anomalies and Sentinel-2 optical vegetation stress indices (NDVI/NDWI) with hydraulic pressure telemetry to localize subsurface water distribution leaks.",
       metrics: [
-        { label: "CATEGORY", value: "Competition (1st Place EU)" },
         { label: "THEME", value: "Engineering & Remote Sensing" },
         { label: "DATA SOURCE", value: "Sentinel-1 SAR · Sentinel-2" },
       ],
@@ -168,14 +164,13 @@ export const EN: Dict = {
     },
     {
       id: "golfstrom",
-      tag: "05 / PHYSICAL OCEANOGRAPHY & THERMODYNAMICS",
+      shortTitle: "Golfstrom",
       title: "Golfstrom — North Atlantic Heat Engine",
       subtitle:
         "Zonal SST anomalies, baroclinic western boundary fronts & transatlantic latitude climate contrast",
       description:
         "3D oceanic and atmospheric observatory quantifying the ~1 petawatt poleward heat transport of the Gulf Stream and North Atlantic Current. Contrasts same-latitude maritime climates (North America vs. Western Europe) alongside 5,500 m abyssal bathymetry and Cold Wall isotherm transects.",
       metrics: [
-        { label: "CATEGORY", value: "Educational" },
         { label: "THEME", value: "Oceanography & Climate" },
         { label: "DATA SOURCE", value: "NOAA OISST · ECMWF ERA5" },
       ],
@@ -188,14 +183,13 @@ export const EN: Dict = {
     },
     {
       id: "polis-io",
-      tag: "06 / COMPUTATIONAL HISTORY & GEOSIMULATION",
+      shortTitle: "Polis",
       title: "Polis — Archaic Hellas Geosimulation (600 BC)",
       subtitle:
         "Topography-constrained cellular colonization, agricultural carrying capacity & maritime trade networks",
       description:
         "Agent-based geopolitical and demographic simulation operating on a 336,000-cell (0.63 km resolution) DEM and bathymetric raster of the Aegean basin. Models 18 historical Greek poleis competing through terrain-weighted demographic diffusion, fiscal resource allocation, and phalanx warfare.",
       metrics: [
-        { label: "CATEGORY", value: "Interactive Simulation" },
         { label: "THEME", value: "Computational History & GIS" },
         { label: "DATA SOURCE", value: "AWS Terrain · Natural Earth" },
       ],

@@ -88,8 +88,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly loadedProjectIds = signal(new Set<string>());
   private readonly minLoadingMs = 500;
   private readonly startedAt = new Map<string, number>();
-  private readonly isTouchPrimary =
-    typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches;
 
   @ViewChildren('projectMediaEl', { read: ElementRef })
   private projectMediaEls?: QueryList<ElementRef<HTMLElement>>;
@@ -259,13 +257,24 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     if (typeof window === 'undefined') return;
-    if (this.isReducedMotion()) return;
-    if (!this.isTouchPrimary && !this.bp.mobile()) return;
+
+    this.initPortfolioObserver();
+    this.startTeamAutoScroll();
+  }
+
+  ngOnDestroy(): void {
+    this.observer?.disconnect();
+    this.stopTeamAutoScroll();
+  }
+
+  private initPortfolioObserver(): void {
+    if (typeof window === 'undefined') return;
     if (!('IntersectionObserver' in window)) return;
 
     this.zone.runOutsideAngular(() => {
       this.observer = new IntersectionObserver(
         (entries) => {
+          if (!this.canActivateOnScroll()) return;
           this.zone.run(() => {
             for (const entry of entries) {
               const id = entry.target.getAttribute('data-project-id');
@@ -286,13 +295,15 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         ql.forEach((ref) => this.observer!.observe(ref.nativeElement));
       });
     });
-
-    this.startTeamAutoScroll();
   }
 
-  ngOnDestroy(): void {
-    this.observer?.disconnect();
-    this.stopTeamAutoScroll();
+  private canActivateOnScroll(): boolean {
+    if (typeof window === 'undefined') return false;
+    if (this.isReducedMotion()) return false;
+    // Desktop viewports and hover-capable environments must NEVER activate on scroll (only hover).
+    if (window.matchMedia('(hover: hover)').matches) return false;
+    if (!this.bp.tablet()) return false;
+    return true;
   }
 
   nextTeammate(): void {
@@ -428,12 +439,12 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   }
 
   onProjectPointerEnter(id: string, event: PointerEvent): void {
-    if (this.isTouchPrimary || event.pointerType === 'touch') return;
+    if (event.pointerType === 'touch') return;
     this.activateProject(id);
   }
 
   onProjectPointerLeave(id: string, event: PointerEvent): void {
-    if (this.isTouchPrimary || event.pointerType === 'touch') return;
+    if (event.pointerType === 'touch') return;
     this.deactivateProject(id);
   }
 

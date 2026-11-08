@@ -1,4 +1,17 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  NgZone,
+  OnDestroy,
+  QueryList,
+  ViewChildren,
+  computed,
+  effect,
+  inject,
+  signal
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   LucideAngularModule,
@@ -8,6 +21,8 @@ import {
   Users,
   ExternalLink,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   ArrowUpRight,
   Cpu,
   Waves,
@@ -15,7 +30,8 @@ import {
   Mail,
   Send,
   Menu,
-  X
+  X,
+  Github
 } from 'lucide-angular';
 import {
   ButtonComponent,
@@ -28,13 +44,20 @@ import {
   getContactMailtoUrl
 } from '@kmd/design-system';
 import { I18nService } from './core/i18n/i18n.service';
-import { Lang } from './core/i18n/i18n.types';
+import { FounderEntry, Lang } from './core/i18n/i18n.types';
 import { CurrentWeatherService } from './core/services/current-weather.service';
 import { LocaleDatePipe } from './core/pipes/locale-date.pipe';
 import {
   TelemetryData,
   VortexCanvasComponent
 } from './components/vortex-canvas/vortex-canvas.component';
+
+export interface TeamSlide {
+  slideId: string;
+  realIndex: number;
+  person: FounderEntry;
+  isClone: boolean;
+}
 
 @Component({
   selector: 'app-root',
@@ -52,12 +75,27 @@ import {
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit, OnDestroy {
   readonly i18n = inject(I18nService);
   readonly bp = inject(BreakpointService);
   readonly splash = inject(SplashService);
   readonly weather = inject(CurrentWeatherService);
+  private readonly zone = inject(NgZone);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly splashRevealed = signal(false);
+
+  // Portfolio interactive screengrab / GIF preview state
+  readonly activeProjectIds = signal(new Set<string>());
+  readonly startedProjectIds = signal(new Set<string>());
+  readonly loadedProjectIds = signal(new Set<string>());
+  private readonly minLoadingMs = 500;
+  private readonly startedAt = new Map<string, number>();
+  private readonly mobileGifTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
+  @ViewChildren('projectMediaEl', { read: ElementRef })
+  private projectMediaEls?: QueryList<ElementRef<HTMLElement>>;
+
+  private observer?: IntersectionObserver;
 
   readonly navOptions = computed<DropdownOption<string>[]>(() => {
     const t = this.i18n.t();
@@ -110,6 +148,8 @@ export class AppComponent {
   readonly usersIcon = Users;
   readonly externalLinkIcon = ExternalLink;
   readonly chevronDownIcon = ChevronDown;
+  readonly chevronLeftIcon = ChevronLeft;
+  readonly chevronRightIcon = ChevronRight;
   readonly arrowUpRightIcon = ArrowUpRight;
   readonly cpuIcon = Cpu;
   readonly wavesIcon = Waves;
@@ -118,6 +158,55 @@ export class AppComponent {
   readonly sendIcon = Send;
   readonly menuIcon = Menu;
   readonly xIcon = X;
+  readonly githubIcon = Github;
+
+  // Team Infinite Horizontal Carousel (Mobile / Tablet)
+  readonly teamTrackIndex = signal(1);
+  readonly teamTransitionEnabled = signal(true);
+  readonly teamPaused = signal(false);
+  readonly teamDragOffsetPx = signal(0);
+  readonly isDraggingTeam = signal(false);
+  private teamAutoTimer?: ReturnType<typeof setInterval>;
+  private teamPointerStartX = 0;
+  private teamPointerStartY = 0;
+  private teamIsHorizontalDrag = false;
+  private teamActivePointerId?: number;
+  teamHasDragged = false;
+
+  readonly activeRealTeamIndex = computed(() => {
+    const founders = this.i18n.t().founders;
+    const count = founders?.length || 3;
+    const trackIdx = this.teamTrackIndex();
+    return ((trackIdx - 1) % count + count) % count;
+  });
+
+  readonly teamSlides = computed<TeamSlide[]>(() => {
+    const founders = this.i18n.t().founders;
+    if (!founders || founders.length === 0) return [];
+    const count = founders.length;
+    const last = founders[count - 1];
+    const first = founders[0];
+    return [
+      {
+        slideId: `clone-last-${last.name}`,
+        realIndex: count - 1,
+        person: last,
+        isClone: true
+      },
+      ...founders.map((p, idx) => ({
+        slideId: `real-${idx}-${p.name}`,
+        realIndex: idx,
+        person: p,
+        isClone: false
+      })),
+      {
+        slideId: `clone-first-${first.name}`,
+        realIndex: 0,
+        person: first,
+        isClone: true
+      }
+    ];
+  });
 
   // Contact Mailto URL (Prefilled with localized general inquiry)
   readonly mailtoUrl = computed(() => getContactMailtoUrl(this.i18n.lang()));
@@ -169,6 +258,390 @@ export class AppComponent {
 
   onTelemetryUpdate(data: TelemetryData) {
     this.telemetry.set(data);
+  }
+
+  ngAfterViewInit(): void {
+    if (typeof window === 'undefined') return;
+
+    this.initPortfolioObserver();
+    this.startTeamAutoScroll();
+  }
+
+  ngOnDestroy(): void {
+    this.observer?.disconnect();
+    this.stopTeamAutoScroll();
+    for (const timer of this.mobileGifTimers.values()) {
+      clearTimeout(timer);
+    }
+    this.mobileGifTimers.clear();
+  }
+
+  private initPortfolioObserver(): void {
+    if (typeof window === 'undefined') return;
+    if (!('IntersectionObserver' in window)) return;
+
+    this.zone.runOutsideAngular(() => {
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          if (!this.canActivateOnScroll()) return;
+          this.zone.run(() => {
+            for (const entry of entries) {
+              const id = entry.target.getAttribute('data-project-id');
+              if (!id) continue;
+              if (entry.isIntersecting) {
+                this.activateProject(id);
+              } else {
+                this.deactivateProject(id);
+              }
+            }
+          });
+        },
+        { threshold: 0.25, rootMargin: '0px' }
+      );
+      this.projectMediaEls?.forEach((ref) => this.observer!.observe(ref.nativeElement));
+      this.projectMediaEls?.changes.subscribe((ql: QueryList<ElementRef<HTMLElement>>) => {
+        this.observer?.disconnect();
+        ql.forEach((ref) => this.observer!.observe(ref.nativeElement));
+      });
+    });
+  }
+
+  private canActivateOnScroll(): boolean {
+    if (typeof window === 'undefined') return false;
+    if (this.isReducedMotion()) return false;
+    // Desktop viewports and hover-capable environments must NEVER activate on scroll (only hover).
+    if (window.matchMedia('(hover: hover)').matches) return false;
+    if (!this.bp.tablet()) return false;
+    return true;
+  }
+
+  nextTeammate(): void {
+    const count = this.i18n.t().founders?.length || 3;
+    if (this.teamTrackIndex() >= count + 1) return;
+    this.teamTransitionEnabled.set(true);
+    this.teamTrackIndex.update((idx) => idx + 1);
+    this.resetTeamAutoTimer();
+  }
+
+  prevTeammate(): void {
+    if (this.teamTrackIndex() <= 0) return;
+    this.teamTransitionEnabled.set(true);
+    this.teamTrackIndex.update((idx) => idx - 1);
+    this.resetTeamAutoTimer();
+  }
+
+  selectTeammate(realIndex: number): void {
+    this.teamTransitionEnabled.set(true);
+    this.teamTrackIndex.set(realIndex + 1);
+    this.resetTeamAutoTimer();
+  }
+
+  trackSlideById(_index: number, slide: TeamSlide): string {
+    return slide.slideId;
+  }
+
+  onTeamTrackTransitionEnd(event: TransitionEvent): void {
+    if (event.target !== event.currentTarget) return;
+    if (event.propertyName !== 'transform') return;
+    if (!this.teamTransitionEnabled()) return;
+
+    const count = this.i18n.t().founders?.length || 3;
+    const current = this.teamTrackIndex();
+
+    if (current >= count + 1) {
+      const trackEl = event.currentTarget as HTMLElement | null;
+      if (trackEl) {
+        trackEl.style.transition = 'none';
+      }
+      this.teamTransitionEnabled.set(false);
+      this.teamTrackIndex.set(1);
+      this.cdr.detectChanges();
+      if (trackEl) {
+        void trackEl.offsetHeight;
+      }
+      if (typeof window !== 'undefined') {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (trackEl) {
+              trackEl.style.transition = '';
+            }
+            this.teamTransitionEnabled.set(true);
+          });
+        });
+      }
+    } else if (current <= 0) {
+      const trackEl = event.currentTarget as HTMLElement | null;
+      if (trackEl) {
+        trackEl.style.transition = 'none';
+      }
+      this.teamTransitionEnabled.set(false);
+      this.teamTrackIndex.set(count);
+      this.cdr.detectChanges();
+      if (trackEl) {
+        void trackEl.offsetHeight;
+      }
+      if (typeof window !== 'undefined') {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (trackEl) {
+              trackEl.style.transition = '';
+            }
+            this.teamTransitionEnabled.set(true);
+          });
+        });
+      }
+    }
+  }
+
+  private startTeamAutoScroll(): void {
+    if (typeof window === 'undefined') return;
+    this.stopTeamAutoScroll();
+    this.zone.runOutsideAngular(() => {
+      this.teamAutoTimer = setInterval(() => {
+        if (this.teamPaused() || this.isDraggingTeam() || this.isReducedMotion()) return;
+        if (!this.bp.tablet()) return;
+        this.zone.run(() => {
+          this.nextTeammate();
+        });
+      }, 4500);
+    });
+  }
+
+  private stopTeamAutoScroll(): void {
+    if (this.teamAutoTimer) {
+      clearInterval(this.teamAutoTimer);
+      this.teamAutoTimer = undefined;
+    }
+  }
+
+  private resetTeamAutoTimer(): void {
+    this.startTeamAutoScroll();
+  }
+
+  onTeamPointerDown(event: PointerEvent): void {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    const target = event.currentTarget as HTMLElement;
+    try {
+      target.setPointerCapture?.(event.pointerId);
+    } catch {
+      // Ignore if pointer capture fails
+    }
+    this.teamActivePointerId = event.pointerId;
+    this.teamPointerStartX = event.clientX;
+    this.teamPointerStartY = event.clientY;
+    this.teamDragOffsetPx.set(0);
+    this.teamIsHorizontalDrag = false;
+    this.teamHasDragged = false;
+    this.isDraggingTeam.set(true);
+    this.teamPaused.set(true);
+  }
+
+  onTeamPointerMove(event: PointerEvent): void {
+    if (!this.isDraggingTeam()) return;
+    if (this.teamActivePointerId !== undefined && event.pointerId !== this.teamActivePointerId) return;
+
+    const deltaX = event.clientX - this.teamPointerStartX;
+    const deltaY = event.clientY - this.teamPointerStartY;
+
+    if (!this.teamIsHorizontalDrag) {
+      if (Math.abs(deltaX) > 6 && Math.abs(deltaX) >= Math.abs(deltaY) * 0.7) {
+        this.teamIsHorizontalDrag = true;
+        this.teamHasDragged = true;
+      } else if (Math.abs(deltaY) > 12 && Math.abs(deltaY) > Math.abs(deltaX) * 1.2) {
+        // Vertical scroll gesture - release capture and let page scroll natively
+        const target = event.currentTarget as HTMLElement;
+        try {
+          if (target.hasPointerCapture?.(event.pointerId)) {
+            target.releasePointerCapture(event.pointerId);
+          }
+        } catch {
+          // Ignore
+        }
+        this.teamActivePointerId = undefined;
+        this.isDraggingTeam.set(false);
+        this.teamDragOffsetPx.set(0);
+        return;
+      }
+    }
+
+    if (this.teamIsHorizontalDrag) {
+      this.teamTransitionEnabled.set(false);
+      this.teamDragOffsetPx.set(deltaX);
+    }
+  }
+
+  onTeamPointerUp(event: PointerEvent): void {
+    if (!this.isDraggingTeam()) return;
+    if (this.teamActivePointerId !== undefined && event.pointerId !== this.teamActivePointerId) return;
+
+    const target = event.currentTarget as HTMLElement;
+    try {
+      if (target.hasPointerCapture?.(event.pointerId)) {
+        target.releasePointerCapture(event.pointerId);
+      }
+    } catch {
+      // Ignore
+    }
+    this.teamActivePointerId = undefined;
+
+    const deltaX = this.teamDragOffsetPx();
+    this.isDraggingTeam.set(false);
+    this.teamDragOffsetPx.set(0);
+    this.teamTransitionEnabled.set(true);
+    this.teamPaused.set(false);
+
+    if (this.teamIsHorizontalDrag) {
+      if (deltaX < -35) {
+        this.nextTeammate();
+      } else if (deltaX > 35) {
+        this.prevTeammate();
+      }
+    }
+    this.teamIsHorizontalDrag = false;
+    setTimeout(() => {
+      this.teamHasDragged = false;
+    }, 100);
+  }
+
+  onTeamPointerCancel(event?: PointerEvent): void {
+    if (event) {
+      const target = event.currentTarget as HTMLElement;
+      try {
+        if (target.hasPointerCapture?.(event.pointerId)) {
+          target.releasePointerCapture(event.pointerId);
+        }
+      } catch {
+        // Ignore
+      }
+    }
+    this.teamActivePointerId = undefined;
+    this.isDraggingTeam.set(false);
+    this.teamDragOffsetPx.set(0);
+    this.teamTransitionEnabled.set(true);
+    this.teamPaused.set(false);
+    this.teamIsHorizontalDrag = false;
+    setTimeout(() => {
+      this.teamHasDragged = false;
+    }, 100);
+  }
+
+  onSlideClick(sIdx: number): void {
+    if (this.teamHasDragged) return;
+    if (this.teamTrackIndex() !== sIdx) {
+      if (sIdx > this.teamTrackIndex()) {
+        this.nextTeammate();
+      } else {
+        this.prevTeammate();
+      }
+    }
+  }
+
+  setTeamPaused(paused: boolean): void {
+    this.teamPaused.set(paused);
+  }
+
+  onProjectPointerEnter(id: string, event: PointerEvent): void {
+    if (event.pointerType === 'touch') return;
+    this.activateProject(id);
+  }
+
+  onProjectPointerLeave(id: string, event: PointerEvent): void {
+    if (event.pointerType === 'touch') return;
+    this.deactivateProject(id);
+  }
+
+  activateProject(id: string): void {
+    if (this.isReducedMotion()) return;
+    if (this.activeProjectIds().has(id)) return;
+    this.activeProjectIds.set(new Set(this.activeProjectIds()).add(id));
+    if (!this.startedProjectIds().has(id)) {
+      this.startedProjectIds.set(new Set(this.startedProjectIds()).add(id));
+      this.startedAt.set(id, performance.now());
+    } else if (this.isProjectReady(id)) {
+      this.scheduleMobileOneShotPlay(id);
+    }
+  }
+
+  deactivateProject(id: string): void {
+    this.clearMobileGifTimer(id);
+    if (!this.activeProjectIds().has(id)) return;
+    const next = new Set(this.activeProjectIds());
+    next.delete(id);
+    this.activeProjectIds.set(next);
+  }
+
+  onProjectGifLoaded(id: string): void {
+    if (this.loadedProjectIds().has(id)) {
+      this.scheduleMobileOneShotPlay(id);
+      return;
+    }
+    const started = this.startedAt.get(id);
+    const elapsed = started != null ? performance.now() - started : Infinity;
+    const wait = Math.max(0, this.minLoadingMs - elapsed);
+    const markReady = () => {
+      this.zone.run(() => {
+        if (!this.loadedProjectIds().has(id)) {
+          this.loadedProjectIds.set(new Set(this.loadedProjectIds()).add(id));
+        }
+        this.scheduleMobileOneShotPlay(id);
+      });
+    };
+    if (wait === 0) {
+      markReady();
+    } else {
+      setTimeout(markReady, wait);
+    }
+  }
+
+  private scheduleMobileOneShotPlay(id: string): void {
+    if (typeof window === 'undefined') return;
+    // On desktop, user leaves hover alone; on mobile/touch, play once to avoid reader distraction
+    if (!this.isMobileOrTouch()) return;
+
+    this.clearMobileGifTimer(id);
+    const duration = this.getProjectPreviewDuration(id);
+    const timer = setTimeout(() => {
+      this.zone.run(() => {
+        this.deactivateProject(id);
+      });
+    }, duration);
+    this.mobileGifTimers.set(id, timer);
+  }
+
+  private isMobileOrTouch(): boolean {
+    if (typeof window === 'undefined') return false;
+    if (this.bp.mobile()) return true;
+    return !window.matchMedia('(hover: hover)').matches;
+  }
+
+  private getProjectPreviewDuration(id: string): number {
+    const proj = this.i18n.t().projects.find((p) => p.id === id);
+    return proj?.previewDurationMs ?? 3600;
+  }
+
+  private clearMobileGifTimer(id: string): void {
+    const timer = this.mobileGifTimers.get(id);
+    if (timer) {
+      clearTimeout(timer);
+      this.mobileGifTimers.delete(id);
+    }
+  }
+
+  isProjectActive(id: string): boolean {
+    return this.activeProjectIds().has(id);
+  }
+
+  isProjectReady(id: string): boolean {
+    return this.loadedProjectIds().has(id);
+  }
+
+  hasProjectStarted(id: string): boolean {
+    return this.startedProjectIds().has(id);
+  }
+
+  private isReducedMotion(): boolean {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
   scrollToSection(id: string) {

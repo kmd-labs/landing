@@ -94,7 +94,7 @@ export class CurrentWeatherService {
   private async init() {
     try {
       // 1. Load Real Current Wind & Marine Dataset
-      const windRes = await fetch('assets/data/current-wind.json', { cache: 'no-cache' });
+      const windRes = await fetch('assets/data/current-wind.json');
       if (!windRes.ok) throw new Error(`Failed to load wind data: HTTP ${windRes.status}`);
       const dataset: WindDataset = await windRes.json();
 

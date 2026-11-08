@@ -1,4 +1,5 @@
 import { Dict } from "./i18n.types";
+import { buildProjects } from "../config/projects.data";
 
 export const EN: Dict = {
   htmlLang: "en",
@@ -77,90 +78,132 @@ export const EN: Dict = {
   portfolioKicker: "OBSERVATORY ARCHIVE",
   portfolioTitle: "Flagship Interactive Applications",
   portfolioLead:
-    "Every project is engineered with zero-friction interaction, custom WebGL/Canvas rendering pipelines, and real planetary telemetry.",
+    "Scientific geovisualizations, Earth observation pipelines, and spatial simulations built on authoritative satellite, oceanographic, and topographic datasets.",
   launchApp: "Launch Visualization",
-  projects: [
+  viewRepository: "GitHub",
+  projects: buildProjects([
     {
       id: "el-nino",
-      tag: "01 / PLANETARY CLIMATOLOGY",
-      title: "El Niño — Southern Oscillation",
+      tag: "01 / COUPLED OCEAN–ATMOSPHERE DYNAMICS",
+      title: "El Niño — Southern Oscillation (ENSO)",
       subtitle:
-        "Global 3D WebGL thermal anomaly, atmospheric Walker circulation & historical impact ledger",
+        "3D Pacific thermocline variability, Walker Circulation dynamics & Niño 3.4 teleconnections",
       description:
-        "Interactive digital twin of the coupled Pacific ocean-atmosphere system. Integrates multi-decade Sea Surface Temperature (SST) keyframes, real-time NOAA/Copernicus anomalies, and dynamic wind & wave crest streamlines.",
+        "Interactive geophysical model of the coupled tropical Pacific ocean–atmosphere system. Visualizes Bjerknes feedback, trade-wind relaxation, equatorial upwelling suppression, and multi-decadal Sea Surface Temperature (SST) anomalies driving global hydroclimate extremes.",
       metrics: [
-        { label: "RESOLUTION", value: "0.25° Global" },
-        { label: "RENDERER", value: "WebGL / Three.js" },
-        { label: "LATENCY", value: "60 FPS" },
+        { label: "CATEGORY", value: "Educational" },
+        { label: "THEME", value: "Climatology & Meteorology" },
+        { label: "DATA SOURCE", value: "NOAA OISST · Copernicus" },
       ],
       tags: [
-        "WebGL 3D",
-        "Three.js",
-        "Climate Telemetry",
-        "Particle Streamlines",
+        "ENSO Dynamics",
+        "Walker Circulation",
+        "SST Anomalies",
+        "3D WebGL Globe",
       ],
-      url: "https://kmd-labs.github.io/el-nino/",
     },
     {
       id: "watershed",
-      tag: "02 / OCEANOGRAPHY & ECOLOGY",
-      title: "Baltic Nutrient Loads (Watershed)",
+      tag: "02 / MARINE BIOGEOCHEMISTRY & HYDROLOGY",
+      title: "Baltic Nutrient Loads & Hypoxia (Watershed)",
       subtitle:
-        "Drainage basin riverine Nitrogen/Phosphorus discharge & deep seabed hypoxia telemetry",
+        "Catchment-scale nitrogen/phosphorus runoff, halocline stratification & benthic dead zones",
       description:
-        "Comprehensive geospatial analysis of 85+ Baltic catchments across 14 countries. Visualizes 50 years of agricultural nutrient runoff and near-bottom oxygen depletion (dead zones) ventilated by Major Baltic Inflows.",
+        "Spatiotemporal mass-balance analysis of riverine nutrient loading across 85+ Baltic drainage basins in 14 countries. Tracks five decades of anthropogenic eutrophication and deep-water oxygen depletion punctuated by barotropic Major Baltic Inflows from the North Sea.",
       metrics: [
-        { label: "CATCHMENTS", value: "85+ Basins" },
-        { label: "DATA BASIS", value: "HELCOM PLC-7" },
-        { label: "OXYGEN DEAD ZONES", value: "1960–2026" },
-      ],
-      tags: ["Geographic GIS", "Cartography", "Biogeochemistry", "HELCOM Data"],
-      url: "https://kmd-labs.github.io/watershed/",
-    },
-    {
-      id: "golfstrom",
-      tag: "03 / THERMOHALINE DYNAMICS",
-      title: "Golfstrom",
-      subtitle:
-        "North Atlantic boundary current transport, vorticity filaments & kinetic eddy simulation",
-      description:
-        "High-density vector field advection modeling the Atlantic Meridional Overturning Circulation (AMOC). Renders thousands of Lagrangian particle tracks reflecting boundary current velocity, salinity, and temperature gradients.",
-      metrics: [
-        { label: "CURRENT SYSTEM", value: "North Atlantic" },
-        { label: "ADVECTION", value: "Vector Field" },
-        { label: "COMPUTATION", value: "Client-side GL" },
+        { label: "CATEGORY", value: "Educational" },
+        { label: "THEME", value: "Environment & Ecology" },
+        { label: "DATA SOURCE", value: "HELCOM PLC-7 · SMHI" },
       ],
       tags: [
-        "Ocean Dynamics",
-        "Lagrangian Particles",
-        "AMOC",
-        "Interactive Canvas",
+        "Eutrophication",
+        "Benthic Hypoxia",
+        "Hydrological GIS",
+        "HELCOM Dataset",
       ],
-      url: "https://kmd-labs.github.io/golfstrom/",
+    },
+    {
+      id: "baltic",
+      tag: "03 / QUATERNARY GEOLOGY & PALEOCLIMATE",
+      title: "Baltic Postglacial Reconstruction",
+      subtitle:
+        "Fennoscandian deglaciation, Glacial Isostatic Adjustment & shoreline evolution (20 ka BP → Present)",
+      description:
+        "Paleogeographic DEM reconstruction modeling viscoelastic lithospheric rebound and eustatic sea-level rise across the Baltic basin. Traces the morphological transitions from the Baltic Ice Lake and Yoldia Sea through the Ancylus Lake to the modern Littorina Sea.",
+      metrics: [
+        { label: "CATEGORY", value: "Educational" },
+        { label: "THEME", value: "Geology & Paleogeography" },
+        { label: "DATA SOURCE", value: "GEBCO · ICE-6G DEM" },
+      ],
+      tags: [
+        "Glacial Isostasy",
+        "Paleobathymetry",
+        "Holocene Sea Level",
+        "DEM Simulation",
+      ],
     },
     {
       id: "viadrus-ai",
-      tag: "04 / SATELLITE INNOVATION",
-      title: "Viadrus AI (CASSINI Winner)",
+      tag: "04 / SATELLITE EARTH OBSERVATION",
+      title: "Viadrus AI (CASSINI EU Winner)",
       subtitle:
-        "1st Place European Champions — 11th CASSINI Hackathon by European Union Space Programme",
+        "1st Place European Winner — EUSPA 11th CASSINI Hackathon · SAR & multispectral leak detection",
       description:
-        "Our founding innovation: early detection of municipal water distribution network leaks by correlating Copernicus Sentinel-1 radar (SAR) moisture signatures and Sentinel-2 multispectral indices with hydraulic telemetry.",
+        "Award-winning remote sensing pipeline fusing C-band Synthetic Aperture Radar (Sentinel-1 SAR) soil dielectric moisture anomalies and Sentinel-2 optical vegetation stress indices (NDVI/NDWI) with hydraulic pressure telemetry to localize subsurface water distribution leaks.",
       metrics: [
-        { label: "AWARD", value: "1st Place EU Final" },
-        { label: "ORGANIZER", value: "EUSPA / EC" },
-        { label: "SATELLITES", value: "Sentinel-1 & 2" },
+        { label: "CATEGORY", value: "Competition (1st Place EU)" },
+        { label: "THEME", value: "Engineering & Remote Sensing" },
+        { label: "DATA SOURCE", value: "Sentinel-1 SAR · Sentinel-2" },
       ],
       tags: [
         "Copernicus SAR",
-        "Machine Learning",
+        "Soil Moisture Anomaly",
         "EUSPA Award",
-        "Infrastructure",
+        "Hydraulic Telemetry",
       ],
-      url: "https://defence-industry-space.ec.europa.eu/orbit-water-tap-11th-cassini-hackathon-2026-05-08_en",
-      isExternal: true,
+      secondaryLabel: "CASSINI EU Award",
     },
-  ],
+    {
+      id: "golfstrom",
+      tag: "05 / PHYSICAL OCEANOGRAPHY & THERMODYNAMICS",
+      title: "Golfstrom — North Atlantic Heat Engine",
+      subtitle:
+        "Zonal SST anomalies, baroclinic western boundary fronts & transatlantic latitude climate contrast",
+      description:
+        "3D oceanic and atmospheric observatory quantifying the ~1 petawatt poleward heat transport of the Gulf Stream and North Atlantic Current. Contrasts same-latitude maritime climates (North America vs. Western Europe) alongside 5,500 m abyssal bathymetry and Cold Wall isotherm transects.",
+      metrics: [
+        { label: "CATEGORY", value: "Educational" },
+        { label: "THEME", value: "Oceanography & Climate" },
+        { label: "DATA SOURCE", value: "NOAA OISST · ECMWF ERA5" },
+      ],
+      tags: [
+        "Gulf Stream & AMOC",
+        "Zonal Thermal Anomaly",
+        "Bathymetric Transect",
+        "ERA5 Reanalysis",
+      ],
+    },
+    {
+      id: "polis-io",
+      tag: "06 / COMPUTATIONAL HISTORY & GEOSIMULATION",
+      title: "Polis — Archaic Hellas Geosimulation (600 BC)",
+      subtitle:
+        "Topography-constrained cellular colonization, agricultural carrying capacity & maritime trade networks",
+      description:
+        "Agent-based geopolitical and demographic simulation operating on a 336,000-cell (0.63 km resolution) DEM and bathymetric raster of the Aegean basin. Models 18 historical Greek poleis competing through terrain-weighted demographic diffusion, fiscal resource allocation, and phalanx warfare.",
+      metrics: [
+        { label: "CATEGORY", value: "Interactive Simulation" },
+        { label: "THEME", value: "Computational History & GIS" },
+        { label: "DATA SOURCE", value: "AWS Terrain · Natural Earth" },
+      ],
+      tags: [
+        "Cellular Automata",
+        "DEM Terrain Raster",
+        "Cliodynamics",
+        "Archaic Greece",
+      ],
+    },
+  ]),
 
   // Specialities Section
   specialitiesKicker: "CORE CAPABILITIES",
@@ -254,7 +297,12 @@ export const EN: Dict = {
       aria: "kmd-labs company profile on LinkedIn",
     },
   ],
+  teamRefsLabel: "PRESS & RECOGNITION",
   teamFocusLabel: "Focus",
+  teamPrevAria: "Previous teammate",
+  teamNextAria: "Next teammate",
+  teamSelectAria: "Select teammate",
+  carouselSlideAria: "Teammate slide",
   founders: [
     {
       name: "Adrian Kulik",

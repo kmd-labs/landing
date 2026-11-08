@@ -1,16 +1,33 @@
 export type Lang = 'en' | 'pl';
 
-export interface ProjectEntry {
+export interface ProjectMetric {
+  label: string;
+  value: string;
+}
+
+export interface ProjectMetadata {
+  id: string;
+  url: string;
+  poster: string;
+  media: string;
+  repoUrl?: string;
+  secondaryUrl?: string;
+  isExternal?: boolean;
+  previewDurationMs?: number;
+}
+
+export interface ProjectCopy {
   id: string;
   tag: string;
   title: string;
   subtitle: string;
   description: string;
-  metrics: { label: string; value: string }[];
+  metrics: ProjectMetric[];
   tags: string[];
-  url: string;
-  isExternal?: boolean;
+  secondaryLabel?: string;
 }
+
+export interface ProjectEntry extends ProjectMetadata, ProjectCopy {}
 
 export interface DisciplineEntry {
   id: string;
@@ -115,6 +132,7 @@ export interface Dict {
   portfolioTitle: string;
   portfolioLead: string;
   launchApp: string;
+  viewRepository: string;
   projects: ProjectEntry[];
 
   // Specialities Section
@@ -129,7 +147,12 @@ export interface Dict {
   teamLead: string;
   teamLeads: string[];
   teamRefs: TeamRef[];
+  teamRefsLabel: string;
   teamFocusLabel: string;
+  teamPrevAria: string;
+  teamNextAria: string;
+  teamSelectAria: string;
+  carouselSlideAria: string;
   founders: FounderEntry[];
 
   // Contact Section

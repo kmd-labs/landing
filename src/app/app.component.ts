@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   NgZone,
@@ -80,6 +81,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly splash = inject(SplashService);
   readonly weather = inject(CurrentWeatherService);
   private readonly zone = inject(NgZone);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly splashRevealed = signal(false);
 
   // Portfolio interactive screengrab / GIF preview state
@@ -327,25 +329,56 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.resetTeamAutoTimer();
   }
 
-  onTeamTrackTransitionEnd(): void {
+  trackSlideById(_index: number, slide: TeamSlide): string {
+    return slide.slideId;
+  }
+
+  onTeamTrackTransitionEnd(event: TransitionEvent): void {
+    if (event.target !== event.currentTarget) return;
+    if (event.propertyName !== 'transform') return;
+    if (!this.teamTransitionEnabled()) return;
+
     const count = this.i18n.t().founders?.length || 3;
     const current = this.teamTrackIndex();
+
     if (current >= count + 1) {
+      const trackEl = event.currentTarget as HTMLElement | null;
+      if (trackEl) {
+        trackEl.style.transition = 'none';
+      }
       this.teamTransitionEnabled.set(false);
       this.teamTrackIndex.set(1);
+      this.cdr.detectChanges();
+      if (trackEl) {
+        void trackEl.offsetHeight;
+      }
       if (typeof window !== 'undefined') {
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
+            if (trackEl) {
+              trackEl.style.transition = '';
+            }
             this.teamTransitionEnabled.set(true);
           });
         });
       }
     } else if (current <= 0) {
+      const trackEl = event.currentTarget as HTMLElement | null;
+      if (trackEl) {
+        trackEl.style.transition = 'none';
+      }
       this.teamTransitionEnabled.set(false);
       this.teamTrackIndex.set(count);
+      this.cdr.detectChanges();
+      if (trackEl) {
+        void trackEl.offsetHeight;
+      }
       if (typeof window !== 'undefined') {
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
+            if (trackEl) {
+              trackEl.style.transition = '';
+            }
             this.teamTransitionEnabled.set(true);
           });
         });

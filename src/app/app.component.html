@@ -413,9 +413,9 @@
             class="team-carousel__track"
             [class.is-animating]="teamTransitionEnabled()"
             [style.transform]="'translateX(calc(-1 * ' + teamTrackIndex() + ' * (var(--slide-width) + var(--slide-gap)) + ' + teamDragOffsetPx() + 'px))'"
-            (transitionend)="onTeamTrackTransitionEnd()">
+            (transitionend)="onTeamTrackTransitionEnd($event)">
             <article
-              *ngFor="let slide of teamSlides(); let sIdx = index"
+              *ngFor="let slide of teamSlides(); let sIdx = index; trackBy: trackSlideById"
               class="team-card team-carousel__slide glass-panel"
               [class.is-active]="teamTrackIndex() === sIdx"
               [class.is-peeking]="teamTrackIndex() !== sIdx"
@@ -426,7 +426,7 @@
                   class="team-photo"
                   [src]="slide.person.photo"
                   [alt]="slide.person.name"
-                  loading="lazy" />
+                  decoding="async" />
               </div>
 
               <div class="team-card__content">

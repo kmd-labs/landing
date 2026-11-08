@@ -155,7 +155,7 @@
             [class.is-active]="isProjectActive(proj.id)"
             [class.is-ready]="isProjectReady(proj.id)"
             [href]="proj.url"
-            [target]="proj.isExternal ? '_blank' : '_self'"
+            target="_blank"
             rel="noopener noreferrer"
             [attr.aria-label]="t.launchApp + ': ' + proj.title"
             [attr.data-project-id]="proj.id"
@@ -222,7 +222,7 @@
 
             <a
               [href]="proj.url"
-              [target]="proj.isExternal ? '_blank' : '_self'"
+              target="_blank"
               rel="noopener noreferrer"
               class="portfolio-link-btn portfolio-link-btn--primary">
               <span>{{ t.launchApp }}</span>

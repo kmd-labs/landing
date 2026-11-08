@@ -270,6 +270,10 @@ export const PL: Dict = {
     },
   ],
   teamFocusLabel: "Zadania",
+  teamPrevAria: "Poprzedni członek zespołu",
+  teamNextAria: "Następny członek zespołu",
+  teamSelectAria: "Wybierz członka zespołu",
+  carouselSlideAria: "Karta członka zespołu",
   founders: [
     {
       name: "Adrian Kulik",

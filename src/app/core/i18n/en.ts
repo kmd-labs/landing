@@ -270,6 +270,10 @@ export const EN: Dict = {
     },
   ],
   teamFocusLabel: "Focus",
+  teamPrevAria: "Previous teammate",
+  teamNextAria: "Next teammate",
+  teamSelectAria: "Select teammate",
+  carouselSlideAria: "Teammate slide",
   founders: [
     {
       name: "Adrian Kulik",

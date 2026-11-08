@@ -136,6 +136,10 @@ export interface Dict {
   teamLeads: string[];
   teamRefs: TeamRef[];
   teamFocusLabel: string;
+  teamPrevAria: string;
+  teamNextAria: string;
+  teamSelectAria: string;
+  carouselSlideAria: string;
   founders: FounderEntry[];
 
   // Contact Section

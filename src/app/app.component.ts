@@ -20,6 +20,8 @@ import {
   Users,
   ExternalLink,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   ArrowUpRight,
   Cpu,
   Waves,
@@ -41,13 +43,20 @@ import {
   getContactMailtoUrl
 } from '@kmd/design-system';
 import { I18nService } from './core/i18n/i18n.service';
-import { Lang } from './core/i18n/i18n.types';
+import { FounderEntry, Lang } from './core/i18n/i18n.types';
 import { CurrentWeatherService } from './core/services/current-weather.service';
 import { LocaleDatePipe } from './core/pipes/locale-date.pipe';
 import {
   TelemetryData,
   VortexCanvasComponent
 } from './components/vortex-canvas/vortex-canvas.component';
+
+export interface TeamSlide {
+  slideId: string;
+  realIndex: number;
+  person: FounderEntry;
+  isClone: boolean;
+}
 
 @Component({
   selector: 'app-root',
@@ -138,6 +147,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly usersIcon = Users;
   readonly externalLinkIcon = ExternalLink;
   readonly chevronDownIcon = ChevronDown;
+  readonly chevronLeftIcon = ChevronLeft;
+  readonly chevronRightIcon = ChevronRight;
   readonly arrowUpRightIcon = ArrowUpRight;
   readonly cpuIcon = Cpu;
   readonly wavesIcon = Waves;
@@ -147,6 +158,52 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly menuIcon = Menu;
   readonly xIcon = X;
   readonly githubIcon = Github;
+
+  // Team Infinite Horizontal Carousel (Mobile / Tablet)
+  readonly teamTrackIndex = signal(1);
+  readonly teamTransitionEnabled = signal(true);
+  readonly teamPaused = signal(false);
+  readonly teamDragOffsetPx = signal(0);
+  readonly isDraggingTeam = signal(false);
+  private teamAutoTimer?: ReturnType<typeof setInterval>;
+  private teamPointerStartX = 0;
+  private teamPointerStartY = 0;
+  private teamIsHorizontalDrag = false;
+
+  readonly activeRealTeamIndex = computed(() => {
+    const founders = this.i18n.t().founders;
+    const count = founders?.length || 3;
+    const trackIdx = this.teamTrackIndex();
+    return ((trackIdx - 1) % count + count) % count;
+  });
+
+  readonly teamSlides = computed<TeamSlide[]>(() => {
+    const founders = this.i18n.t().founders;
+    if (!founders || founders.length === 0) return [];
+    const count = founders.length;
+    const last = founders[count - 1];
+    const first = founders[0];
+    return [
+      {
+        slideId: `clone-last-${last.name}`,
+        realIndex: count - 1,
+        person: last,
+        isClone: true
+      },
+      ...founders.map((p, idx) => ({
+        slideId: `real-${idx}-${p.name}`,
+        realIndex: idx,
+        person: p,
+        isClone: false
+      })),
+      {
+        slideId: `clone-first-${first.name}`,
+        realIndex: 0,
+        person: first,
+        isClone: true
+      }
+    ];
+  });
 
   // Contact Mailto URL (Prefilled with localized general inquiry)
   readonly mailtoUrl = computed(() => getContactMailtoUrl(this.i18n.lang()));
@@ -229,10 +286,145 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         ql.forEach((ref) => this.observer!.observe(ref.nativeElement));
       });
     });
+
+    this.startTeamAutoScroll();
   }
 
   ngOnDestroy(): void {
     this.observer?.disconnect();
+    this.stopTeamAutoScroll();
+  }
+
+  nextTeammate(): void {
+    const count = this.i18n.t().founders?.length || 3;
+    if (this.teamTrackIndex() >= count + 1) return;
+    this.teamTransitionEnabled.set(true);
+    this.teamTrackIndex.update((idx) => idx + 1);
+    this.resetTeamAutoTimer();
+  }
+
+  prevTeammate(): void {
+    if (this.teamTrackIndex() <= 0) return;
+    this.teamTransitionEnabled.set(true);
+    this.teamTrackIndex.update((idx) => idx - 1);
+    this.resetTeamAutoTimer();
+  }
+
+  selectTeammate(realIndex: number): void {
+    this.teamTransitionEnabled.set(true);
+    this.teamTrackIndex.set(realIndex + 1);
+    this.resetTeamAutoTimer();
+  }
+
+  onTeamTrackTransitionEnd(): void {
+    const count = this.i18n.t().founders?.length || 3;
+    const current = this.teamTrackIndex();
+    if (current >= count + 1) {
+      this.teamTransitionEnabled.set(false);
+      this.teamTrackIndex.set(1);
+      if (typeof window !== 'undefined') {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            this.teamTransitionEnabled.set(true);
+          });
+        });
+      }
+    } else if (current <= 0) {
+      this.teamTransitionEnabled.set(false);
+      this.teamTrackIndex.set(count);
+      if (typeof window !== 'undefined') {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            this.teamTransitionEnabled.set(true);
+          });
+        });
+      }
+    }
+  }
+
+  private startTeamAutoScroll(): void {
+    if (typeof window === 'undefined') return;
+    this.stopTeamAutoScroll();
+    this.zone.runOutsideAngular(() => {
+      this.teamAutoTimer = setInterval(() => {
+        if (this.teamPaused() || this.isDraggingTeam() || this.isReducedMotion()) return;
+        if (!this.bp.tablet()) return;
+        this.zone.run(() => {
+          this.nextTeammate();
+        });
+      }, 4500);
+    });
+  }
+
+  private stopTeamAutoScroll(): void {
+    if (this.teamAutoTimer) {
+      clearInterval(this.teamAutoTimer);
+      this.teamAutoTimer = undefined;
+    }
+  }
+
+  private resetTeamAutoTimer(): void {
+    this.startTeamAutoScroll();
+  }
+
+  onTeamPointerDown(event: PointerEvent): void {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    this.teamPointerStartX = event.clientX;
+    this.teamPointerStartY = event.clientY;
+    this.teamIsHorizontalDrag = false;
+    this.isDraggingTeam.set(true);
+    this.teamPaused.set(true);
+  }
+
+  onTeamPointerMove(event: PointerEvent): void {
+    if (!this.isDraggingTeam()) return;
+    const deltaX = event.clientX - this.teamPointerStartX;
+    const deltaY = event.clientY - this.teamPointerStartY;
+
+    if (!this.teamIsHorizontalDrag) {
+      if (Math.abs(deltaX) > 8 && Math.abs(deltaX) > Math.abs(deltaY)) {
+        this.teamIsHorizontalDrag = true;
+      } else if (Math.abs(deltaY) > 8) {
+        this.isDraggingTeam.set(false);
+        this.teamDragOffsetPx.set(0);
+        return;
+      }
+    }
+
+    if (this.teamIsHorizontalDrag) {
+      this.teamTransitionEnabled.set(false);
+      this.teamDragOffsetPx.set(deltaX);
+    }
+  }
+
+  onTeamPointerUp(event: PointerEvent): void {
+    if (!this.isDraggingTeam()) return;
+    const deltaX = this.teamDragOffsetPx();
+    this.isDraggingTeam.set(false);
+    this.teamDragOffsetPx.set(0);
+    this.teamTransitionEnabled.set(true);
+    this.teamPaused.set(false);
+
+    if (this.teamIsHorizontalDrag) {
+      if (deltaX < -35) {
+        this.nextTeammate();
+      } else if (deltaX > 35) {
+        this.prevTeammate();
+      }
+    }
+    this.teamIsHorizontalDrag = false;
+  }
+
+  onTeamPointerCancel(): void {
+    this.isDraggingTeam.set(false);
+    this.teamDragOffsetPx.set(0);
+    this.teamTransitionEnabled.set(true);
+    this.teamPaused.set(false);
+    this.teamIsHorizontalDrag = false;
+  }
+
+  setTeamPaused(paused: boolean): void {
+    this.teamPaused.set(paused);
   }
 
   onProjectPointerEnter(id: string, event: PointerEvent): void {

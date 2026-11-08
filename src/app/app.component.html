@@ -134,7 +134,10 @@
         <article
           *ngFor="let proj of t.projects"
           class="portfolio-card glass-panel"
-          [class.portfolio-card--featured]="proj.id === 'el-nino' || proj.id === 'watershed'">
+          [class.portfolio-card--featured]="proj.id === 'el-nino' || proj.id === 'watershed'"
+          [class.is-active]="isProjectActive(proj.id)"
+          (pointerenter)="onProjectPointerEnter(proj.id, $event)"
+          (pointerleave)="onProjectPointerLeave(proj.id, $event)">
           <div class="portfolio-card__top">
             <span class="portfolio-tag font-mono">{{ proj.tag }}</span>
             <div class="portfolio-badges">
@@ -146,7 +149,7 @@
             </div>
           </div>
 
-          <!-- Interactive Screengrab Media / GIF on Hover & In-View -->
+          <!-- Monochrome Observatory Plate -> Full-Color Live GIF on Hover & In-View -->
           <a
             class="portfolio-card__media portfolio-card__media--swap"
             [class.is-active]="isProjectActive(proj.id)"
@@ -156,8 +159,6 @@
             rel="noopener noreferrer"
             [attr.aria-label]="t.launchApp + ': ' + proj.title"
             [attr.data-project-id]="proj.id"
-            (pointerenter)="onProjectPointerEnter(proj.id, $event)"
-            (pointerleave)="onProjectPointerLeave(proj.id, $event)"
             (focus)="activateProject(proj.id)"
             (blur)="deactivateProject(proj.id)"
             #projectMediaEl>
@@ -179,6 +180,7 @@
               height="496"
               decoding="async"
               (load)="onProjectGifLoaded(proj.id)" />
+            <span class="portfolio-card__plate-wash" aria-hidden="true"></span>
           </a>
 
           <div class="portfolio-card__body">
@@ -304,7 +306,8 @@
         </div>
       </div>
 
-      <div class="team-grid">
+      <!-- Desktop static 3-column grid -->
+      <div class="team-grid" *ngIf="!bp.tablet()">
         <article *ngFor="let person of t.founders" class="team-card glass-panel">
           <div class="team-card__media">
             <img
@@ -351,6 +354,120 @@
             </div>
           </div>
         </article>
+      </div>
+
+      <!-- Mobile / Tablet Infinite Carousel with 0% edge opacity mask & click affordances -->
+      <div
+        class="team-carousel"
+        *ngIf="bp.tablet()"
+        (pointerenter)="setTeamPaused(true)"
+        (pointerleave)="setTeamPaused(false)"
+        (focusin)="setTeamPaused(true)"
+        (focusout)="setTeamPaused(false)">
+        <!-- Clickable Teammate Switcher HUD with animated progress fill on active teammate -->
+        <div class="team-carousel__controls" role="toolbar" [attr.aria-label]="t.teamTitle">
+          <button
+            type="button"
+            class="team-carousel__nav-btn glass-panel"
+            [attr.aria-label]="t.teamPrevAria"
+            (click)="prevTeammate()">
+            <lucide-icon [img]="chevronLeftIcon" [size]="16" aria-hidden="true"></lucide-icon>
+          </button>
+
+          <div class="team-carousel__pills" role="tablist">
+            <button
+              *ngFor="let person of t.founders; let i = index"
+              type="button"
+              role="tab"
+              class="team-carousel__pill glass-panel"
+              [class.is-active]="activeRealTeamIndex() === i"
+              [attr.aria-selected]="activeRealTeamIndex() === i"
+              [attr.aria-label]="t.teamSelectAria + ': ' + person.name"
+              (click)="selectTeammate(i)">
+              <img class="team-carousel__pill-avatar" [src]="person.photo" [alt]="person.name" />
+              <span class="team-carousel__pill-name font-mono">{{ person.name.split(' ')[0] }}</span>
+              <span
+                class="team-carousel__pill-progress"
+                *ngIf="activeRealTeamIndex() === i"
+                [class.is-paused]="teamPaused()"></span>
+            </button>
+          </div>
+
+          <button
+            type="button"
+            class="team-carousel__nav-btn glass-panel"
+            [attr.aria-label]="t.teamNextAria"
+            (click)="nextTeammate()">
+            <lucide-icon [img]="chevronRightIcon" [size]="16" aria-hidden="true"></lucide-icon>
+          </button>
+        </div>
+
+        <!-- Fade to 0% Opacity Mask Viewport -->
+        <div
+          class="team-carousel__viewport"
+          (pointerdown)="onTeamPointerDown($event)"
+          (pointermove)="onTeamPointerMove($event)"
+          (pointerup)="onTeamPointerUp($event)"
+          (pointercancel)="onTeamPointerCancel()">
+          <div
+            class="team-carousel__track"
+            [class.is-animating]="teamTransitionEnabled()"
+            [style.transform]="'translateX(calc(-1 * ' + teamTrackIndex() + ' * (var(--slide-width) + var(--slide-gap)) + ' + teamDragOffsetPx() + 'px))'"
+            (transitionend)="onTeamTrackTransitionEnd()">
+            <article
+              *ngFor="let slide of teamSlides(); let sIdx = index"
+              class="team-card team-carousel__slide glass-panel"
+              [class.is-active]="teamTrackIndex() === sIdx"
+              [class.is-peeking]="teamTrackIndex() !== sIdx"
+              [attr.aria-hidden]="teamTrackIndex() !== sIdx"
+              (click)="teamTrackIndex() !== sIdx && (sIdx > teamTrackIndex() ? nextTeammate() : prevTeammate())">
+              <div class="team-card__media">
+                <img
+                  class="team-photo"
+                  [src]="slide.person.photo"
+                  [alt]="slide.person.name"
+                  loading="lazy" />
+              </div>
+
+              <div class="team-card__content">
+                <h3 class="team-name">{{ slide.person.name }}</h3>
+                <span *ngIf="slide.person.role" class="team-role font-mono text-accent">{{ slide.person.role }}</span>
+                <p class="team-bio">{{ slide.person.bio }}</p>
+
+                <div class="team-focus">
+                  <span class="team-focus__label">{{ t.teamFocusLabel }}</span>
+                  <div class="team-tags">
+                    <span *ngFor="let tg of slide.person.tags" class="tag-chip">
+                      {{ tg }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="team-links">
+                  <a
+                    [href]="slide.person.linkedin"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="icon-link"
+                    [attr.aria-label]="slide.person.name + ' on LinkedIn'">
+                    <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
+                    <span>LinkedIn</span>
+                  </a>
+                  <a
+                    *ngIf="slide.person.github"
+                    [href]="slide.person.github"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="icon-link"
+                    [attr.aria-label]="slide.person.name + ' on GitHub'">
+                    <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
+                    <span>GitHub</span>
+                  </a>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
       </div>
     </div>
   </section>

@@ -13,6 +13,72 @@
   <meta property="og:url" content="https://kmd-labs.github.io/">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="alternate icon" href="favicon.ico">
+  <script>
+    /* Standards-based browser compatibility: routes deprecated StorageType / webkitPersistentStorage to navigator.storage and intercepts deprecated FencedFrame constructors */
+    (function() {
+      if (typeof navigator !== 'undefined') {
+        var quotaAdapter = {
+          queryUsageAndQuota: function(cb, errCb) {
+            if (navigator.storage && navigator.storage.estimate) {
+              navigator.storage.estimate().then(function(est) {
+                if (cb) cb(est.usage || 0, est.quota || 0);
+              }, errCb);
+            } else if (cb) {
+              cb(0, 0);
+            }
+          },
+          requestQuota: function(bytes, cb) {
+            if (cb) cb(bytes);
+          }
+        };
+        try {
+          Object.defineProperty(Navigator.prototype, 'webkitPersistentStorage', {
+            get: function() { return quotaAdapter; },
+            enumerable: true,
+            configurable: true
+          });
+        } catch (e) {}
+        try {
+          Object.defineProperty(Navigator.prototype, 'webkitTemporaryStorage', {
+            get: function() { return quotaAdapter; },
+            enumerable: true,
+            configurable: true
+          });
+        } catch (e) {}
+      }
+
+      if (typeof Document !== 'undefined') {
+        if (Document.prototype.createElement) {
+          var origCreate = Document.prototype.createElement;
+          Document.prototype.createElement = function(tag, opt) {
+            if (typeof tag === 'string' && tag.toLowerCase() === 'fencedframe') {
+              var el = origCreate.call(this, 'iframe', opt);
+              try {
+                Object.defineProperty(el, 'tagName', { value: 'FENCEDFRAME', configurable: true });
+                Object.defineProperty(el, 'nodeName', { value: 'FENCEDFRAME', configurable: true });
+              } catch (e) {}
+              return el;
+            }
+            return origCreate.call(this, tag, opt);
+          };
+        }
+        if (Document.prototype.createElementNS) {
+          var origCreateNS = Document.prototype.createElementNS;
+          Document.prototype.createElementNS = function(ns, tag, opt) {
+            if (typeof tag === 'string' && tag.toLowerCase() === 'fencedframe') {
+              var el = origCreateNS.call(this, ns, 'iframe', opt);
+              try {
+                Object.defineProperty(el, 'tagName', { value: 'FENCEDFRAME', configurable: true });
+                Object.defineProperty(el, 'nodeName', { value: 'FENCEDFRAME', configurable: true });
+              } catch (e) {}
+              return el;
+            }
+            return origCreateNS.call(this, ns, tag, opt);
+          };
+        }
+      }
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">

@@ -1,18 +1,20 @@
-import { Injectable, computed, effect, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { Dict, Lang } from './i18n.types';
 import { EN } from './en';
 import { PL } from './pl';
+import { StorageService } from '../services/storage.service';
 
 const DICTS: Record<Lang, Dict> = { en: EN, pl: PL };
 const STORAGE_KEY = 'landing.lang';
 
 /**
  * Manages UI language and localized texts.
- * Resolves initial language from localStorage ('landing.lang') or Navigator API,
- * falling back to 'en', and persists selection to localStorage.
+ * Resolves initial language from StorageService ('landing.lang') or Navigator API,
+ * falling back to 'en', and persists selection via standardized storage.
  */
 @Injectable({ providedIn: 'root' })
 export class I18nService {
+  private readonly storage = inject(StorageService);
   readonly dicts = DICTS;
   readonly langs: Lang[] = ['en', 'pl'];
   readonly lang = signal<Lang>(this.resolveInitialLang());
@@ -35,13 +37,9 @@ export class I18nService {
   }
 
   private resolveInitialLang(): Lang {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (this.isSupportedLang(stored)) {
-        return stored;
-      }
-    } catch {
-      // localStorage unavailable
+    const stored = this.storage.getItem(STORAGE_KEY);
+    if (this.isSupportedLang(stored)) {
+      return stored;
     }
 
     if (typeof navigator !== 'undefined') {
@@ -66,10 +64,6 @@ export class I18nService {
   }
 
   private persistLang(lang: Lang) {
-    try {
-      localStorage.setItem(STORAGE_KEY, lang);
-    } catch {
-      // localStorage unavailable
-    }
+    this.storage.setItem(STORAGE_KEY, lang);
   }
 }

@@ -368,7 +368,7 @@
         <div class="team-carousel__controls" role="toolbar" [attr.aria-label]="t.teamTitle">
           <button
             type="button"
-            class="team-carousel__nav-btn glass-panel"
+            class="team-carousel__nav-btn"
             [attr.aria-label]="t.teamPrevAria"
             (click)="prevTeammate()">
             <lucide-icon [img]="chevronLeftIcon" [size]="16" aria-hidden="true"></lucide-icon>
@@ -379,7 +379,7 @@
               *ngFor="let person of t.founders; let i = index"
               type="button"
               role="tab"
-              class="team-carousel__pill glass-panel"
+              class="team-carousel__pill"
               [class.is-active]="activeRealTeamIndex() === i"
               [attr.aria-selected]="activeRealTeamIndex() === i"
               [attr.aria-label]="t.teamSelectAria + ': ' + person.name"
@@ -395,7 +395,7 @@
 
           <button
             type="button"
-            class="team-carousel__nav-btn glass-panel"
+            class="team-carousel__nav-btn"
             [attr.aria-label]="t.teamNextAria"
             (click)="nextTeammate()">
             <lucide-icon [img]="chevronRightIcon" [size]="16" aria-hidden="true"></lucide-icon>

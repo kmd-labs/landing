@@ -1145,8 +1145,9 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    margin-bottom: 18px;
-    padding: 0 4px;
+    margin-bottom: 16px;
+    padding: 6px 4px;
+    overflow: visible;
   }
 
   &__nav-btn {
@@ -1159,9 +1160,15 @@
     border: 1px solid color("line");
     background: color("panel-bg");
     color: color("text-bright");
+    backdrop-filter: blur(blur-token("sm"));
+    -webkit-backdrop-filter: blur(blur-token("sm"));
+    box-shadow: 0 2px 8px color("shadow-panel");
     cursor: pointer;
     user-select: none;
-    transition: background transition("fast"), border-color transition("fast");
+    transition:
+      background transition("fast"),
+      border-color transition("fast"),
+      box-shadow transition("fast");
     flex-shrink: 0;
 
     lucide-icon {
@@ -1171,10 +1178,11 @@
     &:hover {
       background: color("btn-hover");
       border-color: color("accent");
+      box-shadow: 0 4px 12px color("shadow-panel");
     }
 
     &:active {
-      transform: scale(0.94);
+      transform: scale(0.95);
     }
   }
 
@@ -1183,13 +1191,9 @@
     align-items: center;
     gap: 6px;
     max-width: 100%;
-    overflow-x: auto;
-    padding: 2px;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    padding: 6px 2px;
+    margin: -6px 0;
+    overflow: visible;
   }
 
   &__pill {
@@ -1206,13 +1210,17 @@
     font: inherit;
     font-size: font-size("xs");
     font-weight: font-weight("medium");
+    backdrop-filter: blur(blur-token("sm"));
+    -webkit-backdrop-filter: blur(blur-token("sm"));
+    box-shadow: 0 2px 8px color("shadow-panel");
     cursor: pointer;
     user-select: none;
     overflow: hidden;
     transition:
       background transition("fast"),
       border-color transition("fast"),
-      color transition("fast");
+      color transition("fast"),
+      box-shadow transition("fast");
 
     &-avatar {
       width: 22px;
@@ -1233,13 +1241,14 @@
       background: color("btn-hover");
       color: color("text-bright");
       border-color: color("line-strong");
+      box-shadow: 0 4px 12px color("shadow-panel");
     }
 
     &.is-active {
       background: color("panel-bg-heavy");
       border-color: color("accent");
       color: color("text-bright");
-      box-shadow: 0 2px 10px color("accent-glow-soft");
+      box-shadow: 0 3px 12px color("accent-glow");
 
       .team-carousel__pill-avatar {
         filter: grayscale(0%);
@@ -1265,7 +1274,9 @@
     position: relative;
     width: 100%;
     overflow: hidden;
-    padding: 6px 0 20px;
+    padding: 18px 0 32px;
+    margin-top: -8px;
+    margin-bottom: -14px;
     cursor: grab;
     touch-action: pan-y;
     user-select: none;

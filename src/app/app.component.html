@@ -291,22 +291,13 @@
 
       <!-- Dedicated About Us Studio Narrative Card -->
       <article class="about-card glass-panel">
-        <div class="about-card__top">
-          <div class="about-card__badge-cluster">
-            <span class="about-card__kicker font-mono">CASSINI HACKATHON EU WINNERS</span>
-            <span class="about-card__dot" aria-hidden="true">·</span>
-            <span class="about-card__sub-kicker font-mono">EUSPA · VIADRUS AI</span>
-          </div>
-          <span class="about-card__tag font-mono">03 FOUNDERS</span>
-        </div>
-
         <div class="about-card__content">
           <p class="about-card__lead">{{ t.teamLeads[0] }}</p>
           <p class="about-card__paragraph">{{ t.teamLeads[1] }}</p>
         </div>
 
         <div class="about-card__footer" *ngIf="t.teamRefs.length">
-          <span class="about-card__footer-label font-mono">PRESS & RECOGNITION</span>
+          <span class="about-card__footer-label font-mono">{{ t.teamRefsLabel }}</span>
           <div class="about-card__refs">
             <a
               *ngFor="let ref of t.teamRefs"
@@ -422,10 +413,12 @@
         <!-- Fade to 0% Opacity Mask Viewport -->
         <div
           class="team-carousel__viewport"
+          [class.is-dragging]="isDraggingTeam()"
           (pointerdown)="onTeamPointerDown($event)"
           (pointermove)="onTeamPointerMove($event)"
           (pointerup)="onTeamPointerUp($event)"
-          (pointercancel)="onTeamPointerCancel()">
+          (pointercancel)="onTeamPointerCancel($event)"
+          (dragstart)="$event.preventDefault()">
           <div
             class="team-carousel__track"
             [class.is-animating]="teamTransitionEnabled()"
@@ -437,13 +430,15 @@
               [class.is-active]="teamTrackIndex() === sIdx"
               [class.is-peeking]="teamTrackIndex() !== sIdx"
               [attr.aria-hidden]="teamTrackIndex() !== sIdx"
-              (click)="teamTrackIndex() !== sIdx && (sIdx > teamTrackIndex() ? nextTeammate() : prevTeammate())">
+              (click)="onSlideClick(sIdx)">
               <div class="team-card__media">
                 <img
                   class="team-photo"
                   [src]="slide.person.photo"
                   [alt]="slide.person.name"
-                  decoding="async" />
+                  decoding="async"
+                  draggable="false"
+                  (dragstart)="$event.preventDefault()" />
               </div>
 
               <div class="team-card__content">
@@ -466,7 +461,8 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     class="icon-link"
-                    [attr.aria-label]="slide.person.name + ' on LinkedIn'">
+                    [attr.aria-label]="slide.person.name + ' on LinkedIn'"
+                    (click)="teamHasDragged && $event.preventDefault()">
                     <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
                     <span>LinkedIn</span>
                   </a>
@@ -476,7 +472,8 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     class="icon-link"
-                    [attr.aria-label]="slide.person.name + ' on GitHub'">
+                    [attr.aria-label]="slide.person.name + ' on GitHub'"
+                    (click)="teamHasDragged && $event.preventDefault()">
                     <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
                     <span>GitHub</span>
                   </a>

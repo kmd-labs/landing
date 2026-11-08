@@ -147,6 +147,7 @@ export interface Dict {
   teamLead: string;
   teamLeads: string[];
   teamRefs: TeamRef[];
+  teamRefsLabel: string;
   teamFocusLabel: string;
   teamPrevAria: string;
   teamNextAria: string;

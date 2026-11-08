@@ -170,6 +170,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   private teamPointerStartX = 0;
   private teamPointerStartY = 0;
   private teamIsHorizontalDrag = false;
+  private teamActivePointerId?: number;
+  teamHasDragged = false;
 
   readonly activeRealTeamIndex = computed(() => {
     const founders = this.i18n.t().founders;
@@ -418,22 +420,44 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   onTeamPointerDown(event: PointerEvent): void {
     if (event.pointerType === 'mouse' && event.button !== 0) return;
+    const target = event.currentTarget as HTMLElement;
+    try {
+      target.setPointerCapture?.(event.pointerId);
+    } catch {
+      // Ignore if pointer capture fails
+    }
+    this.teamActivePointerId = event.pointerId;
     this.teamPointerStartX = event.clientX;
     this.teamPointerStartY = event.clientY;
+    this.teamDragOffsetPx.set(0);
     this.teamIsHorizontalDrag = false;
+    this.teamHasDragged = false;
     this.isDraggingTeam.set(true);
     this.teamPaused.set(true);
   }
 
   onTeamPointerMove(event: PointerEvent): void {
     if (!this.isDraggingTeam()) return;
+    if (this.teamActivePointerId !== undefined && event.pointerId !== this.teamActivePointerId) return;
+
     const deltaX = event.clientX - this.teamPointerStartX;
     const deltaY = event.clientY - this.teamPointerStartY;
 
     if (!this.teamIsHorizontalDrag) {
-      if (Math.abs(deltaX) > 8 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (Math.abs(deltaX) > 6 && Math.abs(deltaX) >= Math.abs(deltaY) * 0.7) {
         this.teamIsHorizontalDrag = true;
-      } else if (Math.abs(deltaY) > 8) {
+        this.teamHasDragged = true;
+      } else if (Math.abs(deltaY) > 12 && Math.abs(deltaY) > Math.abs(deltaX) * 1.2) {
+        // Vertical scroll gesture - release capture and let page scroll natively
+        const target = event.currentTarget as HTMLElement;
+        try {
+          if (target.hasPointerCapture?.(event.pointerId)) {
+            target.releasePointerCapture(event.pointerId);
+          }
+        } catch {
+          // Ignore
+        }
+        this.teamActivePointerId = undefined;
         this.isDraggingTeam.set(false);
         this.teamDragOffsetPx.set(0);
         return;
@@ -448,6 +472,18 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   onTeamPointerUp(event: PointerEvent): void {
     if (!this.isDraggingTeam()) return;
+    if (this.teamActivePointerId !== undefined && event.pointerId !== this.teamActivePointerId) return;
+
+    const target = event.currentTarget as HTMLElement;
+    try {
+      if (target.hasPointerCapture?.(event.pointerId)) {
+        target.releasePointerCapture(event.pointerId);
+      }
+    } catch {
+      // Ignore
+    }
+    this.teamActivePointerId = undefined;
+
     const deltaX = this.teamDragOffsetPx();
     this.isDraggingTeam.set(false);
     this.teamDragOffsetPx.set(0);
@@ -462,14 +498,42 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       }
     }
     this.teamIsHorizontalDrag = false;
+    setTimeout(() => {
+      this.teamHasDragged = false;
+    }, 100);
   }
 
-  onTeamPointerCancel(): void {
+  onTeamPointerCancel(event?: PointerEvent): void {
+    if (event) {
+      const target = event.currentTarget as HTMLElement;
+      try {
+        if (target.hasPointerCapture?.(event.pointerId)) {
+          target.releasePointerCapture(event.pointerId);
+        }
+      } catch {
+        // Ignore
+      }
+    }
+    this.teamActivePointerId = undefined;
     this.isDraggingTeam.set(false);
     this.teamDragOffsetPx.set(0);
     this.teamTransitionEnabled.set(true);
     this.teamPaused.set(false);
     this.teamIsHorizontalDrag = false;
+    setTimeout(() => {
+      this.teamHasDragged = false;
+    }, 100);
+  }
+
+  onSlideClick(sIdx: number): void {
+    if (this.teamHasDragged) return;
+    if (this.teamTrackIndex() !== sIdx) {
+      if (sIdx > this.teamTrackIndex()) {
+        this.nextTeammate();
+      } else {
+        this.prevTeammate();
+      }
+    }
   }
 
   setTeamPaused(paused: boolean): void {

@@ -252,6 +252,7 @@ export const PL: Dict = {
       aria: "Profil firmowy kmd-labs na LinkedIn",
     },
   ],
+  teamRefsLabel: "PRASA I WYRÓŻNIENIA",
   teamFocusLabel: "Zadania",
   teamPrevAria: "Poprzedni członek zespołu",
   teamNextAria: "Następny członek zespołu",

@@ -38,6 +38,22 @@ export const PROJECTS_METADATA: readonly ProjectMetadata[] = [
     media: 'assets/projects/viadrusai.gif',
     previewDurationMs: 4500,
     isExternal: true
+  },
+  {
+    id: 'golfstrom',
+    url: 'https://kmd-labs.github.io/golfstrom/',
+    repoUrl: 'https://github.com/kmd-labs/golfstrom',
+    poster: 'assets/projects/golfstrom.poster.jpg',
+    media: 'assets/projects/golfstrom.gif',
+    previewDurationMs: 3600
+  },
+  {
+    id: 'polis-io',
+    url: 'https://kmd-labs.github.io/polis-io/',
+    repoUrl: 'https://github.com/kmd-labs/polis-io',
+    poster: 'assets/projects/polis-io.poster.jpg',
+    media: 'assets/projects/polis-io.gif',
+    previewDurationMs: 4000
   }
 ];
 

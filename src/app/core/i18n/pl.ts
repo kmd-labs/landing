@@ -77,85 +77,130 @@ export const PL: Dict = {
   portfolioKicker: "ARCHIWUM OBSERWATORIUM",
   portfolioTitle: "Kluczowe Aplikacje Interaktywne",
   portfolioLead:
-    "Każdy projekt projektujemy z myślą o zerowej barierze wejścia, dedykowanych potokach WebGL/Canvas i rzeczywistej telemetrii planetarnej.",
+    "Naukowe geowizualizacje, potoki obserwacji Ziemi i symulacje przestrzenne oparte na referencyjnych danych satelitarnych, oceanograficznych i wysokościowych.",
   launchApp: "Uruchom Wizualizację",
   viewRepository: "GitHub",
   projects: buildProjects([
     {
       id: "el-nino",
-      tag: "01 / KLIMATOLOGIA PLANETARNA",
-      title: "El Niño — Oscylacja Południowa",
+      tag: "01 / DYNAMIKA OCEAN–ATMOSFERA",
+      title: "El Niño — Oscylacja Południowa (ENSO)",
       subtitle:
-        "Globalny globus 3D WebGL: anomalia termiczna, cyrkulacja Walkera i kronika skutków klimatycznych",
+        "Zmienność termokliny Pacyfiku 3D, cyrkulacja Walkera i telekoneksje wskaźnika Niño 3.4",
       description:
-        "Interaktywny cyfrowy bliźniak sprzężonego układu ocean-atmosfera na Pacyfiku. Integruje wieloletnie klatki temperatury powierzchni morza (SST), anomalie NOAA/Copernicus w czasie rzeczywistym oraz dynamiczne wektory wiatru i fal.",
+        "Interaktywny model geofizyczny sprzężonego układu ocean–atmosfera w równikowym Pacyfiku. Wizualizuje dodatnie sprzężenie zwrotne Bjerknesa, osłabienie pasatów, zanik upwellingu oraz wielodekadowe anomalie temperatury powierzchni morza (SST) kształtujące globalne ekstrema hydroklimatyczne.",
       metrics: [
-        { label: "ROZDZIELCZOŚĆ", value: "0.25° Globalna" },
-        { label: "SILNIK", value: "WebGL / Three.js" },
-        { label: "PŁYNNOŚĆ", value: "60 FPS" },
+        { label: "KATEGORIA", value: "Edukacyjny" },
+        { label: "TEMATYKA", value: "Klimatologia i Meteorologia" },
+        { label: "ŹRÓDŁA DANYCH", value: "NOAA OISST · Copernicus" },
       ],
-      tags: ["WebGL 3D", "Three.js", "Telemetria Klimatu", "Linie Prądu"],
+      tags: [
+        "Dynamika ENSO",
+        "Cyrkulacja Walkera",
+        "Anomalie SST",
+        "Globus 3D WebGL",
+      ],
     },
     {
       id: "watershed",
-      tag: "02 / OCEANOGRAFIA I EKOLOGIA",
-      title: "Ładunki Rzeczne Bałtyku (Watershed)",
+      tag: "02 / BIOGEOCHEMIA MORZA I HYDROLOGIA",
+      title: "Ładunki Biogenne i Hipoksja Bałtyku (Watershed)",
       subtitle:
-        "Spływ azotu i fosforu ze zlewni rzecznych oraz telemetria hipoksji i beztlenowych stref dennych",
+        "Spływ azotu i fosforu ze zlewni, stratyfikacja halokliny oraz przydenne strefy beztlenowe",
       description:
-        "Kompleksowa analiza geoprzestrzenna ponad 85 zlewni Morza Bałtyckiego w 14 krajach. Wizualizuje 50 lat spływu zanieczyszczeń rolniczych i ubytku tlenu w głębiach, wentylowanych przez wlewy wód z Morza Północnego.",
+        "Czasoprzestrzenna analiza bilansu ładunków biogennych z ponad 85 zlewni rzecznych zlewiska Bałtyku w 14 państwach. Śledzi pięć dekad antropogenicznej eutrofizacji i przydennej hipoksji przerywanej barotropowymi wlewami wód słonych z Morza Północnego (MBI).",
       metrics: [
-        { label: "ZLEWNIE", value: "85+ Rzek" },
-        { label: "BAZA DANYCH", value: "HELCOM PLC-7" },
-        { label: "PUSTYNIE TLENOWE", value: "1960–2026" },
+        { label: "KATEGORIA", value: "Edukacyjny" },
+        { label: "TEMATYKA", value: "Środowisko i Ekologia" },
+        { label: "ŹRÓDŁA DANYCH", value: "HELCOM PLC-7 · SMHI" },
       ],
       tags: [
-        "Geoinformatyka GIS",
-        "Kartografia",
-        "Biogeochemia",
+        "Eutrofizacja",
+        "Hipoksja Przydenna",
+        "Hydrologia GIS",
         "Dane HELCOM",
       ],
     },
     {
       id: "baltic",
-      tag: "03 / PALEOOCEANOGRAFIA",
+      tag: "03 / GEOLOGIA CZWARTORZĘDU I PALEOKLIMAT",
       title: "Rekonstrukcja Postglacjalna Bałtyku",
       subtitle:
-        "Interaktywna ewolucja rzeźby terenu i poziomu morza (20 000 lat BP → Dziś)",
+        "Deglacjacja lądolodu fennoskandzkiego, izostazja i ewolucja linii brzegowej (20 tys. BP → Dziś)",
       description:
-        "Numeryczna symulacja deglacjacji i odprężenia glaciizostatycznego basenu Bałtyku. Oblicza w czasie rzeczywistym maski wodne, progi odpływowe i przekroje batymetryczne w wątkach Web Workerów w przeglądarce.",
+        "Paleogeograficzna rekonstrukcja numerycznego modelu terenu (DEM) symulująca lepkosprężyste wypiętrzanie izostatyczne litosfery (GIA) i eustatyczny wzrost poziomu morza. Odtwarza przejścia od Bałtyckiego Jeziora Lodowego i Morza Yoldiowego przez Jezioro Ancylusowe po Morze Litorynowe.",
       metrics: [
-        { label: "PRZEDZIAŁ CZASU", value: "20 000 BP → 0" },
-        { label: "OBLICZENIA", value: "Web Worker DEM" },
-        { label: "ROZDZIELCZOŚĆ", value: "Krok 1000 lat" },
+        { label: "KATEGORIA", value: "Edukacyjny" },
+        { label: "TEMATYKA", value: "Geologia i Paleogeografia" },
+        { label: "ŹRÓDŁA DANYCH", value: "GEBCO · ICE-6G DEM" },
       ],
       tags: [
-        "Paleogeografia",
-        "Izostazja",
-        "Web Workers",
-        "Batymetria",
+        "Izostazja Glacjalna",
+        "Paleobatymetria",
+        "Poziom Morza Holocenu",
+        "Symulacja DEM",
       ],
     },
     {
       id: "viadrus-ai",
-      tag: "04 / INNOWACJE SATELITARNE",
-      title: "Viadrus AI (Zwycięzca CASSINI)",
+      tag: "04 / SATELITARNA OBSERWACJA ZIEMI",
+      title: "Viadrus AI (Zwycięzca CASSINI UE)",
       subtitle:
-        "1. Miejsce w Finale Europejskim — 11. Hackathon CASSINI organizowany przez EUSPA i Komisję Europejską",
+        "1. Miejsce w Finale Europejskim — 11. Hackathon CASSINI (EUSPA) · Detekcja wycieków SAR",
       description:
-        "Projekt założycielski KMD: wczesne wykrywanie wycieków w miejskich sieciach wodociągowych poprzez korelację danych radarowych Copernicus Sentinel-1 (SAR) i wielospektralnych Sentinel-2 z telemetrią hydrauliczną.",
+        "Nagrodzony w Europie system teledetekcyjny łączący radarowe anomalie wilgotności dielektrycznej gruntu w paśmie C (Sentinel-1 SAR) oraz wielospektralne wskaźniki wegetacji i wody (Sentinel-2 NDVI/NDWI) z telemetrią hydrauliczną do wczesnej lokalizacji podziemnych wycieków wodociągowych.",
       metrics: [
-        { label: "NAGRODA", value: "1. Miejsce w Europie" },
-        { label: "ORGANIZATOR", value: "EUSPA / KE" },
-        { label: "SATELITY", value: "Sentinel-1 i 2" },
+        { label: "KATEGORIA", value: "Konkurs (1. Miejsce UE)" },
+        { label: "TEMATYKA", value: "Inżynieria i Teledetekcja" },
+        { label: "ŹRÓDŁA DANYCH", value: "Sentinel-1 SAR · Sentinel-2" },
       ],
       tags: [
         "Copernicus SAR",
-        "Uczenie Maszynowe",
+        "Wilgotność Gruntu",
         "Nagroda EUSPA",
-        "Infrastruktura",
+        "Telemetria Hydrauliczna",
       ],
       secondaryLabel: "Nagroda CASSINI",
+    },
+    {
+      id: "golfstrom",
+      tag: "05 / OCEANOGRAFIA FIZYCZNA I TERMODYNAMIKA",
+      title: "Golfstrom — Północnoatlantycki Silnik Cieplny",
+      subtitle:
+        "Zonalne anomalie SST, baroklinowy front Prądu Zatokowego i transatlantycki kontrast klimatyczny",
+      description:
+        "Obserwatorium oceaniczno-atmosferyczne 3D obrazujące południkowy transport ~1 petawata energii cieplnej przez Golfsztrom i Prąd Północnoatlantycki. Zestawia klimat par miast na tych samych szerokościach geograficznych Ameryki Północnej i Europy z przekrojami batymetrycznymi do 5500 m.",
+      metrics: [
+        { label: "KATEGORIA", value: "Edukacyjny" },
+        { label: "TEMATYKA", value: "Oceanografia i Klimat" },
+        { label: "ŹRÓDŁA DANYCH", value: "NOAA OISST · ECMWF ERA5" },
+      ],
+      tags: [
+        "Golfsztrom i AMOC",
+        "Anomalia Zonalna",
+        "Przekrój Batymetryczny",
+        "Reanaliza ERA5",
+      ],
+    },
+    {
+      id: "polis-io",
+      tag: "06 / HISTORIA OBLICZENIOWA I GEOSYMULACJA",
+      title: "Polis — Geosymulacja Hellady Archaicznej (600 p.n.e.)",
+      subtitle:
+        "Kolonizacja komórkowa zależna od rzeźby terenu, pojemność troficzna i morskie sieci handlowe",
+      description:
+        "Agentowa geosymulacja geopolityczna i demograficzna na rastrze wysokościowo-batymetrycznym 336 000 komórek (~0,63 km/piksel) basenu Morza Egejskiego. Modeluje 18 historycznych greckich polis rywalizujących poprzez dyfuzję osadniczą zależną od spadków terenu, alokację budżetu i szlaki morskie.",
+      metrics: [
+        { label: "KATEGORIA", value: "Symulacja Strategiczna" },
+        { label: "TEMATYKA", value: "Historia Obliczeniowa i GIS" },
+        { label: "ŹRÓDŁA DANYCH", value: "AWS Terrain · Natural Earth" },
+      ],
+      tags: [
+        "Automaty Komórkowe",
+        "Raster Terenu DEM",
+        "Kliodynamika",
+        "Grecja Archaiczna",
+      ],
     },
   ]),
 

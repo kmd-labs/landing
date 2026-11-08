@@ -679,6 +679,12 @@
     }
   }
 
+  &__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
   &__title {
     margin: 0 0 6px;
     font-size: font-size("xl");

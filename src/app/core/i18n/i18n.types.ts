@@ -1,21 +1,32 @@
 export type Lang = 'en' | 'pl';
 
-export interface ProjectEntry {
+export interface ProjectMetric {
+  label: string;
+  value: string;
+}
+
+export interface ProjectMetadata {
+  id: string;
+  url: string;
+  poster: string;
+  media: string;
+  repoUrl?: string;
+  secondaryUrl?: string;
+  isExternal?: boolean;
+}
+
+export interface ProjectCopy {
   id: string;
   tag: string;
   title: string;
   subtitle: string;
   description: string;
-  metrics: { label: string; value: string }[];
+  metrics: ProjectMetric[];
   tags: string[];
-  url: string;
-  isExternal?: boolean;
-  poster: string;
-  media: string;
-  repoUrl?: string;
-  secondaryUrl?: string;
   secondaryLabel?: string;
 }
+
+export interface ProjectEntry extends ProjectMetadata, ProjectCopy {}
 
 export interface DisciplineEntry {
   id: string;

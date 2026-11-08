@@ -1,4 +1,5 @@
 import { Dict } from "./i18n.types";
+import { buildProjects } from "../config/projects.data";
 
 export const EN: Dict = {
   htmlLang: "en",
@@ -80,7 +81,7 @@ export const EN: Dict = {
     "Every project is engineered with zero-friction interaction, custom WebGL/Canvas rendering pipelines, and real planetary telemetry.",
   launchApp: "Launch Visualization",
   viewRepository: "GitHub",
-  projects: [
+  projects: buildProjects([
     {
       id: "el-nino",
       tag: "01 / PLANETARY CLIMATOLOGY",
@@ -100,10 +101,6 @@ export const EN: Dict = {
         "Climate Telemetry",
         "Particle Streamlines",
       ],
-      poster: "assets/projects/el-nino.poster.jpg",
-      media: "assets/projects/el-nino.gif",
-      url: "https://kmd-labs.github.io/el-nino/",
-      repoUrl: "https://github.com/kmd-labs/el-nino",
     },
     {
       id: "watershed",
@@ -119,10 +116,6 @@ export const EN: Dict = {
         { label: "OXYGEN DEAD ZONES", value: "1960–2026" },
       ],
       tags: ["Geographic GIS", "Cartography", "Biogeochemistry", "HELCOM Data"],
-      poster: "assets/projects/watershed.poster.jpg",
-      media: "assets/projects/watershed.gif",
-      url: "https://kmd-labs.github.io/watershed/",
-      repoUrl: "https://github.com/kmd-labs/watershed",
     },
     {
       id: "baltic",
@@ -143,10 +136,6 @@ export const EN: Dict = {
         "Web Workers",
         "Bathymetry",
       ],
-      poster: "assets/projects/baltic.poster.jpg",
-      media: "assets/projects/baltic.gif",
-      url: "https://kmd-labs.github.io/baltic/",
-      repoUrl: "https://github.com/kmd-labs/baltic",
     },
     {
       id: "viadrus-ai",
@@ -167,15 +156,9 @@ export const EN: Dict = {
         "EUSPA Award",
         "Infrastructure",
       ],
-      poster: "assets/projects/viadrusai.poster.jpg",
-      media: "assets/projects/viadrusai.gif",
-      url: "https://viadrus.adriankulik93.workers.dev/",
-      secondaryUrl:
-        "https://defence-industry-space.ec.europa.eu/orbit-water-tap-11th-cassini-hackathon-2026-05-08_en",
       secondaryLabel: "CASSINI EU Award",
-      isExternal: true,
     },
-  ],
+  ]),
 
   // Specialities Section
   specialitiesKicker: "CORE CAPABILITIES",

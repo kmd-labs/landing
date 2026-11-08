@@ -1,4 +1,5 @@
 import { Dict } from "./i18n.types";
+import { buildProjects } from "../config/projects.data";
 
 export const PL: Dict = {
   htmlLang: "pl",
@@ -79,7 +80,7 @@ export const PL: Dict = {
     "Każdy projekt projektujemy z myślą o zerowej barierze wejścia, dedykowanych potokach WebGL/Canvas i rzeczywistej telemetrii planetarnej.",
   launchApp: "Uruchom Wizualizację",
   viewRepository: "GitHub",
-  projects: [
+  projects: buildProjects([
     {
       id: "el-nino",
       tag: "01 / KLIMATOLOGIA PLANETARNA",
@@ -94,10 +95,6 @@ export const PL: Dict = {
         { label: "PŁYNNOŚĆ", value: "60 FPS" },
       ],
       tags: ["WebGL 3D", "Three.js", "Telemetria Klimatu", "Linie Prądu"],
-      poster: "assets/projects/el-nino.poster.jpg",
-      media: "assets/projects/el-nino.gif",
-      url: "https://kmd-labs.github.io/el-nino/",
-      repoUrl: "https://github.com/kmd-labs/el-nino",
     },
     {
       id: "watershed",
@@ -118,10 +115,6 @@ export const PL: Dict = {
         "Biogeochemia",
         "Dane HELCOM",
       ],
-      poster: "assets/projects/watershed.poster.jpg",
-      media: "assets/projects/watershed.gif",
-      url: "https://kmd-labs.github.io/watershed/",
-      repoUrl: "https://github.com/kmd-labs/watershed",
     },
     {
       id: "baltic",
@@ -142,10 +135,6 @@ export const PL: Dict = {
         "Web Workers",
         "Batymetria",
       ],
-      poster: "assets/projects/baltic.poster.jpg",
-      media: "assets/projects/baltic.gif",
-      url: "https://kmd-labs.github.io/baltic/",
-      repoUrl: "https://github.com/kmd-labs/baltic",
     },
     {
       id: "viadrus-ai",
@@ -166,15 +155,9 @@ export const PL: Dict = {
         "Nagroda EUSPA",
         "Infrastruktura",
       ],
-      poster: "assets/projects/viadrusai.poster.jpg",
-      media: "assets/projects/viadrusai.gif",
-      url: "https://viadrus.adriankulik93.workers.dev/",
-      secondaryUrl:
-        "https://defence-industry-space.ec.europa.eu/orbit-water-tap-11th-cassini-hackathon-2026-05-08_en",
       secondaryLabel: "Nagroda CASSINI",
-      isExternal: true,
     },
-  ],
+  ]),
 
   // Specialities Section
   specialitiesKicker: "NASZE KOMPETENCJE",

@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, NgZone, inject, signal } from '@angular/core';
 import * as topojson from 'topojson-client';
 import * as d3Geo from 'd3-geo';
 import { MAP_CONFIG } from '../config/map-viewport.config';
@@ -87,14 +87,22 @@ export class CurrentWeatherService {
   private nLat = 13;
   private nLon = 36;
 
+  private readonly ngZone = inject(NgZone);
+
   constructor() {
-    this.init();
+    this.ngZone.runOutsideAngular(() => {
+      this.init();
+    });
   }
 
   private async init() {
     try {
-      // 1. Load Real Current Wind & Marine Dataset
-      const windRes = await fetch('assets/data/current-wind.json');
+      // 1. Load Essential Datasets (Wind Field + Global Land 50m) in Parallel
+      const [windRes, landRes] = await Promise.all([
+        fetch('assets/data/current-wind.json'),
+        fetch('assets/data/land-50m.json').catch(() => null)
+      ]);
+
       if (!windRes.ok) throw new Error(`Failed to load wind data: HTTP ${windRes.status}`);
       const dataset: WindDataset = await windRes.json();
 
@@ -135,67 +143,79 @@ export class CurrentWeatherService {
         }
       }
 
-      this.meta.set(dataset);
+      this.ngZone.run(() => {
+        this.meta.set(dataset);
+        // Mark ready immediately so splash fades out without blocking on cartography parsing
+        this.status.set('ready');
+      });
 
-      // 2. Load World & Detailed Land & Cartographic Geometry
-      try {
-        const [landRes, ukLandRes, ukStatesRes, ukStates50mRes, ukRoadsRes, ukCitiesRes, ukCities50mRes] = await Promise.all([
-          fetch('assets/data/land-50m.json').catch(() => null),
-          fetch('assets/data/uk-land-10m.json').catch(() => null),
-          fetch('assets/data/uk-states-10m.json').catch(() => null),
-          fetch('assets/data/uk-states-50m.json').catch(() => null),
-          fetch('assets/data/uk-roads-10m.json').catch(() => null),
-          fetch('assets/data/uk-cities-10m.json').catch(() => null),
-          fetch('assets/data/uk-cities-50m.json').catch(() => null)
-        ]);
-
-        // Always load global land first to ensure worldwide landmass and global land mask coverage
-        if (landRes && landRes.ok) {
-          const topo = await landRes.json();
+      // Process baseline land-50m asynchronously in background
+      if (landRes && landRes.ok) {
+        landRes.json().then((topo) => {
           if (topo && topo.objects && topo.objects.land) {
             const geo = topojson.feature(topo, topo.objects.land);
-            this.landFeature.set(geo);
-            this.buildLandMask(geo);
+            this.ngZone.run(() => {
+              this.landFeature.set(geo);
+            });
+            setTimeout(() => this.buildLandMask(geo), 0);
           }
-        }
-
-        if (ukLandRes && ukLandRes.ok) {
-          const ukGeo = await ukLandRes.json();
-          this.detailedLand.set(ukGeo);
-        }
-
-        if (ukStatesRes && ukStatesRes.ok) {
-          const states = await ukStatesRes.json();
-          this.stateBorders.set(states);
-        }
-
-        if (ukStates50mRes && ukStates50mRes.ok) {
-          const states50m = await ukStates50mRes.json();
-          this.stateBorders50m.set(states50m);
-        }
-
-        if (ukRoadsRes && ukRoadsRes.ok) {
-          const roads = await ukRoadsRes.json();
-          this.roads.set(roads);
-        }
-
-        if (ukCitiesRes && ukCitiesRes.ok) {
-          const cities = await ukCitiesRes.json();
-          this.cityLimits.set(cities);
-        }
-
-        if (ukCities50mRes && ukCities50mRes.ok) {
-          const cities50m = await ukCities50mRes.json();
-          this.cityLimits50m.set(cities50m);
-        }
-      } catch (landErr) {
-        console.warn('Could not load land datasets:', landErr);
+        }).catch((landErr) => {
+          console.warn('Could not parse land-50m:', landErr);
+        });
       }
 
-      this.status.set('ready');
+      // 2. Viewport-optimized secondary cartographic overlay loading deferred until after initial paint
+      const isMobile = typeof window !== 'undefined' && window.innerWidth <= 640;
+      if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+        (window as any).requestIdleCallback(() => this.loadSecondaryCartography(isMobile), { timeout: 2000 });
+      } else {
+        setTimeout(() => this.loadSecondaryCartography(isMobile), 1200);
+      }
     } catch (err) {
       console.error('CurrentWeatherService init error:', err);
       this.status.set('error');
+    }
+  }
+
+  private async loadSecondaryCartography(isMobile: boolean) {
+    try {
+      if (isMobile) {
+        // Mobile only fetches lightweight 50m layers (skips 1.58 MB roads & 430 KB 10m layers)
+        const [states50mRes, cities50mRes] = await Promise.all([
+          fetch('assets/data/uk-states-50m.json').catch(() => null),
+          fetch('assets/data/uk-cities-50m.json').catch(() => null)
+        ]);
+
+        if (states50mRes && states50mRes.ok) {
+          this.stateBorders50m.set(await states50mRes.json());
+        }
+        if (cities50mRes && cities50mRes.ok) {
+          this.cityLimits50m.set(await cities50mRes.json());
+        }
+      } else {
+        // Desktop fetches high-detail 10m layers
+        const [land10mRes, states10mRes, cities10mRes, roadsRes] = await Promise.all([
+          fetch('assets/data/uk-land-10m.json').catch(() => null),
+          fetch('assets/data/uk-states-10m.json').catch(() => null),
+          fetch('assets/data/uk-cities-10m.json').catch(() => null),
+          fetch('assets/data/uk-roads-10m.json').catch(() => null)
+        ]);
+
+        if (land10mRes && land10mRes.ok) {
+          this.detailedLand.set(await land10mRes.json());
+        }
+        if (states10mRes && states10mRes.ok) {
+          this.stateBorders.set(await states10mRes.json());
+        }
+        if (cities10mRes && cities10mRes.ok) {
+          this.cityLimits.set(await cities10mRes.json());
+        }
+        if (roadsRes && roadsRes.ok) {
+          this.roads.set(await roadsRes.json());
+        }
+      }
+    } catch (err) {
+      console.warn('Could not load secondary cartography:', err);
     }
   }
 

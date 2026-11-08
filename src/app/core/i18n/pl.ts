@@ -80,6 +80,9 @@ export const PL: Dict = {
     "Naukowe geowizualizacje, potoki obserwacji Ziemi i symulacje przestrzenne oparte na referencyjnych danych satelitarnych, oceanograficznych i wysokościowych.",
   launchApp: "Uruchom Wizualizację",
   viewRepository: "GitHub",
+  portfolioPrevAria: "Poprzedni projekt",
+  portfolioNextAria: "Następny projekt",
+  portfolioSelectAria: "Wybierz projekt",
   projects: buildProjects([
     {
       id: "el-nino",

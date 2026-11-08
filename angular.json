@@ -23,6 +23,13 @@
               "src/assets",
               "src/favicon.ico",
               "src/favicon.svg",
+              "src/robots.txt",
+              "src/llms.txt",
+              {
+                "glob": "**/*",
+                "input": "src/.well-known",
+                "output": ".well-known"
+              },
               {
                 "glob": "**/*",
                 "input": "src/design-system/assets",

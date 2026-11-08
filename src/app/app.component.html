@@ -288,23 +288,52 @@
       <div class="section__header">
         <span class="section-kicker">{{ t.teamKicker }}</span>
         <h2 class="section__title">{{ t.teamTitle }}</h2>
-        <div class="team-leads">
-          <p *ngFor="let lead of t.teamLeads" class="section__lead team-lead-p">{{ lead }}</p>
-        </div>
-        <div class="team-refs" *ngIf="t.teamRefs.length">
-          <a
-            *ngFor="let ref of t.teamRefs"
-            class="team-ref-chip glass-panel"
-            [href]="ref.href"
-            target="_blank"
-            rel="noopener noreferrer"
-            [title]="ref.title"
-            [attr.aria-label]="ref.aria">
-            <lucide-icon [img]="externalLinkIcon" [size]="12"></lucide-icon>
-            <span>{{ ref.label }}</span>
-          </a>
-        </div>
       </div>
+
+      <!-- Dedicated About Us Studio Narrative Card -->
+      <article class="about-card glass-panel">
+        <div class="about-card__top">
+          <div class="about-card__badge-cluster">
+            <span class="about-card__kicker font-mono">CASSINI HACKATHON EU WINNERS</span>
+            <span class="about-card__dot" aria-hidden="true">·</span>
+            <span class="about-card__sub-kicker font-mono">EUSPA · VIADRUS AI</span>
+          </div>
+          <span class="about-card__tag font-mono">03 FOUNDERS</span>
+        </div>
+
+        <div class="about-card__content">
+          <p class="about-card__lead">{{ t.teamLeads[0] }}</p>
+          <p class="about-card__paragraph">{{ t.teamLeads[1] }}</p>
+
+          <div class="about-card__cta-box">
+            <p class="about-card__cta-text">{{ t.teamLeads[2] }}</p>
+            <a
+              [href]="mailtoUrl()"
+              class="about-card__cta-btn"
+              [attr.aria-label]="t.navContact">
+              <lucide-icon [img]="mailIcon" [size]="14"></lucide-icon>
+              <span>{{ t.navContact }}</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="about-card__footer" *ngIf="t.teamRefs.length">
+          <span class="about-card__footer-label font-mono">PRESS & RECOGNITION</span>
+          <div class="about-card__refs">
+            <a
+              *ngFor="let ref of t.teamRefs"
+              class="about-ref-chip"
+              [href]="ref.href"
+              target="_blank"
+              rel="noopener noreferrer"
+              [title]="ref.title"
+              [attr.aria-label]="ref.aria">
+              <lucide-icon [img]="externalLinkIcon" [size]="12"></lucide-icon>
+              <span>{{ ref.label }}</span>
+            </a>
+          </div>
+        </div>
+      </article>
 
       <!-- Desktop static 3-column grid -->
       <div class="team-grid" *ngIf="!bp.tablet()">

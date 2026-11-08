@@ -304,17 +304,6 @@
         <div class="about-card__content">
           <p class="about-card__lead">{{ t.teamLeads[0] }}</p>
           <p class="about-card__paragraph">{{ t.teamLeads[1] }}</p>
-
-          <div class="about-card__cta-box">
-            <p class="about-card__cta-text">{{ t.teamLeads[2] }}</p>
-            <a
-              [href]="mailtoUrl()"
-              class="about-card__cta-btn"
-              [attr.aria-label]="t.navContact">
-              <lucide-icon [img]="mailIcon" [size]="14"></lucide-icon>
-              <span>{{ t.navContact }}</span>
-            </a>
-          </div>
         </div>
 
         <div class="about-card__footer" *ngIf="t.teamRefs.length">

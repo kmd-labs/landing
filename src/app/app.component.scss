@@ -987,17 +987,6 @@
   position: relative;
   overflow: hidden;
 
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent 0%, color("accent") 35%, transparent 100%);
-    opacity: 0.85;
-  }
-
   &__top {
     display: flex;
     justify-content: space-between;
@@ -1062,55 +1051,6 @@
     color: color("text-desc");
   }
 
-  &__cta-box {
-    margin-top: 8px;
-    padding: 16px 20px;
-    border-radius: radius("card");
-    background: rgba(211, 116, 0, 0.06);
-    border: 1px solid rgba(211, 116, 0, 0.2);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-
-  &__cta-text {
-    margin: 0;
-    font-size: font-size("sm");
-    font-weight: font-weight("semibold");
-    color: color("text-bright");
-    line-height: 1.5;
-    flex: 1 1 280px;
-  }
-
-  &__cta-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    height: 36px;
-    padding: 0 18px;
-    border-radius: radius("pill");
-    background: color("accent");
-    color: #ffffff;
-    font-family: inherit;
-    font-size: font-size("xs");
-    font-weight: font-weight("semibold");
-    text-decoration: none;
-    white-space: nowrap;
-    box-shadow: 0 2px 8px color("accent-glow");
-    transition: background transition("fast"), transform transition("fast"), box-shadow transition("fast");
-
-    &:hover {
-      background: color("accent-hover");
-      box-shadow: 0 4px 14px color("accent-glow");
-    }
-
-    &:active {
-      transform: scale(0.97);
-    }
-  }
-
   &__footer {
     display: flex;
     flex-direction: column;
@@ -1139,17 +1079,6 @@
 
     &__lead {
       font-size: font-size("base");
-    }
-
-    &__cta-box {
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 14px 16px;
-    }
-
-    &__cta-btn {
-      width: 100%;
-      justify-content: center;
     }
   }
 }

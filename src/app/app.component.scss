@@ -715,9 +715,9 @@
 
   &__metrics {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    padding: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    padding: 12px 14px;
     background: color("neutral-50");
     border: 1px solid color("line");
     border-radius: radius("sm");
@@ -726,7 +726,8 @@
     .metric-item {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 3px;
+      min-width: 0;
     }
 
     .metric-label {
@@ -739,6 +740,8 @@
       font-size: font-size("xs");
       font-weight: font-weight("semibold");
       color: color("text-bright");
+      line-height: 1.35;
+      overflow-wrap: break-word;
     }
   }
 

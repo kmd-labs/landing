@@ -90,6 +90,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly loadedProjectIds = signal(new Set<string>());
   private readonly minLoadingMs = 500;
   private readonly startedAt = new Map<string, number>();
+  private readonly mobileGifTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
   @ViewChildren('projectMediaEl', { read: ElementRef })
   private projectMediaEls?: QueryList<ElementRef<HTMLElement>>;
@@ -267,6 +268,10 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.observer?.disconnect();
     this.stopTeamAutoScroll();
+    for (const timer of this.mobileGifTimers.values()) {
+      clearTimeout(timer);
+    }
+    this.mobileGifTimers.clear();
   }
 
   private initPortfolioObserver(): void {
@@ -488,10 +493,13 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     if (!this.startedProjectIds().has(id)) {
       this.startedProjectIds.set(new Set(this.startedProjectIds()).add(id));
       this.startedAt.set(id, performance.now());
+    } else if (this.isProjectReady(id)) {
+      this.scheduleMobileOneShotPlay(id);
     }
   }
 
   deactivateProject(id: string): void {
+    this.clearMobileGifTimer(id);
     if (!this.activeProjectIds().has(id)) return;
     const next = new Set(this.activeProjectIds());
     next.delete(id);
@@ -499,20 +507,59 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   }
 
   onProjectGifLoaded(id: string): void {
-    if (this.loadedProjectIds().has(id)) return;
+    if (this.loadedProjectIds().has(id)) {
+      this.scheduleMobileOneShotPlay(id);
+      return;
+    }
     const started = this.startedAt.get(id);
     const elapsed = started != null ? performance.now() - started : Infinity;
     const wait = Math.max(0, this.minLoadingMs - elapsed);
     const markReady = () => {
       this.zone.run(() => {
-        if (this.loadedProjectIds().has(id)) return;
-        this.loadedProjectIds.set(new Set(this.loadedProjectIds()).add(id));
+        if (!this.loadedProjectIds().has(id)) {
+          this.loadedProjectIds.set(new Set(this.loadedProjectIds()).add(id));
+        }
+        this.scheduleMobileOneShotPlay(id);
       });
     };
     if (wait === 0) {
       markReady();
     } else {
       setTimeout(markReady, wait);
+    }
+  }
+
+  private scheduleMobileOneShotPlay(id: string): void {
+    if (typeof window === 'undefined') return;
+    // On desktop, user leaves hover alone; on mobile/touch, play once to avoid reader distraction
+    if (!this.isMobileOrTouch()) return;
+
+    this.clearMobileGifTimer(id);
+    const duration = this.getProjectPreviewDuration(id);
+    const timer = setTimeout(() => {
+      this.zone.run(() => {
+        this.deactivateProject(id);
+      });
+    }, duration);
+    this.mobileGifTimers.set(id, timer);
+  }
+
+  private isMobileOrTouch(): boolean {
+    if (typeof window === 'undefined') return false;
+    if (this.bp.mobile()) return true;
+    return !window.matchMedia('(hover: hover)').matches;
+  }
+
+  private getProjectPreviewDuration(id: string): number {
+    const proj = this.i18n.t().projects.find((p) => p.id === id);
+    return proj?.previewDurationMs ?? 3600;
+  }
+
+  private clearMobileGifTimer(id: string): void {
+    const timer = this.mobileGifTimers.get(id);
+    if (timer) {
+      clearTimeout(timer);
+      this.mobileGifTimers.delete(id);
     }
   }
 

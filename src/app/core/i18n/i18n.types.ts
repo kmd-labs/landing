@@ -13,6 +13,7 @@ export interface ProjectMetadata {
   repoUrl?: string;
   secondaryUrl?: string;
   isExternal?: boolean;
+  previewDurationMs?: number;
 }
 
 export interface ProjectCopy {

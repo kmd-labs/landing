@@ -10,21 +10,24 @@ export const PROJECTS_METADATA: readonly ProjectMetadata[] = [
     url: 'https://kmd-labs.github.io/el-nino/',
     repoUrl: 'https://github.com/kmd-labs/el-nino',
     poster: 'assets/projects/el-nino.poster.jpg',
-    media: 'assets/projects/el-nino.gif'
+    media: 'assets/projects/el-nino.gif',
+    previewDurationMs: 3200
   },
   {
     id: 'watershed',
     url: 'https://kmd-labs.github.io/watershed/',
     repoUrl: 'https://github.com/kmd-labs/watershed',
     poster: 'assets/projects/watershed.poster.jpg',
-    media: 'assets/projects/watershed.gif'
+    media: 'assets/projects/watershed.gif',
+    previewDurationMs: 3800
   },
   {
     id: 'baltic',
     url: 'https://kmd-labs.github.io/baltic/',
     repoUrl: 'https://github.com/kmd-labs/baltic',
     poster: 'assets/projects/baltic.poster.jpg',
-    media: 'assets/projects/baltic.gif'
+    media: 'assets/projects/baltic.gif',
+    previewDurationMs: 3800
   },
   {
     id: 'viadrus-ai',
@@ -33,6 +36,7 @@ export const PROJECTS_METADATA: readonly ProjectMetadata[] = [
       'https://defence-industry-space.ec.europa.eu/orbit-water-tap-11th-cassini-hackathon-2026-05-08_en',
     poster: 'assets/projects/viadrusai.poster.jpg',
     media: 'assets/projects/viadrusai.gif',
+    previewDurationMs: 4500,
     isExternal: true
   }
 ];

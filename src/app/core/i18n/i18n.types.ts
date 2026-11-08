@@ -133,6 +133,9 @@ export interface Dict {
   portfolioLead: string;
   launchApp: string;
   viewRepository: string;
+  portfolioPrevAria: string;
+  portfolioNextAria: string;
+  portfolioSelectAria: string;
   projects: ProjectEntry[];
 
   // Specialities Section

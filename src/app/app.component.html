@@ -15,7 +15,9 @@
           <img
             class="header__logo-img"
             src="assets/design-system/logo/kmd-black-orange.svg"
-            alt="KMD" />
+            alt="KMD"
+            width="40"
+            height="16" />
         </button>
       </div>
 
@@ -25,7 +27,7 @@
           [icon]="bp.mobile() ? null : globeIcon"
           [options]="langOptions()"
           [value]="i18n.lang()"
-          [ariaLabel]="t.changeLanguage"
+          [ariaLabel]="i18n.lang().toUpperCase() + ' — ' + t.changeLanguage"
           (valueChange)="i18n.setLang($event)">
         </app-dropdown>
       </div>
@@ -67,389 +69,446 @@
   </header>
 
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
-  <!-- 1. HERO SECTION: Interactive 2D Vortex Canvas + Telemetry Console       -->
+  <!-- MAIN LANDMARK (Accessibility requirement: WCAG 2.4.1 landmark-one-main) -->
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
-  <section class="hero-stage">
-    <app-vortex-canvas (telemetryChange)="onTelemetryUpdate($event)"></app-vortex-canvas>
+  <main class="landing-main">
+    <!-- 1. HERO SECTION: Interactive 2D Vortex Canvas + Telemetry Console -->
+    <section class="hero-stage">
+      <app-vortex-canvas (telemetryChange)="onTelemetryUpdate($event)"></app-vortex-canvas>
 
-    <!-- Hero Glass Editorial Card (Simplified per user request) -->
-    <div class="hero-stage__inner">
-      <div class="hero-stage__content">
-        <div class="hero-card glass-panel--heavy">
-          <h1 class="hero-card__title">
-            {{ t.heroTitle }}
-            <span class="text-accent">{{ t.heroHighlight }}</span>
-          </h1>
-          <p class="hero-card__subtitle">
-            {{ t.heroSubtitle }}
-          </p>
+      <!-- Hero Glass Editorial Card -->
+      <div class="hero-stage__inner">
+        <div class="hero-stage__content">
+          <div class="hero-card glass-panel--heavy">
+            <h1 class="hero-card__title">
+              {{ t.heroTitle }}
+              <span class="text-accent">{{ t.heroHighlight }}</span>
+            </h1>
+            <p class="hero-card__subtitle">
+              {{ t.heroSubtitle }}
+            </p>
 
-          <div class="hero-card__divider" aria-hidden="true"></div>
+            <div class="hero-card__divider" aria-hidden="true"></div>
 
-          <div class="hero-card__source font-mono">
-            <span class="live-lozenge">
-              <span class="live-dot" aria-hidden="true"></span>
-              <span class="live-text">{{ t.telemetryLiveBadge }}</span>
-            </span>
-            <span class="source-info">
-              <a
-                class="source-link"
-                [href]="t.telemetrySourceUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-                [title]="t.telemetrySourceTitle"
-              >{{ bp.mobile() ? t.telemetrySourceShort : t.telemetrySourceLabel }}</a>
-              <span class="source-sep">·</span>
-              <span class="source-range">{{ vectorDates() | localeDate:i18n.lang():'range' }}</span>
-            </span>
+            <div class="hero-card__source font-mono">
+              <span class="live-lozenge">
+                <span class="live-dot" aria-hidden="true"></span>
+                <span class="live-text">{{ t.telemetryLiveBadge }}</span>
+              </span>
+              <span class="source-info">
+                <a
+                  class="source-link"
+                  [href]="t.telemetrySourceUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  [title]="t.telemetrySourceTitle"
+                >{{ bp.mobile() ? t.telemetrySourceShort : t.telemetrySourceLabel }}</a>
+                <span class="source-sep">·</span>
+                <span class="source-range">{{ vectorDates() | localeDate:i18n.lang():'range' }}</span>
+              </span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Show More button (using official KMD Design System ButtonComponent) -->
-    <app-button
-      class="hero-stage__show-more"
-      variant="default"
-      extraClass="hero-stage__show-more-btn glass-panel"
-      [ariaLabel]="t.showMoreAria"
-      (btnClick)="scrollToSection('portfolio')">
-      <span>{{ t.showMore }}</span>
-      <lucide-icon [img]="chevronDownIcon" [size]="14"></lucide-icon>
-    </app-button>
-  </section>
+      <!-- Show More button (using official KMD Design System ButtonComponent) -->
+      <app-button
+        class="hero-stage__show-more"
+        variant="default"
+        extraClass="hero-stage__show-more-btn glass-panel"
+        [ariaLabel]="t.showMore + ' — ' + t.showMoreAria"
+        (btnClick)="scrollToSection('portfolio')">
+        <span>{{ t.showMore }}</span>
+        <lucide-icon [img]="chevronDownIcon" [size]="14"></lucide-icon>
+      </app-button>
+    </section>
 
-  <!-- ═══════════════════════════════════════════════════════════════════════ -->
-  <!-- 2. PORTFOLIO OBSERVATORY                                                -->
-  <!-- ═══════════════════════════════════════════════════════════════════════ -->
-  <section class="section portfolio-section" id="portfolio">
-    <div class="section__container">
-      <div class="section__header">
-        <span class="section-kicker">{{ t.portfolioKicker }}</span>
-        <h2 class="section__title">{{ t.portfolioTitle }}</h2>
-        <p class="section__lead">{{ t.portfolioLead }}</p>
-      </div>
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 2. PORTFOLIO OBSERVATORY                                                -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section class="section portfolio-section" id="portfolio">
+      <div class="section__container">
+        <div class="section__header">
+          <span class="section-kicker">{{ t.portfolioKicker }}</span>
+          <h2 class="section__title">{{ t.portfolioTitle }}</h2>
+          <p class="section__lead">{{ t.portfolioLead }}</p>
+        </div>
 
-      <div class="portfolio-grid">
-        <article
-          *ngFor="let proj of t.projects"
-          class="portfolio-card glass-panel"
-          [class.portfolio-card--featured]="proj.id === 'el-nino' || proj.id === 'watershed'"
-          [class.is-active]="isProjectActive(proj.id)"
-          (pointerenter)="onProjectPointerEnter(proj.id, $event)"
-          (pointerleave)="onProjectPointerLeave(proj.id, $event)">
-          <div class="portfolio-card__top">
-            <span class="portfolio-tag font-mono">{{ proj.tag }}</span>
-            <div class="portfolio-badges">
-              <app-badge
-                *ngFor="let tg of proj.tags"
-                [text]="tg"
-                backgroundColor="#334155">
-              </app-badge>
-            </div>
-          </div>
-
-          <!-- Monochrome Observatory Plate -> Full-Color Live GIF on Hover & In-View -->
-          <a
-            class="portfolio-card__media portfolio-card__media--swap"
+        <!-- Desktop 2-Column Grid -->
+        <div class="portfolio-grid" *ngIf="!bp.tablet()">
+          <article
+            *ngFor="let proj of t.projects"
+            class="portfolio-card glass-panel"
+            [class.portfolio-card--featured]="proj.id === 'el-nino' || proj.id === 'watershed'"
             [class.is-active]="isProjectActive(proj.id)"
-            [class.is-ready]="isProjectReady(proj.id)"
-            [href]="proj.url"
-            target="_blank"
-            rel="noopener noreferrer"
-            [attr.aria-label]="t.launchApp + ': ' + proj.title"
-            [attr.data-project-id]="proj.id"
-            (focus)="activateProject(proj.id)"
-            (blur)="deactivateProject(proj.id)"
-            #projectMediaEl>
-            <img
-              class="portfolio-card__poster"
-              [src]="proj.poster"
-              [alt]="proj.title"
-              width="900"
-              height="698"
-              loading="lazy"
-              decoding="async" />
-            <img
-              *ngIf="hasProjectStarted(proj.id)"
-              class="portfolio-card__gif"
-              [src]="proj.media"
-              alt=""
-              aria-hidden="true"
-              width="640"
-              height="496"
-              decoding="async"
-              (load)="onProjectGifLoaded(proj.id)" />
-          </a>
-
-          <div class="portfolio-card__body">
-            <h3 class="portfolio-card__title">{{ proj.title }}</h3>
-            <p class="portfolio-card__subtitle">{{ proj.subtitle }}</p>
-            <p class="portfolio-card__desc">{{ proj.description }}</p>
-
-            <div class="portfolio-card__metrics font-mono">
-              <div *ngFor="let m of proj.metrics" class="metric-item">
-                <span class="metric-label">{{ m.label }}</span>
-                <span class="metric-val">{{ m.value }}</span>
+            (pointerenter)="onProjectPointerEnter(proj.id, $event)"
+            (pointerleave)="onProjectPointerLeave(proj.id, $event)">
+            <div class="portfolio-card__top">
+              <span class="portfolio-tag font-mono">{{ proj.tag }}</span>
+              <div class="portfolio-badges">
+                <app-badge
+                  *ngFor="let tg of proj.tags"
+                  [text]="tg"
+                  backgroundColor="#334155">
+                </app-badge>
               </div>
             </div>
-          </div>
 
-          <div class="portfolio-card__footer">
-            <div class="portfolio-card__footer-links">
-              <a
-                *ngIf="proj.repoUrl"
-                [href]="proj.repoUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="portfolio-link-btn portfolio-link-btn--secondary"
-                [attr.aria-label]="t.viewRepository + ': ' + proj.title">
-                <lucide-icon [img]="githubIcon" [size]="14"></lucide-icon>
-                <span>{{ t.viewRepository }}</span>
-              </a>
-              <a
-                *ngIf="proj.secondaryUrl"
-                [href]="proj.secondaryUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="portfolio-link-btn portfolio-link-btn--secondary"
-                [attr.aria-label]="proj.secondaryLabel + ': ' + proj.title">
-                <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
-                <span>{{ proj.secondaryLabel }}</span>
-              </a>
-            </div>
-
+            <!-- Monochrome Observatory Plate -> Full-Color Live GIF on Hover & Focus -->
             <a
+              class="portfolio-card__media portfolio-card__media--swap"
+              [class.is-active]="isProjectActive(proj.id)"
+              [class.is-ready]="isProjectReady(proj.id)"
               [href]="proj.url"
               target="_blank"
               rel="noopener noreferrer"
-              class="portfolio-link-btn portfolio-link-btn--primary">
-              <span>{{ t.launchApp }}</span>
-              <lucide-icon [img]="arrowUpRightIcon" [size]="15"></lucide-icon>
+              [attr.aria-label]="t.launchApp + ': ' + proj.title"
+              [attr.data-project-id]="proj.id"
+              (focus)="activateProject(proj.id)"
+              (blur)="deactivateProject(proj.id)"
+              #projectMediaEl>
+              <img
+                class="portfolio-card__poster"
+                [src]="proj.poster"
+                [alt]="proj.title"
+                width="680"
+                height="425"
+                loading="lazy"
+                decoding="async" />
+              <img
+                *ngIf="hasProjectStarted(proj.id)"
+                class="portfolio-card__gif"
+                [src]="proj.media"
+                alt=""
+                aria-hidden="true"
+                width="640"
+                height="496"
+                decoding="async"
+                (load)="onProjectGifLoaded(proj.id)" />
             </a>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
 
-  <!-- ═══════════════════════════════════════════════════════════════════════ -->
-  <!-- 4. SPECIALITIES: Geovisualisation, Data Eng, AI & Anomaly ML            -->
-  <!-- ═══════════════════════════════════════════════════════════════════════ -->
-  <section
-    class="section specialities-section"
-    id="specialities"
-    (mousemove)="onSpecialitiesMouseMove($event)"
-    (mouseleave)="onSpecialitiesMouseLeave($event)">
-    <div class="specialities-grid-bg" aria-hidden="true"></div>
-    <div class="section__container">
-      <div class="section__header">
-        <span class="section-kicker">{{ t.specialitiesKicker }}</span>
-        <h2 class="section__title">{{ t.specialitiesTitle }}</h2>
-        <p class="section__lead">{{ t.specialitiesLead }}</p>
-      </div>
+            <div class="portfolio-card__body">
+              <h3 class="portfolio-card__title">{{ proj.title }}</h3>
+              <p class="portfolio-card__subtitle">{{ proj.subtitle }}</p>
+              <p class="portfolio-card__desc">{{ proj.description }}</p>
 
-      <div class="specialities-grid">
-        <div
-          *ngFor="let disc of t.disciplines; let i = index"
-          class="discipline-card glass-panel">
-          <div class="discipline-card__icon-wrap">
-            <lucide-icon *ngIf="i === 0" [img]="wavesIcon" [size]="24"></lucide-icon>
-            <lucide-icon *ngIf="i === 1" [img]="databaseIcon" [size]="24"></lucide-icon>
-            <lucide-icon *ngIf="i === 2" [img]="cpuIcon" [size]="24"></lucide-icon>
-          </div>
-
-          <h3 class="discipline-card__title">{{ disc.title }}</h3>
-          <p class="discipline-card__lead">{{ disc.lead }}</p>
-
-          <ul class="discipline-card__list">
-            <li *ngFor="let pt of disc.points">
-              <span class="bullet" aria-hidden="true">▹</span>
-              <span>{{ pt }}</span>
-            </li>
-          </ul>
-
-          <div class="discipline-card__tools">
-            <span *ngFor="let tool of disc.tools" class="tool-pill font-mono">
-              {{ tool }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════════════════════════════════ -->
-  <!-- 5. TEAM DOSSIER: Collective (1:1 with Design System)                    -->
-  <!-- ═══════════════════════════════════════════════════════════════════════ -->
-  <section class="section team-section" id="team">
-    <div class="section__container">
-      <div class="section__header">
-        <span class="section-kicker">{{ t.teamKicker }}</span>
-        <h2 class="section__title">{{ t.teamTitle }}</h2>
-      </div>
-
-      <!-- Dedicated About Us Studio Narrative Card -->
-      <article class="about-card glass-panel">
-        <div class="about-card__content">
-          <p class="about-card__lead">{{ t.teamLeads[0] }}</p>
-          <p class="about-card__paragraph">{{ t.teamLeads[1] }}</p>
-        </div>
-
-        <div class="about-card__footer" *ngIf="t.teamRefs.length">
-          <span class="about-card__footer-label font-mono">{{ t.teamRefsLabel }}</span>
-          <div class="about-card__refs">
-            <a
-              *ngFor="let ref of t.teamRefs"
-              class="about-ref-chip"
-              [href]="ref.href"
-              target="_blank"
-              rel="noopener noreferrer"
-              [title]="ref.title"
-              [attr.aria-label]="ref.aria">
-              <lucide-icon [img]="externalLinkIcon" [size]="12"></lucide-icon>
-              <span>{{ ref.label }}</span>
-            </a>
-          </div>
-        </div>
-      </article>
-
-      <!-- Desktop static 3-column grid -->
-      <div class="team-grid" *ngIf="!bp.tablet()">
-        <article *ngFor="let person of t.founders" class="team-card glass-panel">
-          <div class="team-card__media">
-            <img
-              class="team-photo"
-              [src]="person.photo"
-              [alt]="person.name"
-              loading="lazy" />
-          </div>
-
-          <div class="team-card__content">
-            <h3 class="team-name">{{ person.name }}</h3>
-            <span *ngIf="person.role" class="team-role font-mono text-accent">{{ person.role }}</span>
-            <p class="team-bio">{{ person.bio }}</p>
-
-            <div class="team-focus">
-              <span class="team-focus__label">{{ t.teamFocusLabel }}</span>
-              <div class="team-tags">
-                <span *ngFor="let tg of person.tags" class="tag-chip">
-                  {{ tg }}
-                </span>
+              <div class="portfolio-card__metrics font-mono">
+                <div *ngFor="let m of proj.metrics" class="metric-item">
+                  <span class="metric-label">{{ m.label }}</span>
+                  <span class="metric-val">{{ m.value }}</span>
+                </div>
               </div>
             </div>
 
-            <div class="team-links">
+            <div class="portfolio-card__footer">
+              <div class="portfolio-card__footer-links">
+                <a
+                  *ngIf="proj.repoUrl"
+                  [href]="proj.repoUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="portfolio-link-btn portfolio-link-btn--secondary"
+                  [attr.aria-label]="t.viewRepository + ': ' + proj.title">
+                  <lucide-icon [img]="githubIcon" [size]="14"></lucide-icon>
+                  <span>{{ t.viewRepository }}</span>
+                </a>
+                <a
+                  *ngIf="proj.secondaryUrl"
+                  [href]="proj.secondaryUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="portfolio-link-btn portfolio-link-btn--secondary"
+                  [attr.aria-label]="proj.secondaryLabel + ': ' + proj.title">
+                  <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
+                  <span>{{ proj.secondaryLabel }}</span>
+                </a>
+              </div>
+
               <a
-                [href]="person.linkedin"
+                [href]="proj.url"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="icon-link"
-                [attr.aria-label]="person.name + ' on LinkedIn'">
-                <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
-                <span>LinkedIn</span>
+                class="portfolio-link-btn portfolio-link-btn--primary">
+                <span>{{ t.launchApp }}</span>
+                <lucide-icon [img]="arrowUpRightIcon" [size]="15"></lucide-icon>
               </a>
+            </div>
+          </article>
+        </div>
+
+        <!-- Mobile / Tablet Portfolio Infinite Carousel (Plays GIF automatically on active slide) -->
+        <app-carousel
+          *ngIf="bp.tablet()"
+          [items]="t.projects"
+          [pills]="projectCarouselPills()"
+          [ariaLabel]="t.portfolioTitle"
+          [prevAria]="t.portfolioPrevAria"
+          [nextAria]="t.portfolioNextAria"
+          (activeIndexChange)="onPortfolioCarouselActiveChange($event)">
+          <ng-template let-proj let-isActive="isActive" let-hasDragged="hasDragged">
+            <article
+              class="portfolio-card glass-panel"
+              [class.portfolio-card--featured]="proj.id === 'el-nino' || proj.id === 'watershed'"
+              [class.is-active]="isProjectActive(proj.id)">
+              <div class="portfolio-card__top">
+                <span class="portfolio-tag font-mono">{{ proj.tag }}</span>
+                <div class="portfolio-badges">
+                  <app-badge
+                    *ngFor="let tg of proj.tags"
+                    [text]="tg"
+                    backgroundColor="#334155">
+                  </app-badge>
+                </div>
+              </div>
+
               <a
-                *ngIf="person.github"
-                [href]="person.github"
+                class="portfolio-card__media portfolio-card__media--swap"
+                [class.is-active]="isProjectActive(proj.id)"
+                [class.is-ready]="isProjectReady(proj.id)"
+                [href]="proj.url"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="icon-link"
-                [attr.aria-label]="person.name + ' on GitHub'">
-                <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
-                <span>GitHub</span>
+                [attr.aria-label]="t.launchApp + ': ' + proj.title"
+                (click)="hasDragged && $event.preventDefault()">
+                <img
+                  class="portfolio-card__poster"
+                  [src]="proj.poster"
+                  [alt]="proj.title"
+                  width="680"
+                  height="425"
+                  loading="lazy"
+                  decoding="async" />
+                <img
+                  *ngIf="hasProjectStarted(proj.id)"
+                  class="portfolio-card__gif"
+                  [src]="proj.media"
+                  alt=""
+                  aria-hidden="true"
+                  width="640"
+                  height="496"
+                  decoding="async"
+                  (load)="onProjectGifLoaded(proj.id)" />
+              </a>
+
+              <div class="portfolio-card__body">
+                <h3 class="portfolio-card__title">{{ proj.title }}</h3>
+                <p class="portfolio-card__subtitle">{{ proj.subtitle }}</p>
+                <p class="portfolio-card__desc">{{ proj.description }}</p>
+
+                <div class="portfolio-card__metrics font-mono">
+                  <div *ngFor="let m of proj.metrics" class="metric-item">
+                    <span class="metric-label">{{ m.label }}</span>
+                    <span class="metric-val">{{ m.value }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="portfolio-card__footer">
+                <div class="portfolio-card__footer-links">
+                  <a
+                    *ngIf="proj.repoUrl"
+                    [href]="proj.repoUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="portfolio-link-btn portfolio-link-btn--secondary"
+                    [attr.aria-label]="t.viewRepository + ': ' + proj.title"
+                    (click)="hasDragged && $event.preventDefault()">
+                    <lucide-icon [img]="githubIcon" [size]="14"></lucide-icon>
+                    <span>{{ t.viewRepository }}</span>
+                  </a>
+                  <a
+                    *ngIf="proj.secondaryUrl"
+                    [href]="proj.secondaryUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="portfolio-link-btn portfolio-link-btn--secondary"
+                    [attr.aria-label]="proj.secondaryLabel + ': ' + proj.title"
+                    (click)="hasDragged && $event.preventDefault()">
+                    <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
+                    <span>{{ proj.secondaryLabel }}</span>
+                  </a>
+                </div>
+
+                <a
+                  [href]="proj.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="portfolio-link-btn portfolio-link-btn--primary"
+                  (click)="hasDragged && $event.preventDefault()">
+                  <span>{{ t.launchApp }}</span>
+                  <lucide-icon [img]="arrowUpRightIcon" [size]="15"></lucide-icon>
+                </a>
+              </div>
+            </article>
+          </ng-template>
+        </app-carousel>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 3. SPECIALITIES: Geovisualisation, Data Eng, AI & Anomaly ML            -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section
+      class="section specialities-section"
+      id="specialities"
+      (mousemove)="onSpecialitiesMouseMove($event)"
+      (mouseleave)="onSpecialitiesMouseLeave($event)">
+      <div class="specialities-grid-bg" aria-hidden="true"></div>
+      <div class="section__container">
+        <div class="section__header">
+          <span class="section-kicker">{{ t.specialitiesKicker }}</span>
+          <h2 class="section__title">{{ t.specialitiesTitle }}</h2>
+          <p class="section__lead">{{ t.specialitiesLead }}</p>
+        </div>
+
+        <div class="specialities-grid">
+          <div
+            *ngFor="let disc of t.disciplines; let i = index"
+            class="discipline-card glass-panel">
+            <div class="discipline-card__icon-wrap">
+              <lucide-icon *ngIf="i === 0" [img]="wavesIcon" [size]="24"></lucide-icon>
+              <lucide-icon *ngIf="i === 1" [img]="databaseIcon" [size]="24"></lucide-icon>
+              <lucide-icon *ngIf="i === 2" [img]="cpuIcon" [size]="24"></lucide-icon>
+            </div>
+
+            <h3 class="discipline-card__title">{{ disc.title }}</h3>
+            <p class="discipline-card__lead">{{ disc.lead }}</p>
+
+            <ul class="discipline-card__list">
+              <li *ngFor="let pt of disc.points">
+                <span class="bullet" aria-hidden="true">▹</span>
+                <span>{{ pt }}</span>
+              </li>
+            </ul>
+
+            <div class="discipline-card__tools">
+              <span *ngFor="let tool of disc.tools" class="tool-pill font-mono">
+                {{ tool }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 4. TEAM DOSSIER: Collective (1:1 with Design System)                    -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section class="section team-section" id="team">
+      <div class="section__container">
+        <div class="section__header">
+          <span class="section-kicker">{{ t.teamKicker }}</span>
+          <h2 class="section__title">{{ t.teamTitle }}</h2>
+        </div>
+
+        <!-- Dedicated About Us Studio Narrative Card -->
+        <article class="about-card glass-panel">
+          <div class="about-card__content">
+            <p class="about-card__lead">{{ t.teamLeads[0] }}</p>
+            <p class="about-card__paragraph">{{ t.teamLeads[1] }}</p>
+          </div>
+
+          <div class="about-card__footer" *ngIf="t.teamRefs.length">
+            <span class="about-card__footer-label font-mono">{{ t.teamRefsLabel }}</span>
+            <div class="about-card__refs">
+              <a
+                *ngFor="let ref of t.teamRefs"
+                class="about-ref-chip"
+                [href]="ref.href"
+                target="_blank"
+                rel="noopener noreferrer"
+                [title]="ref.title">
+                <lucide-icon [img]="externalLinkIcon" [size]="12"></lucide-icon>
+                <span>{{ ref.label }}</span>
               </a>
             </div>
           </div>
         </article>
-      </div>
 
-      <!-- Mobile / Tablet Infinite Carousel with 0% edge opacity mask & click affordances -->
-      <div
-        class="team-carousel"
-        *ngIf="bp.tablet()"
-        (pointerenter)="setTeamPaused(true)"
-        (pointerleave)="setTeamPaused(false)"
-        (focusin)="setTeamPaused(true)"
-        (focusout)="setTeamPaused(false)">
-        <!-- Clickable Teammate Switcher HUD with animated progress fill on active teammate -->
-        <div class="team-carousel__controls" role="toolbar" [attr.aria-label]="t.teamTitle">
-          <button
-            type="button"
-            class="team-carousel__nav-btn"
-            [attr.aria-label]="t.teamPrevAria"
-            (click)="prevTeammate()">
-            <lucide-icon [img]="chevronLeftIcon" [size]="16" aria-hidden="true"></lucide-icon>
-          </button>
+        <!-- Desktop static 3-column grid -->
+        <div class="team-grid" *ngIf="!bp.tablet()">
+          <article *ngFor="let person of t.founders" class="team-card glass-panel">
+            <div class="team-card__media">
+              <img
+                class="team-photo"
+                [src]="person.photo"
+                [alt]="person.name"
+                width="400"
+                height="400"
+                loading="lazy" />
+            </div>
 
-          <div class="team-carousel__pills" role="tablist">
-            <button
-              *ngFor="let person of t.founders; let i = index"
-              type="button"
-              role="tab"
-              class="team-carousel__pill"
-              [class.is-active]="activeRealTeamIndex() === i"
-              [attr.aria-selected]="activeRealTeamIndex() === i"
-              [attr.aria-label]="t.teamSelectAria + ': ' + person.name"
-              (click)="selectTeammate(i)">
-              <img class="team-carousel__pill-avatar" [src]="person.photo" [alt]="person.name" />
-              <span class="team-carousel__pill-name font-mono">{{ person.name.split(' ')[0] }}</span>
-              <span
-                class="team-carousel__pill-progress"
-                *ngIf="activeRealTeamIndex() === i"
-                [class.is-paused]="teamPaused()"></span>
-            </button>
-          </div>
+            <div class="team-card__content">
+              <h3 class="team-name">{{ person.name }}</h3>
+              <span *ngIf="person.role" class="team-role font-mono text-accent">{{ person.role }}</span>
+              <p class="team-bio">{{ person.bio }}</p>
 
-          <button
-            type="button"
-            class="team-carousel__nav-btn"
-            [attr.aria-label]="t.teamNextAria"
-            (click)="nextTeammate()">
-            <lucide-icon [img]="chevronRightIcon" [size]="16" aria-hidden="true"></lucide-icon>
-          </button>
+              <div class="team-focus">
+                <span class="team-focus__label">{{ t.teamFocusLabel }}</span>
+                <div class="team-tags">
+                  <span *ngFor="let tg of person.tags" class="tag-chip">
+                    {{ tg }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="team-links">
+                <a
+                  [href]="person.linkedin"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="icon-link"
+                  [attr.aria-label]="person.name + ' on LinkedIn'">
+                  <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
+                  <span>LinkedIn</span>
+                </a>
+                <a
+                  *ngIf="person.github"
+                  [href]="person.github"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="icon-link"
+                  [attr.aria-label]="person.name + ' on GitHub'">
+                  <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
+                  <span>GitHub</span>
+                </a>
+              </div>
+            </div>
+          </article>
         </div>
 
-        <!-- Fade to 0% Opacity Mask Viewport -->
-        <div
-          class="team-carousel__viewport"
-          [class.is-dragging]="isDraggingTeam()"
-          (pointerdown)="onTeamPointerDown($event)"
-          (pointermove)="onTeamPointerMove($event)"
-          (pointerup)="onTeamPointerUp($event)"
-          (pointercancel)="onTeamPointerCancel($event)"
-          (dragstart)="$event.preventDefault()">
-          <div
-            class="team-carousel__track"
-            [class.is-animating]="teamTransitionEnabled()"
-            [style.transform]="'translateX(calc(-1 * ' + teamTrackIndex() + ' * (var(--slide-width) + var(--slide-gap)) + ' + teamDragOffsetPx() + 'px))'"
-            (transitionend)="onTeamTrackTransitionEnd($event)">
-            <article
-              *ngFor="let slide of teamSlides(); let sIdx = index; trackBy: trackSlideById"
-              class="team-card team-carousel__slide glass-panel"
-              [class.is-active]="teamTrackIndex() === sIdx"
-              [class.is-peeking]="teamTrackIndex() !== sIdx"
-              [attr.aria-hidden]="teamTrackIndex() !== sIdx"
-              (click)="onSlideClick(sIdx)">
+        <!-- Mobile / Tablet Team Infinite Carousel -->
+        <app-carousel
+          *ngIf="bp.tablet()"
+          [items]="t.founders"
+          [pills]="teamCarouselPills()"
+          [autoPlayMs]="4500"
+          [ariaLabel]="t.teamTitle"
+          [prevAria]="t.teamPrevAria"
+          [nextAria]="t.teamNextAria">
+          <ng-template let-person let-isActive="isActive" let-hasDragged="hasDragged">
+            <article class="team-card glass-panel" [class.is-active]="isActive">
               <div class="team-card__media">
                 <img
                   class="team-photo"
-                  [src]="slide.person.photo"
-                  [alt]="slide.person.name"
+                  [src]="person.photo"
+                  [alt]="person.name"
+                  width="400"
+                  height="400"
                   decoding="async"
                   draggable="false"
                   (dragstart)="$event.preventDefault()" />
               </div>
 
               <div class="team-card__content">
-                <h3 class="team-name">{{ slide.person.name }}</h3>
-                <span *ngIf="slide.person.role" class="team-role font-mono text-accent">{{ slide.person.role }}</span>
-                <p class="team-bio">{{ slide.person.bio }}</p>
+                <h3 class="team-name">{{ person.name }}</h3>
+                <span *ngIf="person.role" class="team-role font-mono text-accent">{{ person.role }}</span>
+                <p class="team-bio">{{ person.bio }}</p>
 
                 <div class="team-focus">
                   <span class="team-focus__label">{{ t.teamFocusLabel }}</span>
                   <div class="team-tags">
-                    <span *ngFor="let tg of slide.person.tags" class="tag-chip">
+                    <span *ngFor="let tg of person.tags" class="tag-chip">
                       {{ tg }}
                     </span>
                   </div>
@@ -457,60 +516,60 @@
 
                 <div class="team-links">
                   <a
-                    [href]="slide.person.linkedin"
+                    [href]="person.linkedin"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="icon-link"
-                    [attr.aria-label]="slide.person.name + ' on LinkedIn'"
-                    (click)="teamHasDragged && $event.preventDefault()">
+                    [attr.aria-label]="person.name + ' on LinkedIn'"
+                    (click)="hasDragged && $event.preventDefault()">
                     <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
                     <span>LinkedIn</span>
                   </a>
                   <a
-                    *ngIf="slide.person.github"
-                    [href]="slide.person.github"
+                    *ngIf="person.github"
+                    [href]="person.github"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="icon-link"
-                    [attr.aria-label]="slide.person.name + ' on GitHub'"
-                    (click)="teamHasDragged && $event.preventDefault()">
+                    [attr.aria-label]="person.name + ' on GitHub'"
+                    (click)="hasDragged && $event.preventDefault()">
                     <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
                     <span>GitHub</span>
                   </a>
                 </div>
               </div>
             </article>
+          </ng-template>
+        </app-carousel>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 5. CONTACT SECTION: Direct Mail Form to hello@kmd-labs.org                -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section class="section contact-section" id="contact">
+      <div class="section__container">
+        <div class="section__header">
+          <span class="section-kicker">{{ t.contactKicker }}</span>
+          <h2 class="section__title">{{ t.contactTitle }}</h2>
+          <p class="section__lead">{{ t.contactLead }}</p>
+        </div>
+
+        <div class="contact-card glass-panel">
+          <div class="contact-cta-wrap">
+            <a
+              [href]="mailtoUrl()"
+              class="contact-submit-btn"
+              aria-label="Send email to hello@kmd-labs.org">
+              <lucide-icon [img]="mailIcon" [size]="16" aria-hidden="true"></lucide-icon>
+              <span>{{ t.contactSubmitBtn }}</span>
+            </a>
+            <p class="contact-note">{{ t.contactClientNote }}</p>
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════════════════════════════════ -->
-  <!-- 5. CONTACT SECTION: Direct Mail Form to hello@kmd-labs.org                -->
-  <!-- ═══════════════════════════════════════════════════════════════════════ -->
-  <section class="section contact-section" id="contact">
-    <div class="section__container">
-      <div class="section__header">
-        <span class="section-kicker">{{ t.contactKicker }}</span>
-        <h2 class="section__title">{{ t.contactTitle }}</h2>
-        <p class="section__lead">{{ t.contactLead }}</p>
-      </div>
-
-      <div class="contact-card glass-panel">
-        <div class="contact-cta-wrap">
-          <a
-            [href]="mailtoUrl()"
-            class="contact-submit-btn"
-            aria-label="Send email to hello@kmd-labs.org">
-            <lucide-icon [img]="mailIcon" [size]="16" aria-hidden="true"></lucide-icon>
-            <span>{{ t.contactSubmitBtn }}</span>
-          </a>
-          <p class="contact-note">{{ t.contactClientNote }}</p>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
+  </main>
 
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
   <!-- 6. SITE FOOTER: 3-Column Balanced Layout                                -->
@@ -527,7 +586,9 @@
           <img
             class="footer__logo"
             src="assets/design-system/logo/kmd-black-orange.svg"
-            alt="KMD" />
+            alt="KMD"
+            width="40"
+            height="16" />
         </button>
       </div>
 
@@ -542,7 +603,7 @@
         <button
           type="button"
           class="back-to-top"
-          [attr.aria-label]="t.scrollToTopAria"
+          [attr.aria-label]="'TOP — ' + t.scrollToTopAria"
           (click)="scrollToTop()">
           ↑ TOP
         </button>

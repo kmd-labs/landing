@@ -14,7 +14,7 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="alternate icon" href="favicon.ico">
   <script>
-    /* Standards-based browser compatibility: routes deprecated StorageType / webkitPersistentStorage to navigator.storage and intercepts deprecated FencedFrame constructors */
+    /* Standards-based browser compatibility: routes deprecated StorageType / webkitPersistentStorage to navigator.storage and intercepts deprecated FencedFrame / Protected Audience API probes */
     (function() {
       if (typeof navigator !== 'undefined') {
         var quotaAdapter = {
@@ -45,6 +45,30 @@
             configurable: true
           });
         } catch (e) {}
+
+        var paMethods = [
+          'joinAdInterestGroup',
+          'leaveAdInterestGroup',
+          'clearOriginJoinedAdInterestGroups',
+          'runAdAuction',
+          'canLoadAdAuctionFencedFrame',
+          'updateAdInterestGroups',
+          'deprecatedReplaceInURN',
+          'adAuctionComponents'
+        ];
+        for (var i = 0; i < paMethods.length; i++) {
+          var m = paMethods[i];
+          try {
+            if (m in Navigator.prototype) {
+              Object.defineProperty(Navigator.prototype, m, {
+                value: function() { return Promise.reject(new Error('Protected Audience API disabled')); },
+                writable: true,
+                enumerable: true,
+                configurable: true
+              });
+            }
+          } catch (e) {}
+        }
       }
 
       if (typeof Document !== 'undefined') {
@@ -77,12 +101,24 @@
           };
         }
       }
+
+      if (typeof window !== 'undefined') {
+        try {
+          if ('HTMLFencedFrameElement' in window) {
+            window.HTMLFencedFrameElement = window.HTMLIFrameElement || function() {};
+          }
+        } catch (e) {}
+        try {
+          if ('FencedFrameConfig' in window) {
+            window.FencedFrameConfig = function() {};
+          }
+        } catch (e) {}
+      }
     })();
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preload" href="assets/design-system/logo/kmd-black-orange.svg" as="image" type="image/svg+xml" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="preload" href="assets/data/current-wind.json" as="fetch" crossorigin>
 </head>
 <body>
   <app-root></app-root>

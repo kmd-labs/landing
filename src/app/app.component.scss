@@ -147,16 +147,16 @@
       }
 
       &--cta {
-        background: color("accent");
+        background: color("warning-700");
         color: #ffffff;
         font-weight: font-weight("semibold");
         padding: 0 16px;
-        box-shadow: 0 2px 8px color("accent-glow");
+        box-shadow: 0 2px 8px rgba(150, 80, 0, 0.28);
 
         &:hover {
-          background: color("accent-hover");
+          background: color("warning-800");
           color: #ffffff;
-          box-shadow: 0 4px 14px color("accent-glow");
+          box-shadow: 0 4px 14px rgba(150, 80, 0, 0.36);
         }
       }
     }
@@ -500,7 +500,7 @@
   font-size: font-size("xxs");
   font-weight: font-weight("bold");
   letter-spacing: 0.14em;
-  color: color("accent");
+  color: color("warning-700");
   text-transform: uppercase;
 }
 
@@ -521,6 +521,12 @@
   padding: 24px;
   border-radius: radius("panel");
   transition: box-shadow transition("fast");
+  height: 100%;
+
+  @include respond-to("mobile") {
+    padding: 16px;
+    border-radius: radius("card");
+  }
 
   &:hover {
     box-shadow: 0 16px 36px color("shadow-heavy");
@@ -538,7 +544,7 @@
   .portfolio-tag {
     font-size: font-size("xxs");
     font-weight: font-weight("bold");
-    color: color("accent");
+    color: color("warning-700");
     letter-spacing: 0.08em;
   }
 
@@ -696,7 +702,7 @@
     margin: 0 0 12px;
     font-size: font-size("xs");
     font-weight: font-weight("medium");
-    color: color("accent");
+    color: color("warning-700");
   }
 
   &__desc {
@@ -725,7 +731,7 @@
 
     .metric-label {
       font-size: 9px;
-      color: color("text-dim");
+      color: color("text-note");
       letter-spacing: 0.05em;
     }
 
@@ -932,7 +938,7 @@
     padding: 3px 8px;
     border-radius: radius("pill");
     background: color("neutral-100");
-    color: color("text-dim");
+    color: color("text-note");
     border: 1px solid color("line");
   }
 }
@@ -1101,6 +1107,8 @@
 
   .team-role {
     font-size: font-size("xs");
+    font-weight: font-weight("semibold");
+    color: color("warning-700");
     margin-bottom: 14px;
   }
 
@@ -1122,7 +1130,7 @@
       font-weight: font-weight("semibold");
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: color("text-dim");
+      color: color("text-note");
       margin-bottom: 8px;
     }
   }
@@ -1138,7 +1146,7 @@
     padding: 3px 8px;
     border-radius: radius("pill");
     background: color("neutral-100");
-    color: color("text-dim");
+    color: color("text-note");
   }
 
   .team-links {
@@ -1163,246 +1171,16 @@
   }
 }
 
-// ─── Team Infinite Horizontal Carousel (Mobile & Tablet) ─────────────────────
-.team-carousel {
-  --slide-width: clamp(280px, 80vw, 440px);
-  --slide-gap: 16px;
-  margin-top: 28px;
-  position: relative;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  box-sizing: border-box;
-  user-select: none;
-  -webkit-user-select: none;
+// ─── Carousel Content Wrap ──────────────────────────────────────────────────
+.carousel__slide-wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
 
-  &__controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 24px;
-    padding: 12px 16px;
-    overflow: visible;
-  }
-
-  &__nav-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: $control-height;
-    height: $control-height;
-    border-radius: radius("pill");
-    border: 1px solid color("line");
-    background: color("panel-bg");
-    color: color("text-bright");
-    backdrop-filter: blur(blur-token("sm"));
-    -webkit-backdrop-filter: blur(blur-token("sm"));
-    box-shadow: 0 2px 8px color("shadow-panel");
-    cursor: pointer;
-    user-select: none;
-    transition:
-      background transition("fast"),
-      border-color transition("fast"),
-      box-shadow transition("fast");
-    flex-shrink: 0;
-
-    lucide-icon {
-      color: color("accent");
-    }
-
-    &:hover {
-      background: color("btn-hover");
-      border-color: color("accent");
-      box-shadow: 0 4px 12px color("shadow-panel");
-    }
-
-    &:active {
-      transform: scale(0.95);
-    }
-  }
-
-  &__pills {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    max-width: 100%;
-    padding: 8px 4px;
-    overflow: visible;
-  }
-
-  &__pill {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    height: $control-height;
-    padding: 0 12px 0 4px;
-    border-radius: radius("pill");
-    border: 1px solid color("line");
-    background: color("panel-bg");
-    color: color("text-dim");
-    font: inherit;
-    font-size: font-size("xs");
-    font-weight: font-weight("medium");
-    backdrop-filter: blur(blur-token("sm"));
-    -webkit-backdrop-filter: blur(blur-token("sm"));
-    box-shadow: 0 2px 8px color("shadow-panel");
-    cursor: pointer;
-    user-select: none;
-    overflow: hidden;
-    transition:
-      background transition("fast"),
-      border-color transition("fast"),
-      color transition("fast"),
-      box-shadow transition("fast");
-
-    &-avatar {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      object-fit: cover;
-      display: block;
-      border: 1px solid color("line");
-    }
-
-    &-name {
-      letter-spacing: 0.02em;
-    }
-
-    &:hover {
-      background: color("btn-hover");
-      color: color("text-bright");
-      border-color: color("line-strong");
-      box-shadow: 0 4px 12px color("shadow-panel");
-    }
-
-    &.is-active {
-      background: color("panel-bg-heavy");
-      border-color: color("accent");
-      color: color("text-bright");
-      box-shadow: 0 3px 12px color("accent-glow");
-    }
-
-    &-progress {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 2px;
-      background: color("accent");
-      width: 0%;
-      animation: teamAutoProgress 4.5s linear infinite;
-
-      &.is-paused {
-        animation-play-state: paused;
-      }
-    }
-  }
-
-  &__viewport {
-    position: relative;
+  .portfolio-card,
+  .team-card {
     width: 100%;
-    overflow: hidden;
-    padding: 24px 0 40px;
-    margin-top: -6px;
-    margin-bottom: -16px;
-    cursor: grab;
-    touch-action: pan-y;
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-user-drag: none;
-
-    // Fade to 0% Opacity Mask at left & right edges
-    mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      rgba(0, 0, 0, 1) 6%,
-      rgba(0, 0, 0, 1) 94%,
-      transparent 100%
-    );
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      rgba(0, 0, 0, 1) 6%,
-      rgba(0, 0, 0, 1) 94%,
-      transparent 100%
-    );
-
-    &:active,
-    &.is-dragging {
-      cursor: grabbing;
-    }
-  }
-
-  &__track {
-    display: flex;
-    gap: var(--slide-gap);
-    padding-left: calc((100% - var(--slide-width)) / 2);
-    padding-right: calc((100% - var(--slide-width)) / 2);
-    will-change: transform;
-    touch-action: pan-y;
-    user-select: none;
-    -webkit-user-select: none;
-
-    &.is-animating {
-      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    &:not(.is-animating) {
-      transition: none !important;
-
-      .team-carousel__slide,
-      .team-carousel__slide * {
-        transition: none !important;
-      }
-    }
-  }
-
-  &__slide {
-    flex: 0 0 var(--slide-width);
-    width: var(--slide-width);
-    box-sizing: border-box;
-    touch-action: pan-y;
-    user-select: none;
-    -webkit-user-select: none;
-    transition:
-      opacity 0.4s ease,
-      transform 0.4s ease,
-      box-shadow 0.4s ease;
-
-    &.is-peeking {
-      opacity: 0.45;
-      transform: scale(0.95);
-      cursor: pointer;
-
-      &:hover {
-        opacity: 0.75;
-      }
-    }
-
-    &.is-active {
-      opacity: 1;
-      transform: scale(1);
-      box-shadow: 0 12px 36px color("shadow-heavy");
-    }
-  }
-}
-
-@keyframes teamAutoProgress {
-  from {
-    width: 0%;
-  }
-  to {
-    width: 100%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .team-carousel__pill-progress {
-    display: none !important;
-  }
-  .team-carousel__track.is-animating {
-    transition: none !important;
+    height: 100%;
   }
 }
 
@@ -1446,7 +1224,7 @@
     height: 44px;
     padding: 0 32px;
     border-radius: radius("pill");
-    background: color("accent");
+    background: color("warning-700");
     color: #ffffff;
     font-family: inherit;
     font-size: font-size("sm");
@@ -1454,7 +1232,7 @@
     text-decoration: none;
     cursor: pointer;
     user-select: none;
-    box-shadow: 0 3px 12px color("accent-glow");
+    box-shadow: 0 3px 12px rgba(150, 80, 0, 0.28);
     transition: background transition("fast"), transform transition("fast"), box-shadow transition("fast");
 
     lucide-icon {
@@ -1464,8 +1242,8 @@
     }
 
     &:hover {
-      background: color("accent-hover");
-      box-shadow: 0 6px 18px color("accent-glow");
+      background: color("warning-800");
+      box-shadow: 0 6px 18px rgba(150, 80, 0, 0.36);
     }
 
     &:active {
@@ -1473,7 +1251,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid color("accent");
+      outline: 2px solid color("warning-700");
       outline-offset: 2px;
     }
 
@@ -1489,7 +1267,7 @@
     max-width: 440px;
     font-size: font-size("xs");
     line-height: 1.5;
-    color: color("text-dim");
+    color: color("text-note");
     text-align: center;
   }
 }
@@ -1566,7 +1344,7 @@
     align-items: center;
     background: transparent;
     border: 0;
-    color: color("accent");
+    color: color("warning-700");
     font: inherit;
     font-size: font-size("xxs");
     font-weight: font-weight("bold");
@@ -1578,6 +1356,7 @@
 
     &:hover {
       background: color("btn-hover");
+      color: color("warning-800");
       text-decoration: underline;
     }
   }

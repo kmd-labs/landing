@@ -1,0 +1,89 @@
+{
+  "entries": [
+    {
+      "identifier": "urn:air:kmd-labs.org:geovis:el-nino",
+      "displayName": "El Niño — Southern Oscillation (ENSO) Interactive 3D Model",
+      "type": "application/json",
+      "url": "https://kmd-labs.org/el-nino/",
+      "description": "Interactive WebGL 3D Pacific thermocline variability, Walker Circulation dynamics, and Niño 3.4 SST anomaly teleconnections.",
+      "representativeQueries": [
+        "visualize El Nino 3D Pacific thermocline",
+        "ENSO Walker circulation animation",
+        "Niño 3.4 sea surface temperature anomalies",
+        "Pacific equatorial ocean atmosphere model"
+      ],
+      "capabilities": ["3DVisualization", "Oceanography", "Climatology"],
+      "tags": ["ENSO", "El Niño", "oceanography", "climatology", "geovisualization"]
+    },
+    {
+      "identifier": "urn:air:kmd-labs.org:geovis:watershed",
+      "displayName": "Baltic Nutrient Loads & Hypoxia (Watershed)",
+      "type": "application/json",
+      "url": "https://kmd-labs.org/watershed/",
+      "description": "Catchment-scale nitrogen/phosphorus runoff, halocline stratification, and benthic oxygen deficit simulation in the Baltic Sea.",
+      "representativeQueries": [
+        "Baltic Sea hypoxia interactive map",
+        "eutrophication nutrient runoff simulation",
+        "HELCOM Baltic catchment water quality"
+      ],
+      "capabilities": ["Hydrology", "Biogeochemistry", "Geovisualization"],
+      "tags": ["Baltic Sea", "hypoxia", "eutrophication", "hydrology"]
+    },
+    {
+      "identifier": "urn:air:kmd-labs.org:geovis:golfstrom",
+      "displayName": "Golfstrom — North Atlantic Heat Engine",
+      "type": "application/json",
+      "url": "https://kmd-labs.org/golfstrom/",
+      "description": "AMOC thermohaline circulation, Gulf Stream western boundary current meanders, and subpolar gyre heat transport simulation.",
+      "representativeQueries": [
+        "Gulf stream current simulation",
+        "AMOC ocean conveyor belt visualization",
+        "North Atlantic thermohaline circulation"
+      ],
+      "capabilities": ["Oceanography", "Climatology", "Geovisualization"],
+      "tags": ["Gulf Stream", "AMOC", "ocean currents", "Atlantic"]
+    },
+    {
+      "identifier": "urn:air:kmd-labs.org:geovis:baltic",
+      "displayName": "Baltic Postglacial Reconstruction",
+      "type": "application/json",
+      "url": "https://kmd-labs.org/baltic/",
+      "description": "14,000-year Glacial Isostatic Adjustment paleogeographic reconstruction from the Baltic Ice Lake to the modern brackish sea.",
+      "representativeQueries": [
+        "Baltic postglacial rebound map",
+        "Glacial Isostatic Adjustment simulation",
+        "Baltic Ice Lake paleogeography 3D"
+      ],
+      "capabilities": ["Paleogeography", "Geophysics", "Geovisualization"],
+      "tags": ["postglacial rebound", "paleogeography", "Baltic", "GIA"]
+    },
+    {
+      "identifier": "urn:air:kmd-labs.org:geovis:viadrusai",
+      "displayName": "Viadrus AI (CASSINI EU Winner)",
+      "type": "application/json",
+      "url": "https://kmd-labs.org/viadrusai/",
+      "description": "Copernicus Sentinel-1 SAR interferometry & Sentinel-2 optical anomaly detection pipeline for early water network leak localization.",
+      "representativeQueries": [
+        "satellite leak detection Sentinel-1 SAR",
+        "Copernicus CASSINI hackathon winning solution",
+        "water supply pipe leak radar detection"
+      ],
+      "capabilities": ["EarthObservation", "RemoteSensing", "MachineLearning"],
+      "tags": ["Copernicus", "Sentinel-1", "SAR", "leak detection"]
+    },
+    {
+      "identifier": "urn:air:kmd-labs.org:geovis:polis-io",
+      "displayName": "Polis — Archaic Hellas Geosimulation (600 BC)",
+      "type": "application/json",
+      "url": "https://kmd-labs.org/polis-io/",
+      "description": "DEM-based agentic city-state simulation of Aegean trade networks, maritime cabotage, and political geography during Archaic Greece.",
+      "representativeQueries": [
+        "Archaic Greece city state simulation",
+        "ancient Mediterranean trade cabotage model",
+        "Aegean historical GIS simulation"
+      ],
+      "capabilities": ["Cliodynamics", "HistoricalGIS", "AgentSimulation"],
+      "tags": ["cliodynamics", "Archaic Greece", "simulation", "GIS"]
+    }
+  ]
+}

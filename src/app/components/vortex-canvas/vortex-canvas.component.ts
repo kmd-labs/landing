@@ -233,8 +233,8 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
     }
 
     // Fast warm-up: pre-advance initial histories so spiral streamlines appear immediately on load
-    for (let step = 0; step < 120; step++) {
-      this.tick(0.033);
+    for (let step = 0; step < 40; step++) {
+      this.tick(0.08);
     }
   }
 

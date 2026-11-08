@@ -1,6 +1,5 @@
 import {
   AfterViewInit,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   NgZone,
@@ -21,8 +20,6 @@ import {
   Users,
   ExternalLink,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   ArrowUpRight,
   Cpu,
   Waves,
@@ -44,20 +41,17 @@ import {
   getContactMailtoUrl
 } from '@kmd/design-system';
 import { I18nService } from './core/i18n/i18n.service';
-import { FounderEntry, Lang } from './core/i18n/i18n.types';
+import { Lang } from './core/i18n/i18n.types';
 import { CurrentWeatherService } from './core/services/current-weather.service';
 import { LocaleDatePipe } from './core/pipes/locale-date.pipe';
 import {
   TelemetryData,
   VortexCanvasComponent
 } from './components/vortex-canvas/vortex-canvas.component';
-
-export interface TeamSlide {
-  slideId: string;
-  realIndex: number;
-  person: FounderEntry;
-  isClone: boolean;
-}
+import {
+  CarouselComponent,
+  CarouselPill
+} from './components/carousel/carousel.component';
 
 @Component({
   selector: 'app-root',
@@ -70,6 +64,7 @@ export interface TeamSlide {
     DropdownComponent,
     SplashComponent,
     VortexCanvasComponent,
+    CarouselComponent,
     LocaleDatePipe
   ],
   templateUrl: './app.component.html',
@@ -81,7 +76,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly splash = inject(SplashService);
   readonly weather = inject(CurrentWeatherService);
   private readonly zone = inject(NgZone);
-  private readonly cdr = inject(ChangeDetectorRef);
   private readonly splashRevealed = signal(false);
 
   // Portfolio interactive screengrab / GIF preview state
@@ -107,6 +101,25 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     ];
   });
 
+  readonly teamCarouselPills = computed<CarouselPill[]>(() => {
+    const t = this.i18n.t();
+    return t.founders.map((p) => ({
+      id: p.name,
+      label: p.name.split(' ')[0],
+      avatar: p.photo,
+      ariaLabel: `${t.teamSelectAria}: ${p.name}`
+    }));
+  });
+
+  readonly projectCarouselPills = computed<CarouselPill[]>(() => {
+    const t = this.i18n.t();
+    return t.projects.map((p) => ({
+      id: p.id,
+      label: p.id.toUpperCase(),
+      ariaLabel: `${p.id.toUpperCase()} — ${t.portfolioSelectAria}: ${p.title}`
+    }));
+  });
+
   constructor() {
     effect(() => {
       const revealed = this.splashRevealed();
@@ -118,11 +131,16 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     });
 
     if (typeof window !== 'undefined') {
+      // Ensure reveal state unlocks if CSS animationend event is dropped in headless/slow environments
+      setTimeout(() => {
+        this.splashRevealed.set(true);
+      }, 950);
+
       setTimeout(() => {
         if (this.splash.visible()) {
           this.splash.finish();
         }
-      }, 5000);
+      }, 1500);
     }
   }
 
@@ -148,8 +166,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly usersIcon = Users;
   readonly externalLinkIcon = ExternalLink;
   readonly chevronDownIcon = ChevronDown;
-  readonly chevronLeftIcon = ChevronLeft;
-  readonly chevronRightIcon = ChevronRight;
   readonly arrowUpRightIcon = ArrowUpRight;
   readonly cpuIcon = Cpu;
   readonly wavesIcon = Waves;
@@ -159,54 +175,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly menuIcon = Menu;
   readonly xIcon = X;
   readonly githubIcon = Github;
-
-  // Team Infinite Horizontal Carousel (Mobile / Tablet)
-  readonly teamTrackIndex = signal(1);
-  readonly teamTransitionEnabled = signal(true);
-  readonly teamPaused = signal(false);
-  readonly teamDragOffsetPx = signal(0);
-  readonly isDraggingTeam = signal(false);
-  private teamAutoTimer?: ReturnType<typeof setInterval>;
-  private teamPointerStartX = 0;
-  private teamPointerStartY = 0;
-  private teamIsHorizontalDrag = false;
-  private teamActivePointerId?: number;
-  teamHasDragged = false;
-
-  readonly activeRealTeamIndex = computed(() => {
-    const founders = this.i18n.t().founders;
-    const count = founders?.length || 3;
-    const trackIdx = this.teamTrackIndex();
-    return ((trackIdx - 1) % count + count) % count;
-  });
-
-  readonly teamSlides = computed<TeamSlide[]>(() => {
-    const founders = this.i18n.t().founders;
-    if (!founders || founders.length === 0) return [];
-    const count = founders.length;
-    const last = founders[count - 1];
-    const first = founders[0];
-    return [
-      {
-        slideId: `clone-last-${last.name}`,
-        realIndex: count - 1,
-        person: last,
-        isClone: true
-      },
-      ...founders.map((p, idx) => ({
-        slideId: `real-${idx}-${p.name}`,
-        realIndex: idx,
-        person: p,
-        isClone: false
-      })),
-      {
-        slideId: `clone-first-${first.name}`,
-        realIndex: 0,
-        person: first,
-        isClone: true
-      }
-    ];
-  });
 
   // Contact Mailto URL (Prefilled with localized general inquiry)
   readonly mailtoUrl = computed(() => getContactMailtoUrl(this.i18n.lang()));
@@ -264,17 +232,17 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     if (typeof window === 'undefined') return;
 
     this.initPortfolioObserver();
-    this.startTeamAutoScroll();
   }
 
   ngOnDestroy(): void {
     this.observer?.disconnect();
-    this.stopTeamAutoScroll();
     for (const timer of this.mobileGifTimers.values()) {
       clearTimeout(timer);
     }
     this.mobileGifTimers.clear();
   }
+
+  private readonly activePortfolioSlideIndex = signal(0);
 
   private initPortfolioObserver(): void {
     if (typeof window === 'undefined') return;
@@ -287,20 +255,36 @@ export class AppComponent implements AfterViewInit, OnDestroy {
           this.zone.run(() => {
             for (const entry of entries) {
               const id = entry.target.getAttribute('data-project-id');
-              if (!id) continue;
-              if (entry.isIntersecting) {
-                this.activateProject(id);
-              } else {
-                this.deactivateProject(id);
+              if (id) {
+                if (entry.isIntersecting) {
+                  this.activateProject(id);
+                } else {
+                  this.deactivateProject(id);
+                }
+              } else if (entry.target.id === 'portfolio') {
+                if (entry.isIntersecting) {
+                  const projects = this.i18n.t().projects;
+                  const idx = this.activePortfolioSlideIndex();
+                  if (projects && projects[idx]) {
+                    this.activateProject(projects[idx].id);
+                  }
+                }
               }
             }
           });
         },
-        { threshold: 0.25, rootMargin: '0px' }
+        { threshold: 0.15, rootMargin: '0px' }
       );
+
+      const portfolioSection = document.getElementById('portfolio');
+      if (portfolioSection) {
+        this.observer.observe(portfolioSection);
+      }
       this.projectMediaEls?.forEach((ref) => this.observer!.observe(ref.nativeElement));
       this.projectMediaEls?.changes.subscribe((ql: QueryList<ElementRef<HTMLElement>>) => {
         this.observer?.disconnect();
+        const pSec = document.getElementById('portfolio');
+        if (pSec) this.observer!.observe(pSec);
         ql.forEach((ref) => this.observer!.observe(ref.nativeElement));
       });
     });
@@ -315,229 +299,19 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     return true;
   }
 
-  nextTeammate(): void {
-    const count = this.i18n.t().founders?.length || 3;
-    if (this.teamTrackIndex() >= count + 1) return;
-    this.teamTransitionEnabled.set(true);
-    this.teamTrackIndex.update((idx) => idx + 1);
-    this.resetTeamAutoTimer();
-  }
+  onPortfolioCarouselActiveChange(realIndex: number): void {
+    this.activePortfolioSlideIndex.set(realIndex);
+    const projects = this.i18n.t().projects;
+    if (!projects || !projects[realIndex]) return;
+    const active = projects[realIndex];
 
-  prevTeammate(): void {
-    if (this.teamTrackIndex() <= 0) return;
-    this.teamTransitionEnabled.set(true);
-    this.teamTrackIndex.update((idx) => idx - 1);
-    this.resetTeamAutoTimer();
-  }
-
-  selectTeammate(realIndex: number): void {
-    this.teamTransitionEnabled.set(true);
-    this.teamTrackIndex.set(realIndex + 1);
-    this.resetTeamAutoTimer();
-  }
-
-  trackSlideById(_index: number, slide: TeamSlide): string {
-    return slide.slideId;
-  }
-
-  onTeamTrackTransitionEnd(event: TransitionEvent): void {
-    if (event.target !== event.currentTarget) return;
-    if (event.propertyName !== 'transform') return;
-    if (!this.teamTransitionEnabled()) return;
-
-    const count = this.i18n.t().founders?.length || 3;
-    const current = this.teamTrackIndex();
-
-    if (current >= count + 1) {
-      const trackEl = event.currentTarget as HTMLElement | null;
-      if (trackEl) {
-        trackEl.style.transition = 'none';
-      }
-      this.teamTransitionEnabled.set(false);
-      this.teamTrackIndex.set(1);
-      this.cdr.detectChanges();
-      if (trackEl) {
-        void trackEl.offsetHeight;
-      }
-      if (typeof window !== 'undefined') {
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            if (trackEl) {
-              trackEl.style.transition = '';
-            }
-            this.teamTransitionEnabled.set(true);
-          });
-        });
-      }
-    } else if (current <= 0) {
-      const trackEl = event.currentTarget as HTMLElement | null;
-      if (trackEl) {
-        trackEl.style.transition = 'none';
-      }
-      this.teamTransitionEnabled.set(false);
-      this.teamTrackIndex.set(count);
-      this.cdr.detectChanges();
-      if (trackEl) {
-        void trackEl.offsetHeight;
-      }
-      if (typeof window !== 'undefined') {
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            if (trackEl) {
-              trackEl.style.transition = '';
-            }
-            this.teamTransitionEnabled.set(true);
-          });
-        });
-      }
-    }
-  }
-
-  private startTeamAutoScroll(): void {
-    if (typeof window === 'undefined') return;
-    this.stopTeamAutoScroll();
-    this.zone.runOutsideAngular(() => {
-      this.teamAutoTimer = setInterval(() => {
-        if (this.teamPaused() || this.isDraggingTeam() || this.isReducedMotion()) return;
-        if (!this.bp.tablet()) return;
-        this.zone.run(() => {
-          this.nextTeammate();
-        });
-      }, 4500);
-    });
-  }
-
-  private stopTeamAutoScroll(): void {
-    if (this.teamAutoTimer) {
-      clearInterval(this.teamAutoTimer);
-      this.teamAutoTimer = undefined;
-    }
-  }
-
-  private resetTeamAutoTimer(): void {
-    this.startTeamAutoScroll();
-  }
-
-  onTeamPointerDown(event: PointerEvent): void {
-    if (event.pointerType === 'mouse' && event.button !== 0) return;
-    const target = event.currentTarget as HTMLElement;
-    try {
-      target.setPointerCapture?.(event.pointerId);
-    } catch {
-      // Ignore if pointer capture fails
-    }
-    this.teamActivePointerId = event.pointerId;
-    this.teamPointerStartX = event.clientX;
-    this.teamPointerStartY = event.clientY;
-    this.teamDragOffsetPx.set(0);
-    this.teamIsHorizontalDrag = false;
-    this.teamHasDragged = false;
-    this.isDraggingTeam.set(true);
-    this.teamPaused.set(true);
-  }
-
-  onTeamPointerMove(event: PointerEvent): void {
-    if (!this.isDraggingTeam()) return;
-    if (this.teamActivePointerId !== undefined && event.pointerId !== this.teamActivePointerId) return;
-
-    const deltaX = event.clientX - this.teamPointerStartX;
-    const deltaY = event.clientY - this.teamPointerStartY;
-
-    if (!this.teamIsHorizontalDrag) {
-      if (Math.abs(deltaX) > 6 && Math.abs(deltaX) >= Math.abs(deltaY) * 0.7) {
-        this.teamIsHorizontalDrag = true;
-        this.teamHasDragged = true;
-      } else if (Math.abs(deltaY) > 12 && Math.abs(deltaY) > Math.abs(deltaX) * 1.2) {
-        // Vertical scroll gesture - release capture and let page scroll natively
-        const target = event.currentTarget as HTMLElement;
-        try {
-          if (target.hasPointerCapture?.(event.pointerId)) {
-            target.releasePointerCapture(event.pointerId);
-          }
-        } catch {
-          // Ignore
-        }
-        this.teamActivePointerId = undefined;
-        this.isDraggingTeam.set(false);
-        this.teamDragOffsetPx.set(0);
-        return;
+    for (const p of projects) {
+      if (p.id !== active.id) {
+        this.deactivateProject(p.id);
       }
     }
 
-    if (this.teamIsHorizontalDrag) {
-      this.teamTransitionEnabled.set(false);
-      this.teamDragOffsetPx.set(deltaX);
-    }
-  }
-
-  onTeamPointerUp(event: PointerEvent): void {
-    if (!this.isDraggingTeam()) return;
-    if (this.teamActivePointerId !== undefined && event.pointerId !== this.teamActivePointerId) return;
-
-    const target = event.currentTarget as HTMLElement;
-    try {
-      if (target.hasPointerCapture?.(event.pointerId)) {
-        target.releasePointerCapture(event.pointerId);
-      }
-    } catch {
-      // Ignore
-    }
-    this.teamActivePointerId = undefined;
-
-    const deltaX = this.teamDragOffsetPx();
-    this.isDraggingTeam.set(false);
-    this.teamDragOffsetPx.set(0);
-    this.teamTransitionEnabled.set(true);
-    this.teamPaused.set(false);
-
-    if (this.teamIsHorizontalDrag) {
-      if (deltaX < -35) {
-        this.nextTeammate();
-      } else if (deltaX > 35) {
-        this.prevTeammate();
-      }
-    }
-    this.teamIsHorizontalDrag = false;
-    setTimeout(() => {
-      this.teamHasDragged = false;
-    }, 100);
-  }
-
-  onTeamPointerCancel(event?: PointerEvent): void {
-    if (event) {
-      const target = event.currentTarget as HTMLElement;
-      try {
-        if (target.hasPointerCapture?.(event.pointerId)) {
-          target.releasePointerCapture(event.pointerId);
-        }
-      } catch {
-        // Ignore
-      }
-    }
-    this.teamActivePointerId = undefined;
-    this.isDraggingTeam.set(false);
-    this.teamDragOffsetPx.set(0);
-    this.teamTransitionEnabled.set(true);
-    this.teamPaused.set(false);
-    this.teamIsHorizontalDrag = false;
-    setTimeout(() => {
-      this.teamHasDragged = false;
-    }, 100);
-  }
-
-  onSlideClick(sIdx: number): void {
-    if (this.teamHasDragged) return;
-    if (this.teamTrackIndex() !== sIdx) {
-      if (sIdx > this.teamTrackIndex()) {
-        this.nextTeammate();
-      } else {
-        this.prevTeammate();
-      }
-    }
-  }
-
-  setTeamPaused(paused: boolean): void {
-    this.teamPaused.set(paused);
+    this.activateProject(active.id);
   }
 
   onProjectPointerEnter(id: string, event: PointerEvent): void {

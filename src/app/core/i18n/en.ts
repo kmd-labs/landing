@@ -81,6 +81,9 @@ export const EN: Dict = {
     "Scientific geovisualizations, Earth observation pipelines, and spatial simulations built on authoritative satellite, oceanographic, and topographic datasets.",
   launchApp: "Launch Visualization",
   viewRepository: "GitHub",
+  portfolioPrevAria: "Previous project",
+  portfolioNextAria: "Next project",
+  portfolioSelectAria: "Select project",
   projects: buildProjects([
     {
       id: "el-nino",

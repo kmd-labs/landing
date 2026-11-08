@@ -144,7 +144,6 @@
             (pointerenter)="onProjectPointerEnter(proj.id, $event)"
             (pointerleave)="onProjectPointerLeave(proj.id, $event)">
             <div class="portfolio-card__top">
-              <span class="portfolio-tag font-mono">{{ proj.tag }}</span>
               <div class="portfolio-badges">
                 <app-badge
                   *ngFor="let tg of proj.tags"
@@ -251,7 +250,6 @@
               [class.portfolio-card--featured]="proj.id === 'el-nino' || proj.id === 'watershed'"
               [class.is-active]="isProjectActive(proj.id)">
               <div class="portfolio-card__top">
-                <span class="portfolio-tag font-mono">{{ proj.tag }}</span>
                 <div class="portfolio-badges">
                   <app-badge
                     *ngFor="let tg of proj.tags"

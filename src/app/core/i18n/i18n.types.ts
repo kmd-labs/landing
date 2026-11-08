@@ -18,7 +18,8 @@ export interface ProjectMetadata {
 
 export interface ProjectCopy {
   id: string;
-  tag: string;
+  tag?: string;
+  shortTitle?: string;
   title: string;
   subtitle: string;
   description: string;

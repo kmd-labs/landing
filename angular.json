@@ -25,6 +25,7 @@
               "src/favicon.svg",
               "src/robots.txt",
               "src/llms.txt",
+              "src/_headers",
               {
                 "glob": "**/*",
                 "input": "src/.well-known",

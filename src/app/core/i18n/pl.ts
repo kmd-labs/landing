@@ -86,14 +86,13 @@ export const PL: Dict = {
   projects: buildProjects([
     {
       id: "el-nino",
-      tag: "01 / DYNAMIKA OCEAN–ATMOSFERA",
+      shortTitle: "El Niño",
       title: "El Niño — Oscylacja Południowa (ENSO)",
       subtitle:
         "Zmienność termokliny Pacyfiku 3D, cyrkulacja Walkera i telekoneksje wskaźnika Niño 3.4",
       description:
         "Interaktywny model geofizyczny sprzężonego układu ocean–atmosfera w równikowym Pacyfiku. Wizualizuje dodatnie sprzężenie zwrotne Bjerknesa, osłabienie pasatów, zanik upwellingu oraz wielodekadowe anomalie temperatury powierzchni morza (SST) kształtujące globalne ekstrema hydroklimatyczne.",
       metrics: [
-        { label: "KATEGORIA", value: "Edukacyjny" },
         { label: "TEMATYKA", value: "Klimatologia i Meteorologia" },
         { label: "ŹRÓDŁA DANYCH", value: "NOAA OISST · Copernicus" },
       ],
@@ -106,14 +105,13 @@ export const PL: Dict = {
     },
     {
       id: "watershed",
-      tag: "02 / BIOGEOCHEMIA MORZA I HYDROLOGIA",
+      shortTitle: "Watershed",
       title: "Ładunki Biogenne i Hipoksja Bałtyku (Watershed)",
       subtitle:
         "Spływ azotu i fosforu ze zlewni, stratyfikacja halokliny oraz przydenne strefy beztlenowe",
       description:
         "Czasoprzestrzenna analiza bilansu ładunków biogennych z ponad 85 zlewni rzecznych zlewiska Bałtyku w 14 państwach. Śledzi pięć dekad antropogenicznej eutrofizacji i przydennej hipoksji przerywanej barotropowymi wlewami wód słonych z Morza Północnego (MBI).",
       metrics: [
-        { label: "KATEGORIA", value: "Edukacyjny" },
         { label: "TEMATYKA", value: "Środowisko i Ekologia" },
         { label: "ŹRÓDŁA DANYCH", value: "HELCOM PLC-7 · SMHI" },
       ],
@@ -126,14 +124,13 @@ export const PL: Dict = {
     },
     {
       id: "baltic",
-      tag: "03 / GEOLOGIA CZWARTORZĘDU I PALEOKLIMAT",
+      shortTitle: "Baltic",
       title: "Rekonstrukcja Postglacjalna Bałtyku",
       subtitle:
         "Deglacjacja lądolodu fennoskandzkiego, izostazja i ewolucja linii brzegowej (20 tys. BP → Dziś)",
       description:
         "Paleogeograficzna rekonstrukcja numerycznego modelu terenu (DEM) symulująca lepkosprężyste wypiętrzanie izostatyczne litosfery (GIA) i eustatyczny wzrost poziomu morza. Odtwarza przejścia od Bałtyckiego Jeziora Lodowego i Morza Yoldiowego przez Jezioro Ancylusowe po Morze Litorynowe.",
       metrics: [
-        { label: "KATEGORIA", value: "Edukacyjny" },
         { label: "TEMATYKA", value: "Geologia i Paleogeografia" },
         { label: "ŹRÓDŁA DANYCH", value: "GEBCO · ICE-6G DEM" },
       ],
@@ -146,14 +143,13 @@ export const PL: Dict = {
     },
     {
       id: "viadrus-ai",
-      tag: "04 / SATELITARNA OBSERWACJA ZIEMI",
+      shortTitle: "Viadrus AI",
       title: "Viadrus AI (Zwycięzca CASSINI UE)",
       subtitle:
         "1. Miejsce w Finale Europejskim — 11. Hackathon CASSINI (EUSPA) · Detekcja wycieków SAR",
       description:
         "Nagrodzony w Europie system teledetekcyjny łączący radarowe anomalie wilgotności dielektrycznej gruntu w paśmie C (Sentinel-1 SAR) oraz wielospektralne wskaźniki wegetacji i wody (Sentinel-2 NDVI/NDWI) z telemetrią hydrauliczną do wczesnej lokalizacji podziemnych wycieków wodociągowych.",
       metrics: [
-        { label: "KATEGORIA", value: "Konkurs (1. Miejsce UE)" },
         { label: "TEMATYKA", value: "Inżynieria i Teledetekcja" },
         { label: "ŹRÓDŁA DANYCH", value: "Sentinel-1 SAR · Sentinel-2" },
       ],
@@ -167,14 +163,13 @@ export const PL: Dict = {
     },
     {
       id: "golfstrom",
-      tag: "05 / OCEANOGRAFIA FIZYCZNA I TERMODYNAMIKA",
+      shortTitle: "Golfstrom",
       title: "Golfstrom — Północnoatlantycki Silnik Cieplny",
       subtitle:
         "Zonalne anomalie SST, baroklinowy front Prądu Zatokowego i transatlantycki kontrast klimatyczny",
       description:
         "Obserwatorium oceaniczno-atmosferyczne 3D obrazujące południkowy transport ~1 petawata energii cieplnej przez Golfsztrom i Prąd Północnoatlantycki. Zestawia klimat par miast na tych samych szerokościach geograficznych Ameryki Północnej i Europy z przekrojami batymetrycznymi do 5500 m.",
       metrics: [
-        { label: "KATEGORIA", value: "Edukacyjny" },
         { label: "TEMATYKA", value: "Oceanografia i Klimat" },
         { label: "ŹRÓDŁA DANYCH", value: "NOAA OISST · ECMWF ERA5" },
       ],
@@ -187,14 +182,13 @@ export const PL: Dict = {
     },
     {
       id: "polis-io",
-      tag: "06 / HISTORIA OBLICZENIOWA I GEOSYMULACJA",
+      shortTitle: "Polis",
       title: "Polis — Geosymulacja Hellady Archaicznej (600 p.n.e.)",
       subtitle:
         "Kolonizacja komórkowa zależna od rzeźby terenu, pojemność troficzna i morskie sieci handlowe",
       description:
         "Agentowa geosymulacja geopolityczna i demograficzna na rastrze wysokościowo-batymetrycznym 336 000 komórek (~0,63 km/piksel) basenu Morza Egejskiego. Modeluje 18 historycznych greckich polis rywalizujących poprzez dyfuzję osadniczą zależną od spadków terenu, alokację budżetu i szlaki morskie.",
       metrics: [
-        { label: "KATEGORIA", value: "Symulacja Strategiczna" },
         { label: "TEMATYKA", value: "Historia Obliczeniowa i GIS" },
         { label: "ŹRÓDŁA DANYCH", value: "AWS Terrain · Natural Earth" },
       ],

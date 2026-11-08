@@ -38,6 +38,8 @@ import {
   SplashComponent,
   SplashService,
   BreakpointService,
+  CarouselComponent,
+  CarouselPill,
   getContactMailtoUrl
 } from '@kmd/design-system';
 import { I18nService } from './core/i18n/i18n.service';
@@ -48,10 +50,6 @@ import {
   TelemetryData,
   VortexCanvasComponent
 } from './components/vortex-canvas/vortex-canvas.component';
-import {
-  CarouselComponent,
-  CarouselPill
-} from './components/carousel/carousel.component';
 
 @Component({
   selector: 'app-root',
@@ -105,7 +103,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     const t = this.i18n.t();
     return t.founders.map((p) => ({
       id: p.name,
-      label: p.name.split(' ')[0],
+      label: p.name,
       avatar: p.photo,
       ariaLabel: `${t.teamSelectAria}: ${p.name}`
     }));
@@ -115,8 +113,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     const t = this.i18n.t();
     return t.projects.map((p) => ({
       id: p.id,
-      label: p.id.toUpperCase(),
-      ariaLabel: `${p.id.toUpperCase()} — ${t.portfolioSelectAria}: ${p.title}`
+      label: p.shortTitle || p.title,
+      ariaLabel: `${p.shortTitle || p.title} — ${t.portfolioSelectAria}: ${p.title}`
     }));
   });
 

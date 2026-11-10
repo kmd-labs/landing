@@ -10,6 +10,7 @@
         <button
           type="button"
           class="header__brand-btn"
+          data-track="scroll-top/header-logo"
           [attr.aria-label]="t.scrollToTopAria"
           (click)="scrollToTop()">
           <img
@@ -28,23 +29,23 @@
           [options]="langOptions()"
           [value]="i18n.lang()"
           [ariaLabel]="i18n.lang().toUpperCase() + ' — ' + t.changeLanguage"
-          (valueChange)="i18n.setLang($event)">
+          (valueChange)="onLangChange($event)">
         </app-dropdown>
       </div>
     </div>
 
     <!-- Quick navigation bar on desktop -->
     <nav class="header__nav glass-panel" *ngIf="!bp.mobile()">
-      <button type="button" class="nav-link" (click)="scrollToSection('portfolio')">
+      <button type="button" class="nav-link" data-track="nav/portfolio" (click)="scrollToSection('portfolio')">
         {{ t.navPortfolio }}
       </button>
-      <button type="button" class="nav-link" (click)="scrollToSection('specialities')">
+      <button type="button" class="nav-link" data-track="nav/specialities" (click)="scrollToSection('specialities')">
         {{ t.navSpecialities }}
       </button>
-      <button type="button" class="nav-link" (click)="scrollToSection('team')">
+      <button type="button" class="nav-link" data-track="nav/team" (click)="scrollToSection('team')">
         {{ t.navTeam }}
       </button>
-      <button type="button" class="nav-link nav-link--cta" (click)="scrollToSection('contact')">
+      <button type="button" class="nav-link nav-link--cta" data-track="nav/contact" (click)="scrollToSection('contact')">
         {{ t.navContact }}
       </button>
     </nav>
@@ -98,6 +99,7 @@
               <span class="source-info">
                 <a
                   class="source-link"
+                  data-track="telemetry-source"
                   [href]="t.telemetrySourceUrl"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -114,6 +116,7 @@
       <!-- Show More button (using official KMD Design System ButtonComponent) -->
       <app-button
         class="hero-stage__show-more"
+        data-track="show-more"
         variant="default"
         extraClass="hero-stage__show-more-btn glass-panel"
         [ariaLabel]="t.showMore + ' — ' + t.showMoreAria"
@@ -162,9 +165,10 @@
               target="_blank"
               rel="noopener noreferrer"
               [attr.aria-label]="t.launchApp + ': ' + proj.title"
+              [attr.data-track]="'project-launch/' + proj.id"
               [attr.data-project-id]="proj.id"
-              (focus)="activateProject(proj.id)"
-              (blur)="deactivateProject(proj.id)"
+              (focus)="onProjectFocus(proj.id)"
+              (blur)="onProjectBlur(proj.id)"
               #projectMediaEl>
               <img
                 class="portfolio-card__poster"
@@ -207,7 +211,8 @@
                   target="_blank"
                   rel="noopener noreferrer"
                   class="portfolio-link-btn portfolio-link-btn--secondary"
-                  [attr.aria-label]="t.viewRepository + ': ' + proj.title">
+                  [attr.aria-label]="t.viewRepository + ': ' + proj.title"
+                  [attr.data-track]="'project-repo/' + proj.id">
                   <lucide-icon [img]="githubIcon" [size]="14"></lucide-icon>
                   <span>{{ t.viewRepository }}</span>
                 </a>
@@ -217,7 +222,8 @@
                   target="_blank"
                   rel="noopener noreferrer"
                   class="portfolio-link-btn portfolio-link-btn--secondary"
-                  [attr.aria-label]="proj.secondaryLabel + ': ' + proj.title">
+                  [attr.aria-label]="proj.secondaryLabel + ': ' + proj.title"
+                  [attr.data-track]="'project-secondary/' + proj.id">
                   <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
                   <span>{{ proj.secondaryLabel }}</span>
                 </a>
@@ -227,7 +233,8 @@
                 [href]="proj.url"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="portfolio-link-btn portfolio-link-btn--primary">
+                class="portfolio-link-btn portfolio-link-btn--primary"
+                [attr.data-track]="'project-launch/' + proj.id">
                 <span>{{ t.launchApp }}</span>
                 <lucide-icon [img]="arrowUpRightIcon" [size]="15"></lucide-icon>
               </a>
@@ -268,6 +275,7 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 [attr.aria-label]="t.launchApp + ': ' + proj.title"
+              [attr.data-track]="'project-launch/' + proj.id"
                 (click)="hasDragged && $event.preventDefault()">
                 <img
                   class="portfolio-card__poster"
@@ -311,6 +319,7 @@
                     rel="noopener noreferrer"
                     class="portfolio-link-btn portfolio-link-btn--secondary"
                     [attr.aria-label]="t.viewRepository + ': ' + proj.title"
+                  [attr.data-track]="'project-repo/' + proj.id"
                     (click)="hasDragged && $event.preventDefault()">
                     <lucide-icon [img]="githubIcon" [size]="14"></lucide-icon>
                     <span>{{ t.viewRepository }}</span>
@@ -322,6 +331,7 @@
                     rel="noopener noreferrer"
                     class="portfolio-link-btn portfolio-link-btn--secondary"
                     [attr.aria-label]="proj.secondaryLabel + ': ' + proj.title"
+                  [attr.data-track]="'project-secondary/' + proj.id"
                     (click)="hasDragged && $event.preventDefault()">
                     <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
                     <span>{{ proj.secondaryLabel }}</span>
@@ -333,6 +343,7 @@
                   target="_blank"
                   rel="noopener noreferrer"
                   class="portfolio-link-btn portfolio-link-btn--primary"
+                [attr.data-track]="'project-launch/' + proj.id"
                   (click)="hasDragged && $event.preventDefault()">
                   <span>{{ t.launchApp }}</span>
                   <lucide-icon [img]="arrowUpRightIcon" [size]="15"></lucide-icon>
@@ -413,6 +424,7 @@
               <a
                 *ngFor="let ref of t.teamRefs"
                 class="about-ref-chip"
+                data-track="team-ref"
                 [href]="ref.href"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -457,7 +469,8 @@
                   target="_blank"
                   rel="noopener noreferrer"
                   class="icon-link"
-                  [attr.aria-label]="person.name + ' on LinkedIn'">
+                  [attr.aria-label]="person.name + ' on LinkedIn'"
+                  [attr.data-track]="'team-linkedin/' + person.name">
                   <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
                   <span>LinkedIn</span>
                 </a>
@@ -467,7 +480,8 @@
                   target="_blank"
                   rel="noopener noreferrer"
                   class="icon-link"
-                  [attr.aria-label]="person.name + ' on GitHub'">
+                  [attr.aria-label]="person.name + ' on GitHub'"
+                  [attr.data-track]="'team-github/' + person.name">
                   <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
                   <span>GitHub</span>
                 </a>
@@ -520,6 +534,7 @@
                     rel="noopener noreferrer"
                     class="icon-link"
                     [attr.aria-label]="person.name + ' on LinkedIn'"
+                  [attr.data-track]="'team-linkedin/' + person.name"
                     (click)="hasDragged && $event.preventDefault()">
                     <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
                     <span>LinkedIn</span>
@@ -531,6 +546,7 @@
                     rel="noopener noreferrer"
                     class="icon-link"
                     [attr.aria-label]="person.name + ' on GitHub'"
+                  [attr.data-track]="'team-github/' + person.name"
                     (click)="hasDragged && $event.preventDefault()">
                     <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
                     <span>GitHub</span>
@@ -559,7 +575,8 @@
             <a
               [href]="mailtoUrl()"
               class="contact-submit-btn"
-              aria-label="Send email to hello@kmd-labs.org">
+              aria-label="Send email to hello@kmd-labs.org"
+              data-track="contact-email">
               <lucide-icon [img]="mailIcon" [size]="16" aria-hidden="true"></lucide-icon>
               <span>{{ t.contactSubmitBtn }}</span>
             </a>
@@ -580,6 +597,7 @@
         <button
           type="button"
           class="footer__logo-btn"
+          data-track="scroll-top/footer-logo"
           [attr.aria-label]="t.scrollToTopAria"
           (click)="scrollToTop()">
           <img
@@ -602,6 +620,7 @@
         <button
           type="button"
           class="back-to-top"
+          data-track="scroll-top/footer-button"
           [attr.aria-label]="'TOP — ' + t.scrollToTopAria"
           (click)="scrollToTop()">
           ↑ TOP

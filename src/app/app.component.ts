@@ -45,6 +45,7 @@ import {
 import { I18nService } from './core/i18n/i18n.service';
 import { Lang } from './core/i18n/i18n.types';
 import { CurrentWeatherService } from './core/services/current-weather.service';
+import { AnalyticsService } from './core/services/analytics.service';
 import { LocaleDatePipe } from './core/pipes/locale-date.pipe';
 import {
   TelemetryData,
@@ -73,6 +74,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly bp = inject(BreakpointService);
   readonly splash = inject(SplashService);
   readonly weather = inject(CurrentWeatherService);
+  private readonly analytics = inject(AnalyticsService);
   private readonly zone = inject(NgZone);
   private readonly splashRevealed = signal(false);
 
@@ -88,6 +90,11 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   private projectMediaEls?: QueryList<ElementRef<HTMLElement>>;
 
   private observer?: IntersectionObserver;
+  private sectionObserver?: IntersectionObserver;
+
+  /** Hover/focus must last this long before a project preview counts as genuine interest. */
+  private readonly previewDwellMs = 800;
+  private readonly previewTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
   readonly navOptions = computed<DropdownOption<string>[]>(() => {
     const t = this.i18n.t();
@@ -147,7 +154,15 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   }
 
   onNavSelect(id: string) {
+    this.analytics.track(`nav/${id}`);
     this.scrollToSection(id);
+  }
+
+  onLangChange(lang: Lang) {
+    if (lang !== this.i18n.lang()) {
+      this.analytics.track(`lang/${lang}`);
+    }
+    this.i18n.setLang(lang);
   }
 
   readonly vectorDates = computed<[Date, Date]>(() => {
@@ -230,10 +245,16 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     if (typeof window === 'undefined') return;
 
     this.initPortfolioObserver();
+    this.initSectionViewTracking();
   }
 
   ngOnDestroy(): void {
     this.observer?.disconnect();
+    this.sectionObserver?.disconnect();
+    for (const timer of this.previewTimers.values()) {
+      clearTimeout(timer);
+    }
+    this.previewTimers.clear();
     for (const timer of this.mobileGifTimers.values()) {
       clearTimeout(timer);
     }
@@ -315,11 +336,70 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   onProjectPointerEnter(id: string, event: PointerEvent): void {
     if (event.pointerType === 'touch') return;
     this.activateProject(id);
+    this.schedulePreviewTracking(id);
   }
 
   onProjectPointerLeave(id: string, event: PointerEvent): void {
     if (event.pointerType === 'touch') return;
     this.deactivateProject(id);
+    this.cancelPreviewTracking(id);
+  }
+
+  onProjectFocus(id: string): void {
+    this.activateProject(id);
+    this.schedulePreviewTracking(id);
+  }
+
+  onProjectBlur(id: string): void {
+    this.deactivateProject(id);
+    this.cancelPreviewTracking(id);
+  }
+
+  /** Counts `project-preview/<id>` once per page view, only after a deliberate hover/focus dwell. */
+  private schedulePreviewTracking(id: string): void {
+    this.cancelPreviewTracking(id);
+    this.previewTimers.set(
+      id,
+      setTimeout(() => {
+        this.previewTimers.delete(id);
+        this.analytics.trackOnce(`project-preview/${id}`);
+      }, this.previewDwellMs)
+    );
+  }
+
+  private cancelPreviewTracking(id: string): void {
+    const timer = this.previewTimers.get(id);
+    if (timer) {
+      clearTimeout(timer);
+      this.previewTimers.delete(id);
+    }
+  }
+
+  /**
+   * Counts `section-view/<id>` the first time each section's top crosses the middle of the
+   * viewport. Works as a scroll-depth funnel regardless of section height.
+   */
+  private initSectionViewTracking(): void {
+    if (!('IntersectionObserver' in window)) return;
+    const ids = ['portfolio', 'specialities', 'team', 'contact'];
+
+    this.zone.runOutsideAngular(() => {
+      this.sectionObserver = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            this.analytics.trackOnce(`section-view/${entry.target.id}`);
+            this.sectionObserver?.unobserve(entry.target);
+          }
+        },
+        { threshold: 0, rootMargin: '0px 0px -50% 0px' }
+      );
+
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el) this.sectionObserver.observe(el);
+      }
+    });
   }
 
   activateProject(id: string): void {

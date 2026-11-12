@@ -26,8 +26,8 @@ export const PROJECTS_METADATA: readonly ProjectMetadata[] = [
     url: 'https://kmd-labs.github.io/baltic/',
     repoUrl: 'https://github.com/kmd-labs/baltic',
     poster: 'assets/projects/baltic.poster.jpg',
-    media: 'assets/projects/baltic.gif',
-    previewDurationMs: 3800
+    media: 'assets/projects/baltic.webp',
+    previewDurationMs: 6000
   },
   {
     id: 'viadrus-ai',
@@ -44,8 +44,8 @@ export const PROJECTS_METADATA: readonly ProjectMetadata[] = [
     url: 'https://kmd-labs.github.io/golfstrom/',
     repoUrl: 'https://github.com/kmd-labs/golfstrom',
     poster: 'assets/projects/golfstrom.poster.jpg',
-    media: 'assets/projects/golfstrom.gif',
-    previewDurationMs: 3600
+    media: 'assets/projects/golfstrom.webp',
+    previewDurationMs: 5200
   },
   {
     id: 'polis-io',

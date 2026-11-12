@@ -17,17 +17,18 @@
     },
     {
       "identifier": "urn:air:kmd-labs.org:geovis:watershed",
-      "displayName": "Baltic Nutrient Loads & Hypoxia (Watershed)",
+      "displayName": "Baltic Sea Drainage Basin (Watershed)",
       "type": "application/json",
       "url": "https://kmd-labs.org/watershed/",
-      "description": "Catchment-scale nitrogen/phosphorus runoff, halocline stratification, and benthic oxygen deficit simulation in the Baltic Sea.",
+      "description": "Interactive 3D globe of every river catchment draining to the Baltic Sea, the sea sub-basins they feed and the countries they cross, with guided tours, catchment statistics and a print poster maker.",
       "representativeQueries": [
-        "Baltic Sea hypoxia interactive map",
-        "eutrophication nutrient runoff simulation",
-        "HELCOM Baltic catchment water quality"
+        "Baltic Sea drainage basin interactive map",
+        "which rivers flow into the Baltic Sea",
+        "largest river basins of the Baltic catchment",
+        "Baltic river map poster"
       ],
-      "capabilities": ["Hydrology", "Biogeochemistry", "Geovisualization"],
-      "tags": ["Baltic Sea", "hypoxia", "eutrophication", "hydrology"]
+      "capabilities": ["Hydrology", "Cartography", "Geovisualization"],
+      "tags": ["Baltic Sea", "drainage basin", "river catchments", "hydrology"]
     },
     {
       "identifier": "urn:air:kmd-labs.org:geovis:golfstrom",

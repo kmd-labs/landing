@@ -106,20 +106,20 @@ export const PL: Dict = {
     {
       id: "watershed",
       shortTitle: "Watershed",
-      title: "Ładunki Biogenne i Hipoksja Bałtyku (Watershed)",
+      title: "Zlewisko Morza Bałtyckiego (Watershed)",
       subtitle:
-        "Spływ azotu i fosforu ze zlewni, stratyfikacja halokliny oraz przydenne strefy beztlenowe",
+        "Każda zlewnia rzeki uchodzącej do Bałtyku, akweny, do których odprowadza wodę, i państwa, przez które przebiega",
       description:
-        "Czasoprzestrzenna analiza bilansu ładunków biogennych z ponad 85 zlewni rzecznych zlewiska Bałtyku w 14 państwach. Śledzi pięć dekad antropogenicznej eutrofizacji i przydennej hipoksji przerywanej barotropowymi wlewami wód słonych z Morza Północnego (MBI).",
+        "Interaktywny globus 3D zlewiska Bałtyku zbudowany na danych HydroRIVERS i HydroBASINS. Prezentacje prowadzą akwen po akwenie śladem tego, dokąd płyną rzeki, oraz przez 20 największych dorzeczy; karta każdej zlewni podaje powierzchnię, średni przepływ, długość sieci rzecznej i państwa, a wbudowany kreator plakatów eksportuje mapy do druku w 300 dpi.",
       metrics: [
-        { label: "TEMATYKA", value: "Środowisko i Ekologia" },
-        { label: "ŹRÓDŁA DANYCH", value: "HELCOM PLC-7 · SMHI" },
+        { label: "TEMATYKA", value: "Hydrologia i Kartografia" },
+        { label: "ŹRÓDŁA DANYCH", value: "HydroSHEDS · Natural Earth" },
       ],
       tags: [
-        "Eutrofizacja",
-        "Hipoksja Przydenna",
+        "Zlewisko",
+        "Sieci Rzeczne",
         "Hydrologia GIS",
-        "Dane HELCOM",
+        "HydroSHEDS",
       ],
     },
     {

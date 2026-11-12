@@ -107,20 +107,20 @@ export const EN: Dict = {
     {
       id: "watershed",
       shortTitle: "Watershed",
-      title: "Baltic Nutrient Loads & Hypoxia (Watershed)",
+      title: "Baltic Sea Drainage Basin (Watershed)",
       subtitle:
-        "Catchment-scale nitrogen/phosphorus runoff, halocline stratification & benthic dead zones",
+        "Every river catchment draining to the Baltic, the sea sub-basins they feed & the countries they cross",
       description:
-        "Spatiotemporal mass-balance analysis of riverine nutrient loading across 85+ Baltic drainage basins in 14 countries. Tracks five decades of anthropogenic eutrophication and deep-water oxygen depletion punctuated by barotropic Major Baltic Inflows from the North Sea.",
+        "Interactive 3D globe of the Baltic drainage basin built from HydroRIVERS and HydroBASINS. Guided tours follow where the rivers end, sea by sea, and the 20 largest river basins; every catchment card gives area, mean discharge, river-network length and the countries it spans, and a built-in poster maker exports 300 dpi print maps.",
       metrics: [
-        { label: "THEME", value: "Environment & Ecology" },
-        { label: "DATA SOURCE", value: "HELCOM PLC-7 · SMHI" },
+        { label: "THEME", value: "Hydrology & Cartography" },
+        { label: "DATA SOURCE", value: "HydroSHEDS · Natural Earth" },
       ],
       tags: [
-        "Eutrophication",
-        "Benthic Hypoxia",
+        "Drainage Basin",
+        "River Networks",
         "Hydrological GIS",
-        "HELCOM Dataset",
+        "HydroSHEDS",
       ],
     },
     {

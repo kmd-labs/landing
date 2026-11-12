@@ -7,7 +7,7 @@ KMD Labs is a scientific engineering and geovisualization studio that designs im
 ## Interactive Projects
 
 - [El Niño — Southern Oscillation (ENSO)](https://kmd-labs.org/el-nino/): Interactive 3D Pacific thermocline variability, Walker Circulation dynamics, and Niño 3.4 SST anomaly teleconnections. [GitHub Repository](https://github.com/kmd-labs/el-nino)
-- [Baltic Nutrient Loads & Hypoxia (Watershed)](https://kmd-labs.org/watershed/): Catchment-scale nitrogen/phosphorus runoff, halocline stratification, and benthic oxygen deficit simulation in the Baltic Sea. [GitHub Repository](https://github.com/kmd-labs/watershed)
+- [Baltic Sea Drainage Basin (Watershed)](https://kmd-labs.org/watershed/): Interactive 3D globe of every river catchment draining to the Baltic Sea, the sea sub-basins they feed and the countries they cross, with guided tours, catchment statistics and a print poster maker (HydroRIVERS / HydroBASINS). [GitHub Repository](https://github.com/kmd-labs/watershed)
 - [Golfstrom — North Atlantic Heat Engine](https://kmd-labs.org/golfstrom/): AMOC thermohaline circulation, Gulf Stream western boundary current meanders, and subpolar gyre heat transport simulation. [GitHub Repository](https://github.com/kmd-labs/golfstrom)
 - [Baltic Postglacial Reconstruction](https://kmd-labs.org/baltic/): 14,000-year Glacial Isostatic Adjustment paleogeographic reconstruction from the Baltic Ice Lake to the modern brackish sea. [GitHub Repository](https://github.com/kmd-labs/baltic)
 - [Viadrus AI (CASSINI EU Winner)](https://kmd-labs.org/viadrusai/): Copernicus Sentinel-1 SAR interferometry & Sentinel-2 optical anomaly detection pipeline for early water network leak localization. [GitHub Repository](https://github.com/kmd-labs/viadrusai)

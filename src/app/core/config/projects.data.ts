@@ -10,7 +10,7 @@ export const PROJECTS_METADATA: readonly ProjectMetadata[] = [
     url: 'https://kmd-labs.github.io/el-nino/',
     repoUrl: 'https://github.com/kmd-labs/el-nino',
     poster: 'assets/projects/el-nino.poster.jpg',
-    media: 'assets/projects/el-nino.gif',
+    media: 'assets/projects/el-nino.webp',
     previewDurationMs: 3200
   },
   {
@@ -18,8 +18,8 @@ export const PROJECTS_METADATA: readonly ProjectMetadata[] = [
     url: 'https://kmd-labs.github.io/watershed/',
     repoUrl: 'https://github.com/kmd-labs/watershed',
     poster: 'assets/projects/watershed.poster.jpg',
-    media: 'assets/projects/watershed.gif',
-    previewDurationMs: 3800
+    media: 'assets/projects/watershed.webp',
+    previewDurationMs: 5700
   },
   {
     id: 'baltic',

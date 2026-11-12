@@ -4,7 +4,7 @@ import { buildProjects } from "../config/projects.data";
 export const EN: Dict = {
   htmlLang: "en",
   docTitle:
-    "KMD Labs · Interactive Data Visualisation & Scientific Engineering",
+    "KMD Labs · Interactive Data Visualization & Scientific Engineering",
   appName: "Laboratory",
   langName: "English",
 
@@ -20,7 +20,7 @@ export const EN: Dict = {
 
   // Hero Section
   heroKicker: "KMD LABS · EARTH OBSERVATION & CARTOGRAPHY",
-  heroTitle: "Scientific Data Visualisation &",
+  heroTitle: "Scientific Data Visualization &",
   heroHighlight: "Geospatial Engineering",
   heroSubtitle:
     "Transforming your complex data into beautiful and interactive applications.",
@@ -210,7 +210,7 @@ export const EN: Dict = {
   disciplines: [
     {
       id: "geoviz",
-      title: "Geovisualisation & 3D WebGL",
+      title: "Geovisualization & 3D WebGL",
       lead: "Turning multi-gigabyte spatial rasters and atmospheric fields into fluid 60 FPS web canvases.",
       points: [
         "Custom WebGL, Three.js, and GLSL shaders for real-time spherical & flat projections.",
@@ -270,7 +270,7 @@ export const EN: Dict = {
     "kmd-labs is a three-person team that grew out of Viadrus AI, the first Polish team to win the European final of the CASSINI hackathon run by the European Union Agency for the Space Programme (EUSPA). Our winning solution used satellite data to detect leaks in water supply networks early.",
   teamLeads: [
     "kmd-labs is a three-person team that grew out of Viadrus AI, the first Polish team to win the European final of the CASSINI hackathon run by the European Union Agency for the Space Programme (EUSPA). Our winning solution used satellite data to detect leaks in water supply networks early.",
-    "After the final we decided to pool the computing power of our grey matter. Each of us comes from a different field, but we are bound by a passion for geoinformatics and satellite data, as well as for anomaly detection, machine learning, software development and geovisualisation.",
+    "After the final we decided to pool the computing power of our grey matter. Each of us comes from a different field, but we are bound by a passion for geoinformatics and satellite data, as well as for anomaly detection, machine learning, software development and geovisualization.",
     "Got data and no idea how to show it on a map or in space? Write to us!",
   ],
   teamRefs: [
@@ -334,10 +334,10 @@ export const EN: Dict = {
     {
       name: "Marcin Derewońko",
       role: "Geoinformatics & AI Specialist · Co-Founder",
-      bio: "I am a graduate of Marine Geography at the Faculty of Earth Sciences, University of Szczecin; of Geoinformation at the Faculty of Geographical and Geological Sciences, Adam Mickiewicz University in Poznań; and of Artificial Intelligence in Corporate Finance and Controlling at Kozminski University. For 12 years I have worked as a functional consultant for ERP-class systems. After hours I build systems that detect anomalies in financial and satellite data using machine learning. Creating geovisualisations is another great passion of mine. I have been developing my artificial intelligence skills for 4 years. I believe the future belongs to domain experts who can use AI effectively as a tool in their everyday work. Outside work I am into strength training, board games, Magic: The Gathering and gardening.",
+      bio: "I am a graduate of Marine Geography at the Faculty of Earth Sciences, University of Szczecin; of Geoinformation at the Faculty of Geographical and Geological Sciences, Adam Mickiewicz University in Poznań; and of Artificial Intelligence in Corporate Finance and Controlling at Kozminski University. For 12 years I have worked as a functional consultant for ERP-class systems. After hours I build systems that detect anomalies in financial and satellite data using machine learning. Creating geovisualizations is another great passion of mine. I have been developing my artificial intelligence skills for 4 years. I believe the future belongs to domain experts who can use AI effectively as a tool in their everyday work. Outside work I am into strength training, board games, Magic: The Gathering and gardening.",
       tags: [
         "Geoinformatics",
-        "Geovisualisation",
+        "Geovisualization",
         "Anomaly detection",
         "Machine learning",
         "Artificial intelligence",
@@ -351,7 +351,7 @@ export const EN: Dict = {
   contactKicker: "CONTACT",
   contactTitle: "Get in Touch",
   contactLead:
-    "Have complex planetary, satellite, or environmental data that needs to be visualised, or want to collaborate? Reach out to us.",
+    "Have complex planetary, satellite, or environmental data that needs to be visualized, or want to collaborate? Reach out to us.",
   contactSubmitBtn: "Send Email",
   contactClientNote:
     "Launches your default email client addressed to. No personal data is stored on our servers.",
@@ -384,5 +384,5 @@ export const EN: Dict = {
   // Footer
   footerRights: "All rights reserved.",
   footerTagline:
-    "KMD Labs · Interactive Data Visualisations & Geospatial Intelligence",
+    "KMD Labs · Interactive Data Visualizations & Geospatial Intelligence",
 };

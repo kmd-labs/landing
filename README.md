@@ -1,4 +1,4 @@
-# KMD Labs — Scientific Data Visualisation & Cartography
+# KMD Labs — Scientific Data Visualization & Cartography
 
 [![Deploy to GitHub Pages](https://github.com/kmd-labs/landing/actions/workflows/deploy.yml/badge.svg)](https://github.com/kmd-labs/landing/actions/workflows/deploy.yml)
 [![Daily Wind Data Update](https://github.com/kmd-labs/landing/actions/workflows/daily-wind-update.yml/badge.svg)](https://github.com/kmd-labs/landing/actions/workflows/daily-wind-update.yml)

@@ -417,6 +417,12 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     return true;
   }
 
+  onCarouselLinkClick(event: Event, hasDragged: boolean): void {
+    if (hasDragged) {
+      event.preventDefault();
+    }
+  }
+
   onPortfolioCarouselActiveChange(realIndex: number): void {
     this.activePortfolioSlideIndex.set(realIndex);
     const projects = this.i18n.t().projects;

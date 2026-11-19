@@ -291,7 +291,7 @@
                 rel="noopener noreferrer"
                 [attr.aria-label]="t.launchApp + ': ' + proj.title"
               [attr.data-track]="'project-launch/' + proj.id"
-                (click)="hasDragged && $event.preventDefault()">
+                (click)="onCarouselLinkClick($event, hasDragged)">
                 <img
                   class="portfolio-card__poster"
                   [src]="proj.poster"
@@ -335,8 +335,7 @@
                     class="portfolio-link-btn portfolio-link-btn--secondary"
                     [attr.aria-label]="t.viewRepository + ': ' + proj.title"
                     [attr.data-track]="'project-repo/' + proj.id"
-                    (pointerdown)="$event.stopPropagation()"
-                    (click)="hasDragged && $event.preventDefault()">
+                    (click)="onCarouselLinkClick($event, hasDragged)">
                     <lucide-icon [img]="githubIcon" [size]="14"></lucide-icon>
                     <span>{{ t.viewRepository }}</span>
                   </a>
@@ -348,8 +347,7 @@
                     class="portfolio-link-btn portfolio-link-btn--secondary"
                     [attr.aria-label]="proj.secondaryLabel + ': ' + proj.title"
                     [attr.data-track]="'project-secondary/' + proj.id"
-                    (pointerdown)="$event.stopPropagation()"
-                    (click)="hasDragged && $event.preventDefault()">
+                    (click)="onCarouselLinkClick($event, hasDragged)">
                     <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
                     <span>{{ proj.secondaryLabel }}</span>
                   </a>
@@ -361,8 +359,7 @@
                   rel="noopener noreferrer"
                   class="portfolio-link-btn portfolio-link-btn--primary"
                   [attr.data-track]="'project-launch/' + proj.id"
-                  (pointerdown)="$event.stopPropagation()"
-                  (click)="hasDragged && $event.preventDefault()">
+                  (click)="onCarouselLinkClick($event, hasDragged)">
                   <span>{{ t.launchApp }}</span>
                   <lucide-icon [img]="arrowUpRightIcon" [size]="15"></lucide-icon>
                 </a>
@@ -553,8 +550,7 @@
                     class="icon-link"
                     [attr.aria-label]="person.name + ' on LinkedIn'"
                     [attr.data-track]="'team-linkedin/' + person.name"
-                    (pointerdown)="$event.stopPropagation()"
-                    (click)="hasDragged && $event.preventDefault()">
+                    (click)="onCarouselLinkClick($event, hasDragged)">
                     <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
                     <span>LinkedIn</span>
                   </a>
@@ -566,8 +562,7 @@
                     class="icon-link"
                     [attr.aria-label]="person.name + ' on GitHub'"
                     [attr.data-track]="'team-github/' + person.name"
-                    (pointerdown)="$event.stopPropagation()"
-                    (click)="hasDragged && $event.preventDefault()">
+                    (click)="onCarouselLinkClick($event, hasDragged)">
                     <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
                     <span>GitHub</span>
                   </a>

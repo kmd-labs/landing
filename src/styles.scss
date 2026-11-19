@@ -27,6 +27,14 @@ body {
   z-index: 9999;
 }
 
+// Suppress per-element CSS transitions while View Transition snapshots the new theme
+html.theme-vt,
+html.theme-vt *,
+html.theme-vt *::before,
+html.theme-vt *::after {
+  transition: none !important;
+}
+
 // Fallback smooth cross-fade when View Transitions API is unavailable
 html.theme-transitioning,
 html.theme-transitioning *,

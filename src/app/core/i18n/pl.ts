@@ -9,8 +9,13 @@ export const PL: Dict = {
 
   // Top HUD & Navigation
   changeLanguage: "Język",
-  switchToDarkMode: "Przełącz na tryb ciemny",
-  switchToLightMode: "Przełącz na tryb jasny",
+  settingsTitle: "Ustawienia",
+  settingsAria: "Otwórz ustawienia",
+  themeLabel: "Wygląd",
+  themeAuto: "Jak w systemie",
+  themeLight: "Jasny",
+  themeDark: "Ciemny",
+  close: "Zamknij",
   scrollToTopAria: "Wróć do interaktywnej symulacji",
   navPortfolio: "Portfolio",
   navSpecialities: "Specjalizacje",

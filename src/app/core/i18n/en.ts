@@ -10,8 +10,13 @@ export const EN: Dict = {
 
   // Top HUD & Navigation
   changeLanguage: "Language",
-  switchToDarkMode: "Switch to dark mode",
-  switchToLightMode: "Switch to light mode",
+  settingsTitle: "Settings",
+  settingsAria: "Open Settings",
+  themeLabel: "Appearance",
+  themeAuto: "Match system",
+  themeLight: "Light",
+  themeDark: "Dark",
+  close: "Close",
   scrollToTopAria: "Return to interactive simulation",
   navPortfolio: "Portfolio",
   navSpecialities: "Specialities",

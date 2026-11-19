@@ -22,29 +22,15 @@
         </button>
       </div>
 
-      <div class="header__settings glass-panel" role="group" [attr.aria-label]="t.changeLanguage">
-        <app-dropdown
-          variant="ghost"
-          [icon]="bp.mobile() ? null : globeIcon"
-          [options]="langOptions()"
-          [value]="i18n.lang()"
-          [ariaLabel]="i18n.lang().toUpperCase() + ' — ' + t.changeLanguage"
-          (valueChange)="onLangChange($event)">
-        </app-dropdown>
-      </div>
-
-      <div class="header__theme glass-panel">
+      <div class="header__settings glass-panel">
         <app-button
           variant="ghost"
           [iconOnly]="true"
-          [ariaLabel]="theme.isDark() ? t.switchToLightMode : t.switchToDarkMode"
-          [titleText]="theme.isDark() ? t.switchToLightMode : t.switchToDarkMode"
-          [attr.data-track]="theme.isDark() ? 'theme/light' : 'theme/dark'"
-          (btnClick)="toggleTheme($event)">
-          <span class="theme-icon-stack" [class.is-dark]="theme.isDark()" aria-hidden="true">
-            <lucide-icon class="theme-icon theme-icon--sun" [img]="sunIcon" [size]="16"></lucide-icon>
-            <lucide-icon class="theme-icon theme-icon--moon" [img]="moonIcon" [size]="16"></lucide-icon>
-          </span>
+          [ariaLabel]="t.settingsAria"
+          [titleText]="t.settingsTitle"
+          data-track="open-settings"
+          (btnClick)="openSettings()">
+          <lucide-icon [img]="settingsIcon" [size]="16" aria-hidden="true"></lucide-icon>
         </app-button>
       </div>
     </div>
@@ -643,4 +629,7 @@
       </div>
     </div>
   </footer>
+
+  <app-popup [closeAriaLabel]="t.close"></app-popup>
+  <app-tooltip></app-tooltip>
 </div>

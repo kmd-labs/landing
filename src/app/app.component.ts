@@ -1,6 +1,5 @@
 import {
   AfterViewInit,
-  ApplicationRef,
   Component,
   ElementRef,
   NgZone,
@@ -15,7 +14,6 @@ import {
 import { CommonModule } from '@angular/common';
 import {
   LucideAngularModule,
-  Globe,
   Compass,
   Layers,
   Users,
@@ -30,29 +28,30 @@ import {
   Menu,
   X,
   Github,
-  Sun,
-  Moon
+  Settings
 } from 'lucide-angular';
 import {
   ButtonComponent,
   BadgeComponent,
   DropdownComponent,
   DropdownOption,
+  PopupComponent,
+  PopupService,
   SplashComponent,
   SplashService,
   BreakpointService,
   CarouselComponent,
   CarouselPill,
-  ThemeMode,
   ThemeService,
+  TooltipComponent,
   getContactMailtoUrl
 } from '@kmd/design-system';
 import { I18nService } from './core/i18n/i18n.service';
-import { Lang } from './core/i18n/i18n.types';
 import { CurrentWeatherService } from './core/services/current-weather.service';
 import { AnalyticsService } from './core/services/analytics.service';
-import { StorageService } from './core/services/storage.service';
+import { ThemePrefService } from './core/services/theme-pref.service';
 import { LocaleDatePipe } from './core/pipes/locale-date.pipe';
+import { openSettingsPopup } from './components/settings-popup/settings-popup.component';
 import {
   TelemetryData,
   VortexCanvasComponent
@@ -67,7 +66,9 @@ import {
     ButtonComponent,
     BadgeComponent,
     DropdownComponent,
+    PopupComponent,
     SplashComponent,
+    TooltipComponent,
     VortexCanvasComponent,
     CarouselComponent,
     LocaleDatePipe
@@ -80,14 +81,12 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly bp = inject(BreakpointService);
   readonly splash = inject(SplashService);
   readonly theme = inject(ThemeService);
+  private readonly themePref = inject(ThemePrefService);
+  private readonly popup = inject(PopupService);
   readonly weather = inject(CurrentWeatherService);
-  private readonly storage = inject(StorageService);
   private readonly analytics = inject(AnalyticsService);
-  private readonly appRef = inject(ApplicationRef);
   private readonly zone = inject(NgZone);
   private readonly splashRevealed = signal(false);
-  private readonly themeStorageKey = 'landing.theme';
-  private themeFallbackTimer?: ReturnType<typeof setTimeout>;
 
   // Portfolio interactive screengrab / GIF preview state
   readonly activeProjectIds = signal(new Set<string>());
@@ -137,7 +136,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   });
 
   constructor() {
-    this.initTheme();
+    void this.themePref;
 
     effect(() => {
       const revealed = this.splashRevealed();
@@ -171,91 +170,9 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.scrollToSection(id);
   }
 
-  onLangChange(lang: Lang) {
-    if (lang !== this.i18n.lang()) {
-      this.analytics.track(`lang/${lang}`);
-    }
-    this.i18n.setLang(lang);
-  }
-
-  private initTheme(): void {
-    const saved = this.storage.getItem(this.themeStorageKey);
-    if (saved === 'dark' || saved === 'light') {
-      this.theme.setMode(saved);
-      return;
-    }
-    const prefersDark =
-      typeof window !== 'undefined' &&
-      window.matchMedia?.('(prefers-color-scheme: dark)').matches;
-    this.theme.setMode(prefersDark ? 'dark' : 'light');
-  }
-
-  toggleTheme(event?: MouseEvent): void {
-    const next: ThemeMode = this.theme.isDark() ? 'light' : 'dark';
-    const applyTheme = () => {
-      this.theme.setMode(next);
-      this.storage.setItem(this.themeStorageKey, next);
-      this.analytics.track(`theme/${next}`);
-    };
-
-    if (typeof document === 'undefined' || typeof window === 'undefined' || this.isReducedMotion()) {
-      applyTheme();
-      return;
-    }
-
-    const doc = document as Document & {
-      startViewTransition?: (cb: () => void | Promise<void>) => { ready: Promise<void> };
-    };
-
-    if (typeof doc.startViewTransition === 'function') {
-      const target = (event?.currentTarget as HTMLElement | null) ?? (event?.target as HTMLElement | null);
-      const rect = target?.getBoundingClientRect();
-      const x = rect && rect.width > 0 ? rect.left + rect.width / 2 : (event?.clientX || window.innerWidth / 2);
-      const y = rect && rect.height > 0 ? rect.top + rect.height / 2 : (event?.clientY || 32);
-      const endRadius = Math.hypot(
-        Math.max(x, window.innerWidth - x),
-        Math.max(y, window.innerHeight - y)
-      );
-
-      const transition = doc.startViewTransition(async () => {
-        applyTheme();
-        this.appRef.tick();
-        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-      });
-
-      transition.ready
-        .then(() => {
-          document.documentElement.animate(
-            {
-              clipPath: [
-                `circle(0px at ${x}px ${y}px)`,
-                `circle(${endRadius}px at ${x}px ${y}px)`
-              ]
-            },
-            {
-              duration: 520,
-              easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-              pseudoElement: '::view-transition-new(root)'
-            }
-          );
-        })
-        .catch(() => {
-          // Ignore if transition is skipped or aborted
-        });
-      return;
-    }
-
-    // Fallback: smooth CSS property transition
-    const root = document.documentElement;
-    root.classList.add('theme-transitioning');
-    if (this.themeFallbackTimer) {
-      clearTimeout(this.themeFallbackTimer);
-    }
-    applyTheme();
-    this.themeFallbackTimer = setTimeout(() => {
-      root.classList.remove('theme-transitioning');
-      this.themeFallbackTimer = undefined;
-    }, 380);
+  openSettings(): void {
+    this.analytics.track('open-settings');
+    openSettingsPopup(this.popup, this.i18n);
   }
 
   readonly vectorDates = computed<[Date, Date]>(() => {
@@ -266,7 +183,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   });
 
   // Lucide Icons
-  readonly globeIcon = Globe;
   readonly compassIcon = Compass;
   readonly layersIcon = Layers;
   readonly usersIcon = Users;
@@ -281,8 +197,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly menuIcon = Menu;
   readonly xIcon = X;
   readonly githubIcon = Github;
-  readonly sunIcon = Sun;
-  readonly moonIcon = Moon;
+  readonly settingsIcon = Settings;
 
   // Contact Mailto URL (Prefilled with localized general inquiry)
   readonly mailtoUrl = computed(() => getContactMailtoUrl(this.i18n.lang()));
@@ -323,15 +238,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     return this.getCurrentYear();
   }
 
-  readonly langOptions = computed<DropdownOption<Lang>[]>(() =>
-    this.i18n.langs.map(l => ({
-      value: l,
-      label: this.i18n.dicts[l].langName,
-      shortLabel: l.toUpperCase(),
-      badge: l.toUpperCase()
-    }))
-  );
-
   onTelemetryUpdate(data: TelemetryData) {
     this.telemetry.set(data);
   }
@@ -344,10 +250,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.themeFallbackTimer) {
-      clearTimeout(this.themeFallbackTimer);
-      this.themeFallbackTimer = undefined;
-    }
     this.observer?.disconnect();
     this.sectionObserver?.disconnect();
     for (const timer of this.previewTimers.values()) {

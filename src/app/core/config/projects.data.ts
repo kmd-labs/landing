@@ -6,6 +6,22 @@ import { ProjectCopy, ProjectEntry, ProjectMetadata } from '../i18n/i18n.types';
  */
 export const PROJECTS_METADATA: readonly ProjectMetadata[] = [
   {
+    id: 'el-nino',
+    url: 'https://kmd-labs.github.io/el-nino/',
+    repoUrl: 'https://github.com/kmd-labs/el-nino',
+    poster: 'assets/projects/el-nino.poster.jpg',
+    media: 'assets/projects/el-nino.webp',
+    previewDurationMs: 3200
+  },
+  {
+    id: 'watershed',
+    url: 'https://kmd-labs.github.io/watershed/',
+    repoUrl: 'https://github.com/kmd-labs/watershed',
+    poster: 'assets/projects/watershed.poster.jpg',
+    media: 'assets/projects/watershed.webp',
+    previewDurationMs: 6000
+  },
+  {
     id: 'nasa-wildfires',
     url: 'https://harmonization.kmd-labs.org/',
     repoUrl: 'https://github.com/kmd-labs/nasa-wildfires-model',
@@ -22,22 +38,6 @@ export const PROJECTS_METADATA: readonly ProjectMetadata[] = [
     poster: 'assets/projects/wrovis.poster.jpg',
     media: 'assets/projects/wrovis.webp',
     previewDurationMs: 4000
-  },
-  {
-    id: 'el-nino',
-    url: 'https://kmd-labs.github.io/el-nino/',
-    repoUrl: 'https://github.com/kmd-labs/el-nino',
-    poster: 'assets/projects/el-nino.poster.jpg',
-    media: 'assets/projects/el-nino.webp',
-    previewDurationMs: 3200
-  },
-  {
-    id: 'watershed',
-    url: 'https://kmd-labs.github.io/watershed/',
-    repoUrl: 'https://github.com/kmd-labs/watershed',
-    poster: 'assets/projects/watershed.poster.jpg',
-    media: 'assets/projects/watershed.webp',
-    previewDurationMs: 6000
   },
   {
     id: 'baltic',

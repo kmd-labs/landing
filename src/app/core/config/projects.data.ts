@@ -37,7 +37,7 @@ export const PROJECTS_METADATA: readonly ProjectMetadata[] = [
     repoUrl: 'https://github.com/kmd-labs/watershed',
     poster: 'assets/projects/watershed.poster.jpg',
     media: 'assets/projects/watershed.webp',
-    previewDurationMs: 5700
+    previewDurationMs: 6000
   },
   {
     id: 'baltic',

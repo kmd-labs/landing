@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ApplicationRef,
   Component,
   ElementRef,
   NgZone,
@@ -82,9 +83,11 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly weather = inject(CurrentWeatherService);
   private readonly storage = inject(StorageService);
   private readonly analytics = inject(AnalyticsService);
+  private readonly appRef = inject(ApplicationRef);
   private readonly zone = inject(NgZone);
   private readonly splashRevealed = signal(false);
   private readonly themeStorageKey = 'landing.theme';
+  private themeFallbackTimer?: ReturnType<typeof setTimeout>;
 
   // Portfolio interactive screengrab / GIF preview state
   readonly activeProjectIds = signal(new Set<string>());
@@ -187,11 +190,72 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.theme.setMode(prefersDark ? 'dark' : 'light');
   }
 
-  toggleTheme(): void {
+  toggleTheme(event?: MouseEvent): void {
     const next: ThemeMode = this.theme.isDark() ? 'light' : 'dark';
-    this.theme.setMode(next);
-    this.storage.setItem(this.themeStorageKey, next);
-    this.analytics.track(`theme/${next}`);
+    const applyTheme = () => {
+      this.theme.setMode(next);
+      this.storage.setItem(this.themeStorageKey, next);
+      this.analytics.track(`theme/${next}`);
+    };
+
+    if (typeof document === 'undefined' || typeof window === 'undefined' || this.isReducedMotion()) {
+      applyTheme();
+      return;
+    }
+
+    const doc = document as Document & {
+      startViewTransition?: (cb: () => void | Promise<void>) => { ready: Promise<void> };
+    };
+
+    if (typeof doc.startViewTransition === 'function') {
+      const target = (event?.currentTarget as HTMLElement | null) ?? (event?.target as HTMLElement | null);
+      const rect = target?.getBoundingClientRect();
+      const x = rect && rect.width > 0 ? rect.left + rect.width / 2 : (event?.clientX || window.innerWidth / 2);
+      const y = rect && rect.height > 0 ? rect.top + rect.height / 2 : (event?.clientY || 32);
+      const endRadius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+      );
+
+      const transition = doc.startViewTransition(async () => {
+        applyTheme();
+        this.appRef.tick();
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      });
+
+      transition.ready
+        .then(() => {
+          document.documentElement.animate(
+            {
+              clipPath: [
+                `circle(0px at ${x}px ${y}px)`,
+                `circle(${endRadius}px at ${x}px ${y}px)`
+              ]
+            },
+            {
+              duration: 520,
+              easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+              pseudoElement: '::view-transition-new(root)'
+            }
+          );
+        })
+        .catch(() => {
+          // Ignore if transition is skipped or aborted
+        });
+      return;
+    }
+
+    // Fallback: smooth CSS property transition
+    const root = document.documentElement;
+    root.classList.add('theme-transitioning');
+    if (this.themeFallbackTimer) {
+      clearTimeout(this.themeFallbackTimer);
+    }
+    applyTheme();
+    this.themeFallbackTimer = setTimeout(() => {
+      root.classList.remove('theme-transitioning');
+      this.themeFallbackTimer = undefined;
+    }, 380);
   }
 
   readonly vectorDates = computed<[Date, Date]>(() => {
@@ -280,6 +344,10 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.themeFallbackTimer) {
+      clearTimeout(this.themeFallbackTimer);
+      this.themeFallbackTimer = undefined;
+    }
     this.observer?.disconnect();
     this.sectionObserver?.disconnect();
     for (const timer of this.previewTimers.values()) {

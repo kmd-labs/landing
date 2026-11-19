@@ -40,8 +40,11 @@
           [ariaLabel]="theme.isDark() ? t.switchToLightMode : t.switchToDarkMode"
           [titleText]="theme.isDark() ? t.switchToLightMode : t.switchToDarkMode"
           [attr.data-track]="theme.isDark() ? 'theme/light' : 'theme/dark'"
-          (btnClick)="toggleTheme()">
-          <lucide-icon [img]="theme.isDark() ? sunIcon : moonIcon" [size]="16" aria-hidden="true"></lucide-icon>
+          (btnClick)="toggleTheme($event)">
+          <span class="theme-icon-stack" [class.is-dark]="theme.isDark()" aria-hidden="true">
+            <lucide-icon class="theme-icon theme-icon--sun" [img]="sunIcon" [size]="16"></lucide-icon>
+            <lucide-icon class="theme-icon theme-icon--moon" [img]="moonIcon" [size]="16"></lucide-icon>
+          </span>
         </app-button>
       </div>
     </div>

@@ -9,6 +9,8 @@ export const PL: Dict = {
 
   // Top HUD & Navigation
   changeLanguage: "Język",
+  switchToDarkMode: "Przełącz na tryb ciemny",
+  switchToLightMode: "Przełącz na tryb jasny",
   scrollToTopAria: "Wróć do interaktywnej symulacji",
   navPortfolio: "Portfolio",
   navSpecialities: "Specjalizacje",
@@ -84,6 +86,45 @@ export const PL: Dict = {
   portfolioNextAria: "Następny projekt",
   portfolioSelectAria: "Wybierz projekt",
   projects: buildProjects([
+    {
+      id: "nasa-wildfires",
+      shortTitle: "Pożary NASA",
+      title: "NASA Wildfires — Harmonizacja MODIS i VIIRS",
+      subtitle:
+        "NASA Space Apps Challenge 2026 · Ponad 25 lat spójnych detekcji aktywnych pożarów w jednej skali",
+      description:
+        "Zwalidowany naukowo Kalendarz Aktywności Pożarowej i platforma obserwacji Ziemi łącząca detekcje aktywnych pożarów MODIS (Terra i Aqua, 1 km) oraz VIIRS (Suomi NPP, NOAA-20 i NOAA-21, 375 m) od listopada 2000 r. Eliminuje skok po wejściu VIIRS w 2012 r. dzięki czasoprzestrzennej harmonizacji H3 i modelowaniu dryfu orbitalnego MODIS.",
+      metrics: [
+        { label: "TEMATYKA", value: "Obserwacja Ziemi i Pożary" },
+        { label: "ŹRÓDŁA DANYCH", value: "NASA FIRMS · MODIS · VIIRS" },
+      ],
+      tags: [
+        "NASA Space Apps",
+        "MODIS i VIIRS",
+        "Aktywne Pożary",
+        "Mapa 2D/3D",
+      ],
+      secondaryLabel: "NASA Space Apps",
+    },
+    {
+      id: "wrovis",
+      shortTitle: "wroVIS",
+      title: "wroVIS — Interaktywna Mapa 3D Wrocławia",
+      subtitle:
+        "Budynki 3D, mosty, sieć tramwajowa, zasięg pieszy 15 min i ranking osiedli",
+      description:
+        "Interaktywna miejska geowizualizacja Wrocławia zbudowana na danych OpenStreetMap i OpenFreeMap w technologii MapLibre GL JS oraz PMTiles. Umożliwia eksplorację budynków 3D z ich funkcjami i wysokością, mostów nad Odrą, sieci tramwajowej i rowerowej, izochron pieszych oraz rankingów osiedli.",
+      metrics: [
+        { label: "TEMATYKA", value: "GIS Miejski i Kartografia" },
+        { label: "ŹRÓDŁA DANYCH", value: "OpenStreetMap · OpenFreeMap" },
+      ],
+      tags: [
+        "Budynki 3D",
+        "Wrocław",
+        "Sieć Tramwajowa",
+        "MapLibre GL",
+      ],
+    },
     {
       id: "el-nino",
       shortTitle: "El Niño",

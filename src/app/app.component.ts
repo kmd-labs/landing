@@ -28,7 +28,9 @@ import {
   Send,
   Menu,
   X,
-  Github
+  Github,
+  Sun,
+  Moon
 } from 'lucide-angular';
 import {
   ButtonComponent,
@@ -40,12 +42,15 @@ import {
   BreakpointService,
   CarouselComponent,
   CarouselPill,
+  ThemeMode,
+  ThemeService,
   getContactMailtoUrl
 } from '@kmd/design-system';
 import { I18nService } from './core/i18n/i18n.service';
 import { Lang } from './core/i18n/i18n.types';
 import { CurrentWeatherService } from './core/services/current-weather.service';
 import { AnalyticsService } from './core/services/analytics.service';
+import { StorageService } from './core/services/storage.service';
 import { LocaleDatePipe } from './core/pipes/locale-date.pipe';
 import {
   TelemetryData,
@@ -73,10 +78,13 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly i18n = inject(I18nService);
   readonly bp = inject(BreakpointService);
   readonly splash = inject(SplashService);
+  readonly theme = inject(ThemeService);
   readonly weather = inject(CurrentWeatherService);
+  private readonly storage = inject(StorageService);
   private readonly analytics = inject(AnalyticsService);
   private readonly zone = inject(NgZone);
   private readonly splashRevealed = signal(false);
+  private readonly themeStorageKey = 'landing.theme';
 
   // Portfolio interactive screengrab / GIF preview state
   readonly activeProjectIds = signal(new Set<string>());
@@ -126,6 +134,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   });
 
   constructor() {
+    this.initTheme();
+
     effect(() => {
       const revealed = this.splashRevealed();
       const status = this.weather.status();
@@ -165,6 +175,25 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.i18n.setLang(lang);
   }
 
+  private initTheme(): void {
+    const saved = this.storage.getItem(this.themeStorageKey);
+    if (saved === 'dark' || saved === 'light') {
+      this.theme.setMode(saved);
+      return;
+    }
+    const prefersDark =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+    this.theme.setMode(prefersDark ? 'dark' : 'light');
+  }
+
+  toggleTheme(): void {
+    const next: ThemeMode = this.theme.isDark() ? 'light' : 'dark';
+    this.theme.setMode(next);
+    this.storage.setItem(this.themeStorageKey, next);
+    this.analytics.track(`theme/${next}`);
+  }
+
   readonly vectorDates = computed<[Date, Date]>(() => {
     const meta = this.weather.meta();
     const end = meta?.time ? new Date(meta.time) : new Date();
@@ -188,6 +217,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly menuIcon = Menu;
   readonly xIcon = X;
   readonly githubIcon = Github;
+  readonly sunIcon = Sun;
+  readonly moonIcon = Moon;
 
   // Contact Mailto URL (Prefilled with localized general inquiry)
   readonly mailtoUrl = computed(() => getContactMailtoUrl(this.i18n.lang()));

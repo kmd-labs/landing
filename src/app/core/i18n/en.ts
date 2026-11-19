@@ -10,6 +10,8 @@ export const EN: Dict = {
 
   // Top HUD & Navigation
   changeLanguage: "Language",
+  switchToDarkMode: "Switch to dark mode",
+  switchToLightMode: "Switch to light mode",
   scrollToTopAria: "Return to interactive simulation",
   navPortfolio: "Portfolio",
   navSpecialities: "Specialities",
@@ -85,6 +87,45 @@ export const EN: Dict = {
   portfolioNextAria: "Next project",
   portfolioSelectAria: "Select project",
   projects: buildProjects([
+    {
+      id: "nasa-wildfires",
+      shortTitle: "Wildfires",
+      title: "NASA Wildfires — MODIS & VIIRS Harmonization",
+      subtitle:
+        "2026 NASA Space Apps Challenge · 25+ years of drift-corrected active-fire detections on one scale",
+      description:
+        "Scientifically validated Burning Activity Calendar and Earth observation analytics platform reconciling MODIS (Terra & Aqua, 1 km) and VIIRS (Suomi NPP, NOAA-20 & NOAA-21, 375 m) active-fire detections from November 2000 onward. Eliminates the 2012 sensor-entry jump via H3 spatiotemporal harmonization and MODIS orbit-drift modeling.",
+      metrics: [
+        { label: "THEME", value: "Earth Observation & Wildfires" },
+        { label: "DATA SOURCE", value: "NASA FIRMS · MODIS · VIIRS" },
+      ],
+      tags: [
+        "NASA Space Apps",
+        "MODIS & VIIRS",
+        "Active Fires",
+        "2D/3D Globe",
+      ],
+      secondaryLabel: "NASA Space Apps",
+    },
+    {
+      id: "wrovis",
+      shortTitle: "wroVIS",
+      title: "wroVIS — Interactive 3D Map of Wrocław",
+      subtitle:
+        "3D urban buildings, bridges, tram network, 15-minute walking reach & district rankings",
+      description:
+        "Interactive urban geovisualization of Wrocław built on OpenStreetMap and OpenFreeMap vector tiles with MapLibre GL JS and PMTiles. Explores 3D building heights and functions, Odra bridges, tram and cycleway networks, walking-time isochrones, and multi-metric district rankings.",
+      metrics: [
+        { label: "THEME", value: "Urban GIS & Cartography" },
+        { label: "DATA SOURCE", value: "OpenStreetMap · OpenFreeMap" },
+      ],
+      tags: [
+        "3D Buildings",
+        "Wrocław",
+        "Tram Network",
+        "MapLibre GL",
+      ],
+    },
     {
       id: "el-nino",
       shortTitle: "El Niño",

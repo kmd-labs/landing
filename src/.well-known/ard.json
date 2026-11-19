@@ -1,6 +1,34 @@
 {
   "entries": [
     {
+      "identifier": "urn:air:kmd-labs.org:geovis:nasa-wildfires",
+      "displayName": "NASA Wildfires — MODIS & VIIRS Harmonization",
+      "type": "application/json",
+      "url": "https://harmonization.kmd-labs.org/",
+      "description": "Scientifically validated Burning Activity Calendar reconciling 25+ years of MODIS and VIIRS active-fire detections across a 2D map and 3D globe.",
+      "representativeQueries": [
+        "harmonize MODIS and VIIRS active fire hotspots",
+        "NASA Space Apps wildfire burning activity calendar",
+        "cross-sensor satellite wildfire time series 2000-2026"
+      ],
+      "capabilities": ["EarthObservation", "WildfireAnalytics", "3DVisualization"],
+      "tags": ["NASA Space Apps", "MODIS", "VIIRS", "FIRMS", "wildfires"]
+    },
+    {
+      "identifier": "urn:air:kmd-labs.org:geovis:wrovis",
+      "displayName": "wroVIS — Interactive 3D Map of Wrocław",
+      "type": "application/json",
+      "url": "https://kmd-labs.github.io/wroVIS/",
+      "description": "Interactive 3D urban visualization of Wrocław built on OpenStreetMap and OpenFreeMap with 3D buildings, bridges, tram network, walking-range isochrones, and district rankings.",
+      "representativeQueries": [
+        "interactive 3D map of Wroclaw buildings",
+        "Wroclaw tram network and district rankings map",
+        "OpenStreetMap 3D city visualization MapLibre"
+      ],
+      "capabilities": ["UrbanGIS", "3DVisualization", "Cartography"],
+      "tags": ["Wrocław", "OpenStreetMap", "MapLibre", "3D buildings", "urban GIS"]
+    },
+    {
       "identifier": "urn:air:kmd-labs.org:geovis:el-nino",
       "displayName": "El Niño — Southern Oscillation (ENSO) Interactive 3D Model",
       "type": "application/json",

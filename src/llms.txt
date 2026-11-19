@@ -6,6 +6,8 @@ KMD Labs is a scientific engineering and geovisualization studio that designs im
 
 ## Interactive Projects
 
+- [NASA Wildfires — MODIS & VIIRS Harmonization](https://harmonization.kmd-labs.org/): 2026 NASA Space Apps Challenge Burning Activity Calendar reconciling 25+ years of MODIS and VIIRS active-fire detections into a single drift-corrected scale. [GitHub Repository](https://github.com/kmd-labs/nasa-wildfires-model)
+- [wroVIS — Interactive 3D Map of Wrocław](https://kmd-labs.github.io/wroVIS/): Interactive 3D urban visualization of Wrocław built on OpenStreetMap, MapLibre GL JS, and PMTiles featuring 3D buildings, bridges, tram network, and district rankings. [GitHub Repository](https://github.com/kmd-labs/wroVIS)
 - [El Niño — Southern Oscillation (ENSO)](https://kmd-labs.org/el-nino/): Interactive 3D Pacific thermocline variability, Walker Circulation dynamics, and Niño 3.4 SST anomaly teleconnections. [GitHub Repository](https://github.com/kmd-labs/el-nino)
 - [Baltic Sea Drainage Basin (Watershed)](https://kmd-labs.org/watershed/): Interactive 3D globe of every river catchment draining to the Baltic Sea, the sea sub-basins they feed and the countries they cross, with guided tours, catchment statistics and a print poster maker (HydroRIVERS / HydroBASINS). [GitHub Repository](https://github.com/kmd-labs/watershed)
 - [Golfstrom — North Atlantic Heat Engine](https://kmd-labs.org/golfstrom/): AMOC thermohaline circulation, Gulf Stream western boundary current meanders, and subpolar gyre heat transport simulation. [GitHub Repository](https://github.com/kmd-labs/golfstrom)

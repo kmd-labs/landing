@@ -6,6 +6,24 @@ import { ProjectCopy, ProjectEntry, ProjectMetadata } from '../i18n/i18n.types';
  */
 export const PROJECTS_METADATA: readonly ProjectMetadata[] = [
   {
+    id: 'nasa-wildfires',
+    url: 'https://harmonization.kmd-labs.org/',
+    repoUrl: 'https://github.com/kmd-labs/nasa-wildfires-model',
+    secondaryUrl:
+      'https://www.spaceappschallenge.org/2026/challenges/modis-and-viirs-hot-spots/',
+    poster: 'assets/projects/nasa-wildfires.poster.jpg',
+    media: 'assets/projects/nasa-wildfires.webp',
+    previewDurationMs: 4800
+  },
+  {
+    id: 'wrovis',
+    url: 'https://kmd-labs.github.io/wroVIS/',
+    repoUrl: 'https://github.com/kmd-labs/wroVIS',
+    poster: 'assets/projects/wrovis.poster.jpg',
+    media: 'assets/projects/wrovis.webp',
+    previewDurationMs: 4000
+  },
+  {
     id: 'el-nino',
     url: 'https://kmd-labs.github.io/el-nino/',
     repoUrl: 'https://github.com/kmd-labs/el-nino',

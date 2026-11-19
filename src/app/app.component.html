@@ -15,22 +15,23 @@
           (click)="scrollToTop()">
           <img
             class="header__logo-img"
-            src="assets/design-system/logo/kmd-black-orange.svg"
+            [src]="theme.logoSrc()"
             alt="KMD"
             width="40"
             height="16" />
         </button>
       </div>
 
-      <div class="header__settings glass-panel" role="group" [attr.aria-label]="t.changeLanguage">
-        <app-dropdown
+      <div class="header__settings glass-panel">
+        <app-button
           variant="ghost"
-          [icon]="bp.mobile() ? null : globeIcon"
-          [options]="langOptions()"
-          [value]="i18n.lang()"
-          [ariaLabel]="i18n.lang().toUpperCase() + ' — ' + t.changeLanguage"
-          (valueChange)="onLangChange($event)">
-        </app-dropdown>
+          [iconOnly]="true"
+          [ariaLabel]="t.settingsAria"
+          [titleText]="t.settingsTitle"
+          data-track="open-settings"
+          (btnClick)="openSettings()">
+          <lucide-icon [img]="settingsIcon" [size]="16" aria-hidden="true"></lucide-icon>
+        </app-button>
       </div>
     </div>
 
@@ -119,7 +120,7 @@
         data-track="show-more"
         variant="default"
         extraClass="hero-stage__show-more-btn glass-panel"
-        [ariaLabel]="t.showMore + ' — ' + t.showMoreAria"
+        [ariaLabel]="t.showMore + ': ' + t.showMoreAria"
         (btnClick)="scrollToSection('portfolio')">
         <span>{{ t.showMore }}</span>
         <lucide-icon [img]="chevronDownIcon" [size]="14"></lucide-icon>
@@ -151,7 +152,7 @@
                 <app-badge
                   *ngFor="let tg of proj.tags"
                   [text]="tg"
-                  backgroundColor="#334155">
+                  backgroundColor="var(--color-badge-bg)">
                 </app-badge>
               </div>
             </div>
@@ -204,7 +205,7 @@
             </div>
 
             <div class="portfolio-card__footer">
-              <div class="portfolio-card__footer-links">
+              <div class="portfolio-card__footer-links" *ngIf="proj.repoUrl || proj.secondaryUrl">
                 <a
                   *ngIf="proj.repoUrl"
                   [href]="proj.repoUrl"
@@ -262,7 +263,7 @@
                   <app-badge
                     *ngFor="let tg of proj.tags"
                     [text]="tg"
-                    backgroundColor="#334155">
+                    backgroundColor="var(--color-badge-bg)">
                   </app-badge>
                 </div>
               </div>
@@ -275,8 +276,7 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 [attr.aria-label]="t.launchApp + ': ' + proj.title"
-              [attr.data-track]="'project-launch/' + proj.id"
-                (click)="hasDragged && $event.preventDefault()">
+                [attr.data-track]="'project-launch/' + proj.id">
                 <img
                   class="portfolio-card__poster"
                   [src]="proj.poster"
@@ -311,7 +311,7 @@
               </div>
 
               <div class="portfolio-card__footer">
-                <div class="portfolio-card__footer-links">
+                <div class="portfolio-card__footer-links" *ngIf="proj.repoUrl || proj.secondaryUrl">
                   <a
                     *ngIf="proj.repoUrl"
                     [href]="proj.repoUrl"
@@ -319,8 +319,7 @@
                     rel="noopener noreferrer"
                     class="portfolio-link-btn portfolio-link-btn--secondary"
                     [attr.aria-label]="t.viewRepository + ': ' + proj.title"
-                  [attr.data-track]="'project-repo/' + proj.id"
-                    (click)="hasDragged && $event.preventDefault()">
+                    [attr.data-track]="'project-repo/' + proj.id">
                     <lucide-icon [img]="githubIcon" [size]="14"></lucide-icon>
                     <span>{{ t.viewRepository }}</span>
                   </a>
@@ -331,8 +330,7 @@
                     rel="noopener noreferrer"
                     class="portfolio-link-btn portfolio-link-btn--secondary"
                     [attr.aria-label]="proj.secondaryLabel + ': ' + proj.title"
-                  [attr.data-track]="'project-secondary/' + proj.id"
-                    (click)="hasDragged && $event.preventDefault()">
+                    [attr.data-track]="'project-secondary/' + proj.id">
                     <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
                     <span>{{ proj.secondaryLabel }}</span>
                   </a>
@@ -343,8 +341,7 @@
                   target="_blank"
                   rel="noopener noreferrer"
                   class="portfolio-link-btn portfolio-link-btn--primary"
-                [attr.data-track]="'project-launch/' + proj.id"
-                  (click)="hasDragged && $event.preventDefault()">
+                  [attr.data-track]="'project-launch/' + proj.id">
                   <span>{{ t.launchApp }}</span>
                   <lucide-icon [img]="arrowUpRightIcon" [size]="15"></lucide-icon>
                 </a>
@@ -376,7 +373,7 @@
             *ngFor="let disc of t.disciplines; let i = index"
             class="discipline-card glass-panel">
             <div class="discipline-card__icon-wrap">
-              <lucide-icon *ngIf="i === 0" [img]="wavesIcon" [size]="24"></lucide-icon>
+              <lucide-icon *ngIf="i === 0" [img]="layersIcon" [size]="24"></lucide-icon>
               <lucide-icon *ngIf="i === 1" [img]="databaseIcon" [size]="24"></lucide-icon>
               <lucide-icon *ngIf="i === 2" [img]="cpuIcon" [size]="24"></lucide-icon>
             </div>
@@ -534,8 +531,7 @@
                     rel="noopener noreferrer"
                     class="icon-link"
                     [attr.aria-label]="person.name + ' on LinkedIn'"
-                  [attr.data-track]="'team-linkedin/' + person.name"
-                    (click)="hasDragged && $event.preventDefault()">
+                    [attr.data-track]="'team-linkedin/' + person.name">
                     <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
                     <span>LinkedIn</span>
                   </a>
@@ -546,8 +542,7 @@
                     rel="noopener noreferrer"
                     class="icon-link"
                     [attr.aria-label]="person.name + ' on GitHub'"
-                  [attr.data-track]="'team-github/' + person.name"
-                    (click)="hasDragged && $event.preventDefault()">
+                    [attr.data-track]="'team-github/' + person.name">
                     <lucide-icon [img]="externalLinkIcon" [size]="14"></lucide-icon>
                     <span>GitHub</span>
                   </a>
@@ -602,7 +597,7 @@
           (click)="scrollToTop()">
           <img
             class="footer__logo"
-            src="assets/design-system/logo/kmd-black-orange.svg"
+            [src]="theme.logoSrc()"
             alt="KMD"
             width="40"
             height="16" />
@@ -621,11 +616,14 @@
           type="button"
           class="back-to-top"
           data-track="scroll-top/footer-button"
-          [attr.aria-label]="'TOP — ' + t.scrollToTopAria"
+          [attr.aria-label]="'TOP: ' + t.scrollToTopAria"
           (click)="scrollToTop()">
           ↑ TOP
         </button>
       </div>
     </div>
   </footer>
+
+  <app-popup [closeAriaLabel]="t.close"></app-popup>
+  <app-tooltip></app-tooltip>
 </div>

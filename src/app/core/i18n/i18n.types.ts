@@ -67,6 +67,13 @@ export interface Dict {
 
   // Top HUD & Navigation
   changeLanguage: string;
+  settingsTitle: string;
+  settingsAria: string;
+  themeLabel: string;
+  themeAuto: string;
+  themeLight: string;
+  themeDark: string;
+  close: string;
   scrollToTopAria: string;
   navPortfolio: string;
   navSpecialities: string;

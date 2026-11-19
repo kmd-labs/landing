@@ -14,7 +14,6 @@ import {
 import { CommonModule } from '@angular/common';
 import {
   LucideAngularModule,
-  Globe,
   Compass,
   Layers,
   Users,
@@ -28,25 +27,31 @@ import {
   Send,
   Menu,
   X,
-  Github
+  Github,
+  Settings
 } from 'lucide-angular';
 import {
   ButtonComponent,
   BadgeComponent,
   DropdownComponent,
   DropdownOption,
+  PopupComponent,
+  PopupService,
   SplashComponent,
   SplashService,
   BreakpointService,
   CarouselComponent,
   CarouselPill,
+  ThemeService,
+  TooltipComponent,
   getContactMailtoUrl
 } from '@kmd/design-system';
 import { I18nService } from './core/i18n/i18n.service';
-import { Lang } from './core/i18n/i18n.types';
 import { CurrentWeatherService } from './core/services/current-weather.service';
 import { AnalyticsService } from './core/services/analytics.service';
+import { ThemePrefService } from './core/services/theme-pref.service';
 import { LocaleDatePipe } from './core/pipes/locale-date.pipe';
+import { openSettingsPopup } from './components/settings-popup/settings-popup.component';
 import {
   TelemetryData,
   VortexCanvasComponent
@@ -61,7 +66,9 @@ import {
     ButtonComponent,
     BadgeComponent,
     DropdownComponent,
+    PopupComponent,
     SplashComponent,
+    TooltipComponent,
     VortexCanvasComponent,
     CarouselComponent,
     LocaleDatePipe
@@ -73,6 +80,9 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly i18n = inject(I18nService);
   readonly bp = inject(BreakpointService);
   readonly splash = inject(SplashService);
+  readonly theme = inject(ThemeService);
+  private readonly themePref = inject(ThemePrefService);
+  private readonly popup = inject(PopupService);
   readonly weather = inject(CurrentWeatherService);
   private readonly analytics = inject(AnalyticsService);
   private readonly zone = inject(NgZone);
@@ -121,11 +131,13 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     return t.projects.map((p) => ({
       id: p.id,
       label: p.shortTitle || p.title,
-      ariaLabel: `${p.shortTitle || p.title} — ${t.portfolioSelectAria}: ${p.title}`
+      ariaLabel: `${p.shortTitle || p.title} · ${t.portfolioSelectAria}: ${p.title}`
     }));
   });
 
   constructor() {
+    void this.themePref;
+
     effect(() => {
       const revealed = this.splashRevealed();
       const status = this.weather.status();
@@ -158,11 +170,9 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.scrollToSection(id);
   }
 
-  onLangChange(lang: Lang) {
-    if (lang !== this.i18n.lang()) {
-      this.analytics.track(`lang/${lang}`);
-    }
-    this.i18n.setLang(lang);
+  openSettings(): void {
+    this.analytics.track('open-settings');
+    openSettingsPopup(this.popup, this.i18n);
   }
 
   readonly vectorDates = computed<[Date, Date]>(() => {
@@ -173,7 +183,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   });
 
   // Lucide Icons
-  readonly globeIcon = Globe;
   readonly compassIcon = Compass;
   readonly layersIcon = Layers;
   readonly usersIcon = Users;
@@ -188,6 +197,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly menuIcon = Menu;
   readonly xIcon = X;
   readonly githubIcon = Github;
+  readonly settingsIcon = Settings;
 
   // Contact Mailto URL (Prefilled with localized general inquiry)
   readonly mailtoUrl = computed(() => getContactMailtoUrl(this.i18n.lang()));
@@ -227,15 +237,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   get currentYear(): number {
     return this.getCurrentYear();
   }
-
-  readonly langOptions = computed<DropdownOption<Lang>[]>(() =>
-    this.i18n.langs.map(l => ({
-      value: l,
-      label: this.i18n.dicts[l].langName,
-      shortLabel: l.toUpperCase(),
-      badge: l.toUpperCase()
-    }))
-  );
 
   onTelemetryUpdate(data: TelemetryData) {
     this.telemetry.set(data);

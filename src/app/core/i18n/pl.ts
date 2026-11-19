@@ -9,6 +9,13 @@ export const PL: Dict = {
 
   // Top HUD & Navigation
   changeLanguage: "Język",
+  settingsTitle: "Ustawienia",
+  settingsAria: "Otwórz ustawienia",
+  themeLabel: "Wygląd",
+  themeAuto: "Jak w systemie",
+  themeLight: "Jasny",
+  themeDark: "Ciemny",
+  close: "Zamknij",
   scrollToTopAria: "Wróć do interaktywnej symulacji",
   navPortfolio: "Portfolio",
   navSpecialities: "Specjalizacje",
@@ -19,10 +26,9 @@ export const PL: Dict = {
 
   // Hero Section
   heroKicker: "KMD LABS · OBSERWACJA ZIEMI I KARTOGRAFIA",
-  heroTitle: "Naukowa Wizualizacja Danych i",
+  heroTitle: "Wizualizacja Danych oraz",
   heroHighlight: "Inżynieria Geoprzestrzenna",
-  heroSubtitle:
-    "Przekształcamy Twoje złożone dane w piękne i interaktywne aplikacje.",
+  heroSubtitle: "Przekształcamy Twoje dane w piękne i interaktywne aplikacje.",
   heroPrimaryCta: "Odkryj Obserwatorium",
   heroSecondaryCta: "Nawiąż Kontakt",
   heroInteractionHint:
@@ -77,7 +83,7 @@ export const PL: Dict = {
   portfolioKicker: "ARCHIWUM OBSERWATORIUM",
   portfolioTitle: "Kluczowe Aplikacje Interaktywne",
   portfolioLead:
-    "Naukowe geowizualizacje, potoki obserwacji Ziemi i symulacje przestrzenne oparte na referencyjnych danych satelitarnych, oceanograficznych i wysokościowych.",
+    "Naukowe geowizualizacje, systemy przetwarzania danych z obserwacji Ziemi i symulacje przestrzenne oparte na referencyjnych danych satelitarnych, oceanograficznych i wysokościowych.",
   launchApp: "Uruchom Wizualizację",
   viewRepository: "GitHub",
   portfolioPrevAria: "Poprzedni projekt",
@@ -85,9 +91,43 @@ export const PL: Dict = {
   portfolioSelectAria: "Wybierz projekt",
   projects: buildProjects([
     {
+      id: "nasa-wildfires",
+      shortTitle: "Pożary NASA",
+      title: "NASA Wildfires · Harmonizacja MODIS i VIIRS",
+      subtitle:
+        "NASA Space Apps Challenge 2026 · Ponad 25 lat spójnych detekcji aktywnych pożarów w jednej skali",
+      description:
+        "Zwalidowany naukowo Kalendarz Aktywności Pożarowej i platforma obserwacji Ziemi łącząca detekcje aktywnych pożarów MODIS (Terra i Aqua, 1 km) oraz VIIRS (Suomi NPP, NOAA-20 i NOAA-21, 375 m) od listopada 2000 r. Eliminuje skok po wejściu VIIRS w 2012 r. dzięki czasoprzestrzennej harmonizacji H3 i modelowaniu dryfu orbitalnego MODIS.",
+      metrics: [
+        { label: "TEMATYKA", value: "Obserwacja Ziemi i Pożary" },
+        { label: "ŹRÓDŁA DANYCH", value: "NASA FIRMS · MODIS · VIIRS" },
+      ],
+      tags: [
+        "NASA Space Apps",
+        "MODIS i VIIRS",
+        "Aktywne Pożary",
+        "Mapa 2D/3D",
+      ],
+      secondaryLabel: "NASA Space Apps",
+    },
+    {
+      id: "wrovis",
+      shortTitle: "wroVIS",
+      title: "wroVIS · Interaktywna Mapa 3D Wrocławia",
+      subtitle:
+        "Budynki 3D, mosty, sieć tramwajowa, zasięg pieszy 15 min i ranking osiedli",
+      description:
+        "Interaktywna miejska geowizualizacja Wrocławia zbudowana na danych OpenStreetMap i OpenFreeMap w technologii MapLibre GL JS oraz PMTiles. Umożliwia eksplorację budynków 3D z ich funkcjami i wysokością, mostów nad Odrą, sieci tramwajowej i rowerowej, izochron pieszych oraz rankingów osiedli.",
+      metrics: [
+        { label: "TEMATYKA", value: "GIS Miejski i Kartografia" },
+        { label: "ŹRÓDŁA DANYCH", value: "OpenStreetMap · OpenFreeMap" },
+      ],
+      tags: ["Budynki 3D", "Wrocław", "Sieć Tramwajowa", "MapLibre GL"],
+    },
+    {
       id: "el-nino",
       shortTitle: "El Niño",
-      title: "El Niño — Oscylacja Południowa (ENSO)",
+      title: "El Niño · Oscylacja Południowa (ENSO)",
       subtitle:
         "Zmienność termokliny Pacyfiku 3D, cyrkulacja Walkera i telekoneksje wskaźnika Niño 3.4",
       description:
@@ -96,12 +136,7 @@ export const PL: Dict = {
         { label: "TEMATYKA", value: "Klimatologia i Meteorologia" },
         { label: "ŹRÓDŁA DANYCH", value: "NOAA OISST · Copernicus" },
       ],
-      tags: [
-        "El Niño i La Niña",
-        "Pasaty",
-        "Temperatura Oceanu",
-        "Globus 3D",
-      ],
+      tags: ["El Niño i La Niña", "Pasaty", "Temperatura Oceanu", "Globus 3D"],
     },
     {
       id: "watershed",
@@ -146,7 +181,7 @@ export const PL: Dict = {
       shortTitle: "Viadrus AI",
       title: "Viadrus AI (Zwycięzca CASSINI UE)",
       subtitle:
-        "1. Miejsce w Finale Europejskim — 11. Hackathon CASSINI (EUSPA) · Detekcja wycieków SAR",
+        "1. Miejsce w Finale Europejskim · 11. Hackathon CASSINI (EUSPA) · Detekcja wycieków SAR",
       description:
         "Nagrodzony w Europie system teledetekcyjny łączący radarowe anomalie wilgotności dielektrycznej gruntu w paśmie C (Sentinel-1 SAR) oraz wielospektralne wskaźniki wegetacji i wody (Sentinel-2 NDVI/NDWI) z telemetrią hydrauliczną do wczesnej lokalizacji podziemnych wycieków wodociągowych.",
       metrics: [
@@ -164,7 +199,7 @@ export const PL: Dict = {
     {
       id: "golfstrom",
       shortTitle: "Golfstrom",
-      title: "Golfstrom — Północnoatlantycki Silnik Cieplny",
+      title: "Golfstrom · Północnoatlantycki Silnik Cieplny",
       subtitle:
         "Zonalne anomalie SST, baroklinowy front Prądu Zatokowego i transatlantycki kontrast klimatyczny",
       description:
@@ -183,7 +218,7 @@ export const PL: Dict = {
     {
       id: "polis-io",
       shortTitle: "Polis",
-      title: "Polis — Geosymulacja Hellady Archaicznej (600 p.n.e.)",
+      title: "Polis · Geosymulacja Hellady Archaicznej (600 p.n.e.)",
       subtitle:
         "Kolonizacja komórkowa zależna od rzeźby terenu, pojemność troficzna i morskie sieci handlowe",
       description:
@@ -210,33 +245,33 @@ export const PL: Dict = {
   disciplines: [
     {
       id: "geoviz",
-      title: "Geowizualizacja i 3D WebGL",
-      lead: "Przekształcanie wielogigabajtowych rastrów przestrzennych i pól atmosferycznych w płynny interaktywny canvas 60 FPS.",
+      title: "UX/UI, Geowizualizacja i Fullstack Engineering",
+      lead: "Kompleksowe interaktywne aplikacje webowe: od przemyślanego UX/UI i map 2D/3D po wdrożenia w chmurze i długoterminowe utrzymanie.",
       points: [
-        "Autorskie shadery WebGL, Three.js i GLSL dla odwzorowań sferycznych oraz płaskich.",
-        "Układy cząstek Lagrange’a, pola wektorowe curl-noise i termodynamiczne gradienty barwne.",
-        "Precyzyjne renderowanie dopasowane do ekranów Retina z czytelną typografią naukową.",
+        "Projektowanie UX/UI, responsywne interfejsy i dostępne systemy projektowe stworzone z myślą o złożonych danych.",
+        "Inżynieria fullstack łącząca interaktywne mapy 2D/3D, grafikę WebGL oraz szybkie, typowane API.",
+        "Automatyczne testy i wdrożenia w chmurze (CI/CD), globalny cache, monitoring oraz długoterminowe utrzymanie.",
       ],
       tools: [
-        "WebGL",
-        "Three.js",
-        "HTML5 Canvas",
-        "GLSL",
-        "D3.js",
-        "Matematyka Projekcji",
+        "UX/UI Design",
+        "Angular / TypeScript",
+        "WebGL / MapLibre",
+        "FastAPI / Node.js",
+        "Cloud DevOps",
+        "CI/CD i Utrzymanie",
       ],
     },
     {
       id: "data-eng",
-      title: "Inżynieria Danych i Dane Satelitarne",
-      lead: "Kompletne potoki przetwarzania od orbit satelitarnych po zoptymalizowane kafelki klienta.",
+      title: "Inżynieria Danych i Satelitarna Obserwacja Ziemi",
+      lead: "Kompleksowe przetwarzanie danych: od surowych zobrazowań satelitarnych po lekkie kafelki mapowe w przeglądarce.",
       points: [
-        "Zautomatyzowana integracja danych Copernicus Sentinel-1 (SAR), Sentinel-2 oraz morskich zasobów NOAA.",
-        "Potoki przestrzenne ETL, kafelkowanie rastrów, przetwarzanie GeoTIFF i kompresja binarna (bin.gz).",
-        "Kontrola jakości danych (QA), kalibracja sensorów i niezawodne schematy geoprzestrzenne.",
+        "Zautomatyzowana integracja radarowych danych Copernicus Sentinel-1 (SAR), Sentinel-2 oraz morskich zasobów NOAA.",
+        "Przestrzenne procesy ETL, kafelkowanie rastrów, przetwarzanie GeoTIFF i wydajna kompresja binarna (bin.gz).",
+        "Kontrola jakości danych, kalibracja sensorów i niezawodne schematy geoprzestrzenne.",
       ],
       tools: [
-        "Copernicus EO",
+        "Obserwacja Ziemi Copernicus",
         "Python / GDAL",
         "Rasterio",
         "PostGIS",

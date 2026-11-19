@@ -10,6 +10,13 @@ export const EN: Dict = {
 
   // Top HUD & Navigation
   changeLanguage: "Language",
+  settingsTitle: "Settings",
+  settingsAria: "Open Settings",
+  themeLabel: "Appearance",
+  themeAuto: "Match system",
+  themeLight: "Light",
+  themeDark: "Dark",
+  close: "Close",
   scrollToTopAria: "Return to interactive simulation",
   navPortfolio: "Portfolio",
   navSpecialities: "Specialities",
@@ -86,9 +93,48 @@ export const EN: Dict = {
   portfolioSelectAria: "Select project",
   projects: buildProjects([
     {
+      id: "nasa-wildfires",
+      shortTitle: "Wildfires",
+      title: "NASA Wildfires · MODIS & VIIRS Harmonization",
+      subtitle:
+        "2026 NASA Space Apps Challenge · 25+ years of drift-corrected active-fire detections on one scale",
+      description:
+        "Scientifically validated Burning Activity Calendar and Earth observation analytics platform reconciling MODIS (Terra & Aqua, 1 km) and VIIRS (Suomi NPP, NOAA-20 & NOAA-21, 375 m) active-fire detections from November 2000 onward. Eliminates the 2012 sensor-entry jump via H3 spatiotemporal harmonization and MODIS orbit-drift modeling.",
+      metrics: [
+        { label: "THEME", value: "Earth Observation & Wildfires" },
+        { label: "DATA SOURCE", value: "NASA FIRMS · MODIS · VIIRS" },
+      ],
+      tags: [
+        "NASA Space Apps",
+        "MODIS & VIIRS",
+        "Active Fires",
+        "2D/3D Globe",
+      ],
+      secondaryLabel: "NASA Space Apps",
+    },
+    {
+      id: "wrovis",
+      shortTitle: "wroVIS",
+      title: "wroVIS · Interactive 3D Map of Wrocław",
+      subtitle:
+        "3D urban buildings, bridges, tram network, 15-minute walking reach & district rankings",
+      description:
+        "Interactive urban geovisualization of Wrocław built on OpenStreetMap and OpenFreeMap vector tiles with MapLibre GL JS and PMTiles. Explores 3D building heights and functions, Odra bridges, tram and cycleway networks, walking-time isochrones, and multi-metric district rankings.",
+      metrics: [
+        { label: "THEME", value: "Urban GIS & Cartography" },
+        { label: "DATA SOURCE", value: "OpenStreetMap · OpenFreeMap" },
+      ],
+      tags: [
+        "3D Buildings",
+        "Wrocław",
+        "Tram Network",
+        "MapLibre GL",
+      ],
+    },
+    {
       id: "el-nino",
       shortTitle: "El Niño",
-      title: "El Niño — Southern Oscillation (ENSO)",
+      title: "El Niño · Southern Oscillation (ENSO)",
       subtitle:
         "3D Pacific thermocline variability, Walker Circulation dynamics & Niño 3.4 teleconnections",
       description:
@@ -147,7 +193,7 @@ export const EN: Dict = {
       shortTitle: "Viadrus AI",
       title: "Viadrus AI (CASSINI EU Winner)",
       subtitle:
-        "1st Place European Winner — EUSPA 11th CASSINI Hackathon · SAR & multispectral leak detection",
+        "1st Place European Winner · EUSPA 11th CASSINI Hackathon · SAR & multispectral leak detection",
       description:
         "Award-winning remote sensing pipeline fusing C-band Synthetic Aperture Radar (Sentinel-1 SAR) soil dielectric moisture anomalies and Sentinel-2 optical vegetation stress indices (NDVI/NDWI) with hydraulic pressure telemetry to localize subsurface water distribution leaks.",
       metrics: [
@@ -165,7 +211,7 @@ export const EN: Dict = {
     {
       id: "golfstrom",
       shortTitle: "Golfstrom",
-      title: "Golfstrom — North Atlantic Heat Engine",
+      title: "Golfstrom · North Atlantic Heat Engine",
       subtitle:
         "Zonal SST anomalies, baroclinic western boundary fronts & transatlantic latitude climate contrast",
       description:
@@ -184,7 +230,7 @@ export const EN: Dict = {
     {
       id: "polis-io",
       shortTitle: "Polis",
-      title: "Polis — Archaic Hellas Geosimulation (600 BC)",
+      title: "Polis · Archaic Hellas Geosimulation (600 BC)",
       subtitle:
         "Topography-constrained cellular colonization, agricultural carrying capacity & maritime trade networks",
       description:
@@ -210,33 +256,33 @@ export const EN: Dict = {
   disciplines: [
     {
       id: "geoviz",
-      title: "Geovisualization & 3D WebGL",
-      lead: "Turning multi-gigabyte spatial rasters and atmospheric fields into fluid 60 FPS web canvases.",
+      title: "UX/UI, Geovisualization & Fullstack Engineering",
+      lead: "End-to-end interactive web applications, from thoughtful UX/UI design and 2D/3D mapping to cloud deployment and long-term maintenance.",
       points: [
-        "Custom WebGL, Three.js, and GLSL shaders for real-time spherical & flat projections.",
-        "Lagrangian particle systems, curl-noise vector fields, and thermodynamic color gradients.",
-        "Pixel-ratio aware, high-DPI scientific rendering with accessible HUD typography.",
+        "Human-centered UX/UI design, responsive interfaces, and accessible design systems built for complex data.",
+        "Fullstack web engineering combining interactive 2D/3D maps, WebGL canvases, and fast, type-safe APIs.",
+        "Automated cloud DevOps, CI/CD pipelines, edge caching, monitoring, and reliable ongoing maintenance.",
       ],
       tools: [
-        "WebGL",
-        "Three.js",
-        "HTML5 Canvas",
-        "GLSL",
-        "D3.js",
-        "GIS Projection Math",
+        "UX/UI Design",
+        "Angular / TypeScript",
+        "WebGL / MapLibre",
+        "FastAPI / Node.js",
+        "Cloud DevOps",
+        "CI/CD & Maintenance",
       ],
     },
     {
       id: "data-eng",
-      title: "Data Engineering & Satellite EO",
+      title: "Data Engineering & Satellite Earth Observation",
       lead: "End-to-end processing pipelines from satellite orbits down to optimized client tiles.",
       points: [
-        "Automated ingestion of Copernicus Sentinel-1 (SAR), Sentinel-2, and NOAA/Copernicus marine data.",
-        "Spatial ETL pipelines, raster tiling, GeoTIFF processing, and binary compression (bin.gz).",
+        "Automated ingestion of Copernicus Sentinel-1 Synthetic Aperture Radar, Sentinel-2, and NOAA/Copernicus marine data.",
+        "Spatial Extract-Transform-Load pipelines, raster tiling, GeoTIFF processing, and binary compression (bin.gz).",
         "Data quality monitoring, sensor cross-calibration, and robust geographic data schemas.",
       ],
       tools: [
-        "Copernicus EO",
+        "Copernicus Earth Observation",
         "Python / GDAL",
         "Rasterio",
         "PostGIS",

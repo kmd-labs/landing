@@ -150,6 +150,7 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
   constructor() {
     effect(() => {
       const status = this.weather.status();
+      this.theme.mode();
       const land = this.weather.landFeature();
       const detailed = this.weather.detailedLand();
       const states = this.weather.stateBorders();
@@ -434,8 +435,8 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
     ctx.save();
     ctx.scale(this.dpr, this.dpr);
 
-    // Ocean Background in KMD Light Theme
-    ctx.fillStyle = this.theme.getTokenColor('neutral-50', '#f5f7fb');
+    // Ocean Background (theme-reactive: light neutral-50 / dark midnight-900)
+    ctx.fillStyle = this.theme.getTokenColor('bg-deep', '#f5f7fb');
     ctx.fillRect(0, 0, this.width, this.height);
 
     // Graticules dynamically generated for the active visible viewport
@@ -444,7 +445,7 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
     const cfg = this.getActiveConfig();
     const step = cfg.zoom > 100 ? 15 : cfg.zoom > 45 ? 5 : cfg.zoom > 15 ? 2 : 1;
 
-    ctx.strokeStyle = this.theme.getTokenColor('neutral-200', 'rgba(203, 213, 225, 0.40)');
+    ctx.strokeStyle = this.theme.getTokenColor('line', 'rgba(15, 23, 42, 0.1)');
     ctx.lineWidth = 1.0;
     ctx.setLineDash([4, 6]);
 
@@ -490,8 +491,8 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
     };
 
     const drawLandLayer = (geo: any, strokeAlpha: number) => {
-      ctx.fillStyle = this.theme.getTokenColor('neutral-100', '#eef2f7');
-      ctx.strokeStyle = this.theme.getTokenColor('neutral-400', `rgba(100, 116, 139, ${strokeAlpha})`);
+      ctx.fillStyle = this.theme.getTokenColor('surface-muted', '#eef2f7');
+      ctx.strokeStyle = this.theme.getTokenColor('line-strong', `rgba(100, 116, 139, ${strokeAlpha})`);
       ctx.lineWidth = 1.1;
       ctx.beginPath();
       for (const feature of geo.features || [geo]) {
@@ -517,8 +518,8 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
     // On mobile, use clean 50m major urban hubs; on desktop, use detailed 10m boundaries
     const cityLimits = isMobile ? this.weather.cityLimits50m() : this.weather.cityLimits();
     if (cityLimits && cityLimits.length > 0) {
-      ctx.fillStyle = this.theme.getTokenColor('neutral-200', isMobile ? 'rgba(226, 232, 240, 0.45)' : 'rgba(226, 232, 240, 0.55)');
-      ctx.strokeStyle = this.theme.getTokenColor('neutral-400', isMobile ? 'rgba(100, 116, 139, 0.25)' : 'rgba(100, 116, 139, 0.35)');
+      ctx.fillStyle = this.theme.getTokenColor('surface-muted-strong', isMobile ? 'rgba(226, 232, 240, 0.45)' : 'rgba(226, 232, 240, 0.55)');
+      ctx.strokeStyle = this.theme.getTokenColor('line-strong', isMobile ? 'rgba(100, 116, 139, 0.25)' : 'rgba(100, 116, 139, 0.35)');
       ctx.lineWidth = isMobile ? 0.7 : 0.8;
       ctx.beginPath();
       for (let c = 0; c < cityLimits.length; c++) {
@@ -563,7 +564,7 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
     // 4. Regional & National Borders (50m clean lines on mobile, 10m county/state lines on desktop)
     const stateLines = isMobile ? this.weather.stateBorders50m() : this.weather.stateBorders();
     if (stateLines && stateLines.length > 0) {
-      ctx.strokeStyle = this.theme.getTokenColor('neutral-300', isMobile ? 'rgba(148, 163, 184, 0.50)' : 'rgba(148, 163, 184, 0.40)');
+      ctx.strokeStyle = this.theme.getTokenColor('line-strong', isMobile ? 'rgba(148, 163, 184, 0.50)' : 'rgba(148, 163, 184, 0.40)');
       ctx.lineWidth = isMobile ? 0.9 : 0.8;
       ctx.setLineDash(isMobile ? [4, 4] : [3, 4]);
       ctx.beginPath();
@@ -577,7 +578,7 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
     if (roads) {
       // 5A. Secondary Highways & Regional Arteries (Rendered only on desktop to avoid clutter on mobile)
       if (!isMobile && roads.secondary && roads.secondary.length > 0) {
-        ctx.strokeStyle = this.theme.getTokenColor('neutral-300', 'rgba(148, 163, 184, 0.42)');
+        ctx.strokeStyle = this.theme.getTokenColor('line', 'rgba(148, 163, 184, 0.42)');
         ctx.lineWidth = 0.65;
         ctx.beginPath();
         drawLineSegments(roads.secondary);
@@ -586,7 +587,7 @@ export class VortexCanvasComponent implements OnInit, OnDestroy {
 
       // 5B. Major Highways, Interstates & Expressways (Crisp transit corridors & beltways)
       if (roads.highways && roads.highways.length > 0) {
-        ctx.strokeStyle = this.theme.getTokenColor('neutral-500', isMobile ? 'rgba(100, 116, 139, 0.55)' : 'rgba(100, 116, 139, 0.62)');
+        ctx.strokeStyle = this.theme.getTokenColor('text-dim', isMobile ? 'rgba(100, 116, 139, 0.55)' : 'rgba(100, 116, 139, 0.62)');
         ctx.lineWidth = isMobile ? 0.9 : 1.1;
         ctx.beginPath();
         drawLineSegments(roads.highways);

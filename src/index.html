@@ -5,6 +5,21 @@
   <title>KMD Labs · Geospatial R&amp;D, Earth Observation &amp; Scientific Geovisualization</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <script>
+    (function() {
+      try {
+        var saved = window.localStorage && window.localStorage.getItem('landing.theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var mode = saved === 'dark' || saved === 'light' ? saved : (prefersDark ? 'dark' : 'light');
+        if (mode === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', '#0d0d0d');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <meta name="description" content="KMD Labs builds interactive scientific geovisualizations, satellite Earth observation pipelines (Sentinel-1 SAR, Sentinel-2), oceanographic and hydrological models (ENSO, Gulf Stream, Baltic drainage basin, postglacial rebound), and DEM-based spatial simulations.">
   <meta name="keywords" content="geovisualization, Earth observation, GIS, oceanography, climatology, ENSO, El Niño, Gulf Stream, AMOC, Baltic Sea, drainage basin, river catchments, hydrology, Glacial Isostatic Adjustment, paleogeography, Sentinel-1 SAR, remote sensing, cliodynamics, WebGL, KMD Labs">
   <meta property="og:title" content="KMD Labs · Geospatial R&amp;D, Earth Observation &amp; Scientific Geovisualization">

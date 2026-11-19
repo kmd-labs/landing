@@ -84,7 +84,7 @@ export const PL: Dict = {
   portfolioKicker: "ARCHIWUM OBSERWATORIUM",
   portfolioTitle: "Kluczowe Aplikacje Interaktywne",
   portfolioLead:
-    "Naukowe geowizualizacje, potoki obserwacji Ziemi i symulacje przestrzenne oparte na referencyjnych danych satelitarnych, oceanograficznych i wysokościowych.",
+    "Naukowe geowizualizacje, systemy przetwarzania danych z obserwacji Ziemi i symulacje przestrzenne oparte na referencyjnych danych satelitarnych, oceanograficznych i wysokościowych.",
   launchApp: "Uruchom Wizualizację",
   viewRepository: "GitHub",
   portfolioPrevAria: "Poprzedni projekt",
@@ -261,7 +261,7 @@ export const PL: Dict = {
       points: [
         "Projektowanie UX/UI, responsywne interfejsy i dostępne systemy projektowe stworzone z myślą o złożonych danych.",
         "Inżynieria fullstack łącząca interaktywne mapy 2D/3D, grafikę WebGL oraz szybkie, typowane API.",
-        "Zautomatyzowany DevOps w chmurze, potoki CI/CD, cache na brzegu sieci, monitoring i niezawodne utrzymanie.",
+        "Automatyczne testy i wdrożenia w chmurze (CI/CD), globalny cache, monitoring oraz długoterminowe utrzymanie.",
       ],
       tools: [
         "UX/UI Design",
@@ -275,10 +275,10 @@ export const PL: Dict = {
     {
       id: "data-eng",
       title: "Inżynieria Danych i Satelitarna Obserwacja Ziemi",
-      lead: "Kompletne potoki przetwarzania od orbit satelitarnych po zoptymalizowane kafelki klienta.",
+      lead: "Kompleksowe przetwarzanie danych: od surowych zobrazowań satelitarnych po lekkie kafelki mapowe w przeglądarce.",
       points: [
         "Zautomatyzowana integracja radarowych danych Copernicus Sentinel-1 (SAR), Sentinel-2 oraz morskich zasobów NOAA.",
-        "Przestrzenne potoki ETL, kafelkowanie rastrów, przetwarzanie GeoTIFF i kompresja binarna (bin.gz).",
+        "Przestrzenne procesy ETL, kafelkowanie rastrów, przetwarzanie GeoTIFF i wydajna kompresja binarna (bin.gz).",
         "Kontrola jakości danych, kalibracja sensorów i niezawodne schematy geoprzestrzenne.",
       ],
       tools: [

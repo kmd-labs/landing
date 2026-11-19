@@ -94,7 +94,7 @@ export const PL: Dict = {
     {
       id: "nasa-wildfires",
       shortTitle: "Pożary NASA",
-      title: "NASA Wildfires — Harmonizacja MODIS i VIIRS",
+      title: "NASA Wildfires · Harmonizacja MODIS i VIIRS",
       subtitle:
         "NASA Space Apps Challenge 2026 · Ponad 25 lat spójnych detekcji aktywnych pożarów w jednej skali",
       description:
@@ -114,7 +114,7 @@ export const PL: Dict = {
     {
       id: "wrovis",
       shortTitle: "wroVIS",
-      title: "wroVIS — Interaktywna Mapa 3D Wrocławia",
+      title: "wroVIS · Interaktywna Mapa 3D Wrocławia",
       subtitle:
         "Budynki 3D, mosty, sieć tramwajowa, zasięg pieszy 15 min i ranking osiedli",
       description:
@@ -133,7 +133,7 @@ export const PL: Dict = {
     {
       id: "el-nino",
       shortTitle: "El Niño",
-      title: "El Niño — Oscylacja Południowa (ENSO)",
+      title: "El Niño · Oscylacja Południowa (ENSO)",
       subtitle:
         "Zmienność termokliny Pacyfiku 3D, cyrkulacja Walkera i telekoneksje wskaźnika Niño 3.4",
       description:
@@ -192,7 +192,7 @@ export const PL: Dict = {
       shortTitle: "Viadrus AI",
       title: "Viadrus AI (Zwycięzca CASSINI UE)",
       subtitle:
-        "1. Miejsce w Finale Europejskim — 11. Hackathon CASSINI (EUSPA) · Detekcja wycieków SAR",
+        "1. Miejsce w Finale Europejskim · 11. Hackathon CASSINI (EUSPA) · Detekcja wycieków SAR",
       description:
         "Nagrodzony w Europie system teledetekcyjny łączący radarowe anomalie wilgotności dielektrycznej gruntu w paśmie C (Sentinel-1 SAR) oraz wielospektralne wskaźniki wegetacji i wody (Sentinel-2 NDVI/NDWI) z telemetrią hydrauliczną do wczesnej lokalizacji podziemnych wycieków wodociągowych.",
       metrics: [
@@ -210,7 +210,7 @@ export const PL: Dict = {
     {
       id: "golfstrom",
       shortTitle: "Golfstrom",
-      title: "Golfstrom — Północnoatlantycki Silnik Cieplny",
+      title: "Golfstrom · Północnoatlantycki Silnik Cieplny",
       subtitle:
         "Zonalne anomalie SST, baroklinowy front Prądu Zatokowego i transatlantycki kontrast klimatyczny",
       description:
@@ -229,7 +229,7 @@ export const PL: Dict = {
     {
       id: "polis-io",
       shortTitle: "Polis",
-      title: "Polis — Geosymulacja Hellady Archaicznej (600 p.n.e.)",
+      title: "Polis · Geosymulacja Hellady Archaicznej (600 p.n.e.)",
       subtitle:
         "Kolonizacja komórkowa zależna od rzeźby terenu, pojemność troficzna i morskie sieci handlowe",
       description:
@@ -257,7 +257,7 @@ export const PL: Dict = {
     {
       id: "geoviz",
       title: "UX/UI, Geowizualizacja i Inżynieria Fullstack",
-      lead: "Kompleksowe interaktywne aplikacje webowe — od przemyślanego UX/UI i map 2D/3D po wdrożenia w chmurze i długoterminowe utrzymanie.",
+      lead: "Kompleksowe interaktywne aplikacje webowe: od przemyślanego UX/UI i map 2D/3D po wdrożenia w chmurze i długoterminowe utrzymanie.",
       points: [
         "Projektowanie UX/UI, responsywne interfejsy i dostępne systemy projektowe stworzone z myślą o złożonych danych.",
         "Inżynieria fullstack łącząca interaktywne mapy 2D/3D, grafikę WebGL oraz szybkie, typowane API.",

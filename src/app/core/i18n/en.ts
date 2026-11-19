@@ -95,7 +95,7 @@ export const EN: Dict = {
     {
       id: "nasa-wildfires",
       shortTitle: "Wildfires",
-      title: "NASA Wildfires — MODIS & VIIRS Harmonization",
+      title: "NASA Wildfires · MODIS & VIIRS Harmonization",
       subtitle:
         "2026 NASA Space Apps Challenge · 25+ years of drift-corrected active-fire detections on one scale",
       description:
@@ -115,7 +115,7 @@ export const EN: Dict = {
     {
       id: "wrovis",
       shortTitle: "wroVIS",
-      title: "wroVIS — Interactive 3D Map of Wrocław",
+      title: "wroVIS · Interactive 3D Map of Wrocław",
       subtitle:
         "3D urban buildings, bridges, tram network, 15-minute walking reach & district rankings",
       description:
@@ -134,7 +134,7 @@ export const EN: Dict = {
     {
       id: "el-nino",
       shortTitle: "El Niño",
-      title: "El Niño — Southern Oscillation (ENSO)",
+      title: "El Niño · Southern Oscillation (ENSO)",
       subtitle:
         "3D Pacific thermocline variability, Walker Circulation dynamics & Niño 3.4 teleconnections",
       description:
@@ -193,7 +193,7 @@ export const EN: Dict = {
       shortTitle: "Viadrus AI",
       title: "Viadrus AI (CASSINI EU Winner)",
       subtitle:
-        "1st Place European Winner — EUSPA 11th CASSINI Hackathon · SAR & multispectral leak detection",
+        "1st Place European Winner · EUSPA 11th CASSINI Hackathon · SAR & multispectral leak detection",
       description:
         "Award-winning remote sensing pipeline fusing C-band Synthetic Aperture Radar (Sentinel-1 SAR) soil dielectric moisture anomalies and Sentinel-2 optical vegetation stress indices (NDVI/NDWI) with hydraulic pressure telemetry to localize subsurface water distribution leaks.",
       metrics: [
@@ -211,7 +211,7 @@ export const EN: Dict = {
     {
       id: "golfstrom",
       shortTitle: "Golfstrom",
-      title: "Golfstrom — North Atlantic Heat Engine",
+      title: "Golfstrom · North Atlantic Heat Engine",
       subtitle:
         "Zonal SST anomalies, baroclinic western boundary fronts & transatlantic latitude climate contrast",
       description:
@@ -230,7 +230,7 @@ export const EN: Dict = {
     {
       id: "polis-io",
       shortTitle: "Polis",
-      title: "Polis — Archaic Hellas Geosimulation (600 BC)",
+      title: "Polis · Archaic Hellas Geosimulation (600 BC)",
       subtitle:
         "Topography-constrained cellular colonization, agricultural carrying capacity & maritime trade networks",
       description:
@@ -257,7 +257,7 @@ export const EN: Dict = {
     {
       id: "geoviz",
       title: "UX/UI, Geovisualization & Fullstack Engineering",
-      lead: "End-to-end interactive web applications — from thoughtful UX/UI design and 2D/3D mapping to cloud deployment and long-term maintenance.",
+      lead: "End-to-end interactive web applications, from thoughtful UX/UI design and 2D/3D mapping to cloud deployment and long-term maintenance.",
       points: [
         "Human-centered UX/UI design, responsive interfaces, and accessible design systems built for complex data.",
         "Fullstack web engineering combining interactive 2D/3D maps, WebGL canvases, and fast, type-safe APIs.",

@@ -2,7 +2,7 @@
   "entries": [
     {
       "identifier": "urn:air:kmd-labs.org:geovis:nasa-wildfires",
-      "displayName": "NASA Wildfires — MODIS & VIIRS Harmonization",
+      "displayName": "NASA Wildfires · MODIS & VIIRS Harmonization",
       "type": "application/json",
       "url": "https://harmonization.kmd-labs.org/",
       "description": "Scientifically validated Burning Activity Calendar reconciling 25+ years of MODIS and VIIRS active-fire detections across a 2D map and 3D globe.",
@@ -16,7 +16,7 @@
     },
     {
       "identifier": "urn:air:kmd-labs.org:geovis:wrovis",
-      "displayName": "wroVIS — Interactive 3D Map of Wrocław",
+      "displayName": "wroVIS · Interactive 3D Map of Wrocław",
       "type": "application/json",
       "url": "https://kmd-labs.github.io/wroVIS/",
       "description": "Interactive 3D urban visualization of Wrocław built on OpenStreetMap and OpenFreeMap with 3D buildings, bridges, tram network, walking-range isochrones, and district rankings.",
@@ -30,7 +30,7 @@
     },
     {
       "identifier": "urn:air:kmd-labs.org:geovis:el-nino",
-      "displayName": "El Niño — Southern Oscillation (ENSO) Interactive 3D Model",
+      "displayName": "El Niño · Southern Oscillation (ENSO) Interactive 3D Model",
       "type": "application/json",
       "url": "https://kmd-labs.org/el-nino/",
       "description": "Interactive WebGL 3D Pacific thermocline variability, Walker Circulation dynamics, and Niño 3.4 SST anomaly teleconnections.",
@@ -60,7 +60,7 @@
     },
     {
       "identifier": "urn:air:kmd-labs.org:geovis:golfstrom",
-      "displayName": "Golfstrom — North Atlantic Heat Engine",
+      "displayName": "Golfstrom · North Atlantic Heat Engine",
       "type": "application/json",
       "url": "https://kmd-labs.org/golfstrom/",
       "description": "AMOC thermohaline circulation, Gulf Stream western boundary current meanders, and subpolar gyre heat transport simulation.",
@@ -102,7 +102,7 @@
     },
     {
       "identifier": "urn:air:kmd-labs.org:geovis:polis-io",
-      "displayName": "Polis — Archaic Hellas Geosimulation (600 BC)",
+      "displayName": "Polis · Archaic Hellas Geosimulation (600 BC)",
       "type": "application/json",
       "url": "https://kmd-labs.org/polis-io/",
       "description": "DEM-based agentic city-state simulation of Aegean trade networks, maritime cabotage, and political geography during Archaic Greece.",

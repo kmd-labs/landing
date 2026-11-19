@@ -131,7 +131,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     return t.projects.map((p) => ({
       id: p.id,
       label: p.shortTitle || p.title,
-      ariaLabel: `${p.shortTitle || p.title} — ${t.portfolioSelectAria}: ${p.title}`
+      ariaLabel: `${p.shortTitle || p.title} · ${t.portfolioSelectAria}: ${p.title}`
     }));
   });
 

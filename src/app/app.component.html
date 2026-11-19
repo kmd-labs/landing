@@ -120,7 +120,7 @@
         data-track="show-more"
         variant="default"
         extraClass="hero-stage__show-more-btn glass-panel"
-        [ariaLabel]="t.showMore + ' — ' + t.showMoreAria"
+        [ariaLabel]="t.showMore + ': ' + t.showMoreAria"
         (btnClick)="scrollToSection('portfolio')">
         <span>{{ t.showMore }}</span>
         <lucide-icon [img]="chevronDownIcon" [size]="14"></lucide-icon>
@@ -616,7 +616,7 @@
           type="button"
           class="back-to-top"
           data-track="scroll-top/footer-button"
-          [attr.aria-label]="'TOP — ' + t.scrollToTopAria"
+          [attr.aria-label]="'TOP: ' + t.scrollToTopAria"
           (click)="scrollToTop()">
           ↑ TOP
         </button>

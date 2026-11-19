@@ -26,10 +26,9 @@ export const PL: Dict = {
 
   // Hero Section
   heroKicker: "KMD LABS · OBSERWACJA ZIEMI I KARTOGRAFIA",
-  heroTitle: "Naukowa Wizualizacja Danych i",
+  heroTitle: "Wizualizacja Danych oraz",
   heroHighlight: "Inżynieria Geoprzestrzenna",
-  heroSubtitle:
-    "Przekształcamy Twoje złożone dane w piękne i interaktywne aplikacje.",
+  heroSubtitle: "Przekształcamy Twoje dane w piękne i interaktywne aplikacje.",
   heroPrimaryCta: "Odkryj Obserwatorium",
   heroSecondaryCta: "Nawiąż Kontakt",
   heroInteractionHint:
@@ -123,12 +122,7 @@ export const PL: Dict = {
         { label: "TEMATYKA", value: "GIS Miejski i Kartografia" },
         { label: "ŹRÓDŁA DANYCH", value: "OpenStreetMap · OpenFreeMap" },
       ],
-      tags: [
-        "Budynki 3D",
-        "Wrocław",
-        "Sieć Tramwajowa",
-        "MapLibre GL",
-      ],
+      tags: ["Budynki 3D", "Wrocław", "Sieć Tramwajowa", "MapLibre GL"],
     },
     {
       id: "el-nino",
@@ -142,12 +136,7 @@ export const PL: Dict = {
         { label: "TEMATYKA", value: "Klimatologia i Meteorologia" },
         { label: "ŹRÓDŁA DANYCH", value: "NOAA OISST · Copernicus" },
       ],
-      tags: [
-        "El Niño i La Niña",
-        "Pasaty",
-        "Temperatura Oceanu",
-        "Globus 3D",
-      ],
+      tags: ["El Niño i La Niña", "Pasaty", "Temperatura Oceanu", "Globus 3D"],
     },
     {
       id: "watershed",
@@ -256,7 +245,7 @@ export const PL: Dict = {
   disciplines: [
     {
       id: "geoviz",
-      title: "UX/UI, Geowizualizacja i Inżynieria Fullstack",
+      title: "UX/UI, Geowizualizacja i Fullstack Engineering",
       lead: "Kompleksowe interaktywne aplikacje webowe: od przemyślanego UX/UI i map 2D/3D po wdrożenia w chmurze i długoterminowe utrzymanie.",
       points: [
         "Projektowanie UX/UI, responsywne interfejsy i dostępne systemy projektowe stworzone z myślą o złożonych danych.",

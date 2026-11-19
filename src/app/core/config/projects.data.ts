@@ -1,4 +1,4 @@
-import { ProjectCopy, ProjectEntry, ProjectMetadata } from '../i18n/i18n.types';
+import { ProjectCopy, ProjectEntry, ProjectMetadata } from "../i18n/i18n.types";
 
 /**
  * Canonical static configuration for all showcase portfolio projects.
@@ -6,73 +6,72 @@ import { ProjectCopy, ProjectEntry, ProjectMetadata } from '../i18n/i18n.types';
  */
 export const PROJECTS_METADATA: readonly ProjectMetadata[] = [
   {
-    id: 'el-nino',
-    url: 'https://kmd-labs.github.io/el-nino/',
-    repoUrl: 'https://github.com/kmd-labs/el-nino',
-    poster: 'assets/projects/el-nino.poster.jpg',
-    media: 'assets/projects/el-nino.webp',
-    previewDurationMs: 3200
+    id: "el-nino",
+    url: "https://kmd-labs.github.io/el-nino/",
+    repoUrl: "https://github.com/kmd-labs/el-nino",
+    poster: "assets/projects/el-nino.poster.jpg",
+    media: "assets/projects/el-nino.webp",
+    previewDurationMs: 3200,
   },
   {
-    id: 'watershed',
-    url: 'https://kmd-labs.github.io/watershed/',
-    repoUrl: 'https://github.com/kmd-labs/watershed',
-    poster: 'assets/projects/watershed.poster.jpg',
-    media: 'assets/projects/watershed.webp',
-    previewDurationMs: 6000
+    id: "watershed",
+    url: "https://kmd-labs.github.io/watershed/",
+    repoUrl: "https://github.com/kmd-labs/watershed",
+    poster: "assets/projects/watershed.poster.jpg",
+    media: "assets/projects/watershed.webp",
+    previewDurationMs: 6000,
   },
   {
-    id: 'nasa-wildfires',
-    url: 'https://harmonization.kmd-labs.org/',
-    repoUrl: 'https://github.com/kmd-labs/nasa-wildfires-model',
+    id: "nasa-wildfires",
+    url: "https://harmonization.kmd-labs.org/",
     secondaryUrl:
-      'https://www.spaceappschallenge.org/2026/challenges/modis-and-viirs-hot-spots/',
-    poster: 'assets/projects/nasa-wildfires.poster.jpg',
-    media: 'assets/projects/nasa-wildfires.webp',
-    previewDurationMs: 4800
+      "https://www.spaceappschallenge.org/2026/challenges/modis-and-viirs-hot-spots/",
+    poster: "assets/projects/nasa-wildfires.poster.jpg",
+    media: "assets/projects/nasa-wildfires.webp",
+    previewDurationMs: 4800,
   },
   {
-    id: 'wrovis',
-    url: 'https://kmd-labs.github.io/wroVIS/',
-    repoUrl: 'https://github.com/kmd-labs/wroVIS',
-    poster: 'assets/projects/wrovis.poster.jpg',
-    media: 'assets/projects/wrovis.webp',
-    previewDurationMs: 4000
+    id: "wrovis",
+    url: "https://kmd-labs.github.io/wroVIS/",
+    repoUrl: "https://github.com/kmd-labs/wroVIS",
+    poster: "assets/projects/wrovis.poster.jpg",
+    media: "assets/projects/wrovis.webp",
+    previewDurationMs: 4000,
   },
   {
-    id: 'baltic',
-    url: 'https://kmd-labs.github.io/baltic/',
-    repoUrl: 'https://github.com/kmd-labs/baltic',
-    poster: 'assets/projects/baltic.poster.jpg',
-    media: 'assets/projects/baltic.webp',
-    previewDurationMs: 6000
+    id: "baltic",
+    url: "https://kmd-labs.github.io/baltic/",
+    repoUrl: "https://github.com/kmd-labs/baltic",
+    poster: "assets/projects/baltic.poster.jpg",
+    media: "assets/projects/baltic.webp",
+    previewDurationMs: 6000,
   },
   {
-    id: 'viadrus-ai',
-    url: 'https://viadrus.adriankulik93.workers.dev/',
+    id: "viadrus-ai",
+    url: "https://viadrus.adriankulik93.workers.dev/",
     secondaryUrl:
-      'https://defence-industry-space.ec.europa.eu/orbit-water-tap-11th-cassini-hackathon-2026-05-08_en',
-    poster: 'assets/projects/viadrusai.poster.jpg',
-    media: 'assets/projects/viadrusai.gif',
+      "https://defence-industry-space.ec.europa.eu/orbit-water-tap-11th-cassini-hackathon-2026-05-08_en",
+    poster: "assets/projects/viadrusai.poster.jpg",
+    media: "assets/projects/viadrusai.gif",
     previewDurationMs: 4500,
-    isExternal: true
+    isExternal: true,
   },
   {
-    id: 'golfstrom',
-    url: 'https://kmd-labs.github.io/golfstrom/',
-    repoUrl: 'https://github.com/kmd-labs/golfstrom',
-    poster: 'assets/projects/golfstrom.poster.jpg',
-    media: 'assets/projects/golfstrom.webp',
-    previewDurationMs: 5200
+    id: "golfstrom",
+    url: "https://kmd-labs.github.io/golfstrom/",
+    repoUrl: "https://github.com/kmd-labs/golfstrom",
+    poster: "assets/projects/golfstrom.poster.jpg",
+    media: "assets/projects/golfstrom.webp",
+    previewDurationMs: 5200,
   },
   {
-    id: 'polis-io',
-    url: 'https://kmd-labs.github.io/polis-io/',
-    repoUrl: 'https://github.com/kmd-labs/polis-io',
-    poster: 'assets/projects/polis-io.poster.jpg',
-    media: 'assets/projects/polis-io.gif',
-    previewDurationMs: 4000
-  }
+    id: "polis-io",
+    url: "https://kmd-labs.github.io/polis-io/",
+    repoUrl: "https://github.com/kmd-labs/polis-io",
+    poster: "assets/projects/polis-io.poster.jpg",
+    media: "assets/projects/polis-io.gif",
+    previewDurationMs: 4000,
+  },
 ];
 
 /**
@@ -84,11 +83,13 @@ export function buildProjects(copies: ProjectCopy[]): ProjectEntry[] {
   return PROJECTS_METADATA.map((meta) => {
     const copy = copyById.get(meta.id);
     if (!copy) {
-      throw new Error(`[buildProjects] Missing copy definition for project id "${meta.id}"`);
+      throw new Error(
+        `[buildProjects] Missing copy definition for project id "${meta.id}"`,
+      );
     }
     return {
       ...meta,
-      ...copy
+      ...copy,
     };
   });
 }
